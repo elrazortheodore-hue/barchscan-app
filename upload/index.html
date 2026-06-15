@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarchScan | Ingestion</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent: #ffffff;
+            --text-primary: #ededed;
+            --text-secondary: #888888;
+            --progress-bg: #222222;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .ingestion-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2.5rem 1.5rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--glass-border);
+            border-radius: 8px;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        .drop-zone-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .drop-zone-text span {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        #file-preview {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+
+        .progress-container {
+            display: none;
+            width: 100%;
+            height: 4px;
+            background-color: var(--progress-bg);
+            border-radius: 2px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--accent);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: var(--progress-bg);
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ingestion-card">
+        <h1>Logbook Scanner</h1>
+        <p class="subtitle">Securely process visual records into structured data.</p>
+
+        <div class="drop-zone" id="drop-zone">
+            <div class="drop-zone-text">Tap to select a document from your gallery</div>
+            <input type="file" id="file-input" accept="image/*">
+        </div>
+
+        <div id="file-preview">
+            <span id="filename">No document selected</span>
+            <span id="remove-file" style="cursor: pointer; color: #ff5555; padding-left: 10px;">&times;</span>
+        </div>
+
+        <div class="progress-container" id="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <button id="process-btn" disabled>Initialize Processing</button>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const filePreview = document.getElementById('file-preview');
+        const filenameDisplay = document.getElementById('filename');
+        const removeFileBtn = document.getElementById('remove-file');
+        const processBtn = document.getElementById('process-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentFile = null;
+
+        // Mobile-friendly tap to upload
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
+
+        removeFileBtn.addEventListener('click', resetSelection);
+
+        function handleFileSelection(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please supply an image format.');
+                return;
+            }
+            currentFile = file;
+            filenameDisplay.textContent = file.name;
+            dropZone.style.display = 'none';
+            filePreview.style.display = 'flex';
+            processBtn.disabled = false;
+        }
+
+        function resetSelection() {
+            currentFile = null;
+            fileInput.value = '';
+            dropZone.style.display = 'block';
+            filePreview.style.display = 'none';
+            processBtn.disabled = true;
+            progressContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            processBtn.textContent = 'Initialize Processing';
+        }
+
+        processBtn.addEventListener('click', async () => {
+            if (!currentFile) return;
+
+            processBtn.disabled = true;
+            processBtn.textContent = 'Analyzing Image...';
+            progressContainer.style.display = 'block';
+
+            // Start an infinite progress bar animation for UI feedback
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 90) progress = 90; 
+                progressBar.style.width = `${progress}%`;
+            }, 300);
+
+            try {
+                const formData = new FormData();
+                formData.append('file', currentFile);
+
+                const response = await fetch('/api/process-logbook', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('API transmission failed');
+
+                const result = await response.json();
+
+                // Save data to browser memory so the next page can read it
+                localStorage.setItem('barchscan_latest_data', JSON.stringify(result));
+
+                clearInterval(interval);
+                progressBar.style.width = '100%';
+                processBtn.textContent = 'Transmission Complete';
+
+                setTimeout(() => {
+                    window.location.href = '/data'; 
+                }, 800);
+
+            } catch (error) {
+                clearInterval(interval);
+                processBtn.textContent = 'Processing Failed - Try Again';
+                processBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+  </html>
