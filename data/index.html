@@ -15,6 +15,17 @@
             --table-hover: rgba(255, 255, 255, 0.05);
         }
 
+        /* Light Theme Compatibility */
+        [data-theme="light"] {
+            --bg-color: #f4f4f5;
+            --glass-bg: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --accent: #000000;
+            --text-primary: #18181b;
+            --text-secondary: #71717a;
+            --table-hover: rgba(0, 0, 0, 0.05);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -52,15 +63,18 @@
             }
         }
 
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-
+        h1 { font-size: 1.8rem; font-weight: 600; }
+        
         p.subtitle {
             color: var(--text-secondary);
             font-size: 0.9rem;
             margin-top: 0.25rem;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         button.action-btn {
@@ -72,16 +86,14 @@
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            width: 100%;
-        }
-
-        @media (min-width: 600px) {
-            button.action-btn {
-                width: auto;
-            }
+            transition: all 0.2s ease;
         }
 
         button.action-btn:hover {
+            background-color: var(--table-hover);
+        }
+
+        button.action-btn.active {
             background-color: var(--accent);
             color: var(--bg-color);
         }
@@ -100,7 +112,8 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            min-width: 600px; /* Forces scroll on mobile instead of squishing */
+            min-width: 600px;
+            transition: all 0.3s ease;
         }
 
         th, td {
@@ -115,26 +128,28 @@
             color: var(--text-secondary);
             font-weight: 500;
             background: rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
         }
 
-        td {
-            font-size: 0.9rem;
+        td { font-size: 0.9rem; }
+        
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: var(--table-hover); }
+
+        /* Excel Edit Mode Styles */
+        table.excel-mode td {
+            border: 1px solid var(--glass-border); /* Visible gridlines */
+            background: rgba(255, 255, 255, 0.02);
+            cursor: text;
+            padding: 0.5rem 1rem; /* Tighter padding like Excel */
+            white-space: nowrap;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        table.excel-mode td:focus {
+            background: rgba(255, 255, 255, 0.08);
+            outline: 2px solid var(--accent);
+            outline-offset: -2px;
         }
-
-        .status {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status.cleared { background: rgba(46, 204, 113, 0.15); color: #2ecc71; }
-        .status.flagged { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
 
         .empty-state {
             text-align: center;
@@ -158,21 +173,16 @@
                 <h1>Processed Records</h1>
                 <p class="subtitle">Structured output from the scanner.</p>
             </div>
-            <button class="action-btn" id="export-csv" style="display: none;">Download CSV</button>
+            <div class="action-group" id="action-buttons" style="display: none;">
+                <button class="action-btn" id="toggle-edit">Enter Edit Mode</button>
+                <button class="action-btn" id="export-csv">Download CSV</button>
+            </div>
         </header>
 
         <div class="table-wrapper" id="table-container" style="display: none;">
             <table id="data-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Unit ID</th>
-                        <th>Operator</th>
-                        <th>Duration (Min)</th>
-                        <th>Status</th>
-                        <th>Notes</th>
-                    </tr>
-                </thead>
+                <thead id="table-head">
+                    </thead>
                 <tbody id="table-body">
                     </tbody>
             </table>
@@ -185,28 +195,38 @@
     </div>
 
     <script>
+        // Check for Light Mode
+        if (localStorage.getItem('barchscan_theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+
         const tableContainer = document.getElementById('table-container');
+        const dataTable = document.getElementById('data-table');
+        const tableHead = document.getElementById('table-head');
         const tableBody = document.getElementById('table-body');
         const emptyState = document.getElementById('empty-state');
+        const actionButtons = document.getElementById('action-buttons');
+        
         const exportBtn = document.getElementById('export-csv');
+        const toggleEditBtn = document.getElementById('toggle-edit');
 
         let logbookData = [];
+        let currentHeaders = [];
+        let isEditMode = false;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Retrieve the data passed from the upload page
             const storedData = localStorage.getItem('barchscan_latest_data');
             
             if (storedData) {
                 try {
                     const parsed = JSON.parse(storedData);
-                    // Ensure it is an array for the table
                     logbookData = Array.isArray(parsed) ? parsed : [parsed];
                     
                     if (logbookData.length > 0) {
-                        populateTable(logbookData);
+                        buildDynamicTable(logbookData);
                         emptyState.style.display = 'none';
                         tableContainer.style.display = 'block';
-                        exportBtn.style.display = 'block';
+                        actionButtons.style.display = 'flex';
                     }
                 } catch (e) {
                     console.error("Could not parse stored data", e);
@@ -214,47 +234,88 @@
             }
         });
 
-        function populateTable(data) {
+        // 1. DYNAMIC TABLE BUILDER
+        function buildDynamicTable(data) {
+            tableHead.innerHTML = '';
             tableBody.innerHTML = '';
+            
+            // Auto-detect columns based on whatever Gemini sent
+            const headerSet = new Set();
+            data.forEach(row => Object.keys(row).forEach(key => headerSet.add(key)));
+            currentHeaders = Array.from(headerSet);
+
+            // Build Header Row
+            const trHead = document.createElement('tr');
+            currentHeaders.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                trHead.appendChild(th);
+            });
+            tableHead.appendChild(trHead);
+
+            // Build Data Rows
             data.forEach(row => {
                 const tr = document.createElement('tr');
-                
-                // Safety checks in case the AI missed a field
-                const safeDate = row.date || 'N/A';
-                const safeUnit = row.unitId || 'N/A';
-                const safeOp = row.operator || 'N/A';
-                const safeDur = row.duration || '0';
-                const safeStatus = row.status || 'Unknown';
-                const safeNotes = row.notes || 'None';
-
-                const statusClass = safeStatus.toLowerCase().includes('clear') ? 'cleared' : 'flagged';
-
-                tr.innerHTML = `
-                    <td>${safeDate}</td>
-                    <td style="font-family: monospace;">${safeUnit}</td>
-                    <td>${safeOp}</td>
-                    <td>${safeDur}</td>
-                    <td><span class="status ${statusClass}">${safeStatus}</span></td>
-                    <td style="color: var(--text-secondary);">${safeNotes}</td>
-                `;
+                currentHeaders.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = row[header] !== undefined ? row[header] : "";
+                    tr.appendChild(td);
+                });
                 tableBody.appendChild(tr);
             });
         }
 
+        // 2. EXCEL EDIT MODE TOGGLE
+        toggleEditBtn.addEventListener('click', () => {
+            isEditMode = !isEditMode;
+            const cells = tableBody.querySelectorAll('td');
+
+            if (isEditMode) {
+                // Enter Excel Mode
+                dataTable.classList.add('excel-mode');
+                toggleEditBtn.textContent = 'Save Changes';
+                toggleEditBtn.classList.add('active');
+                cells.forEach(td => td.contentEditable = "true");
+            } else {
+                // Save and Exit Excel Mode
+                dataTable.classList.remove('excel-mode');
+                toggleEditBtn.textContent = 'Enter Edit Mode';
+                toggleEditBtn.classList.remove('active');
+                cells.forEach(td => td.contentEditable = "false");
+                
+                // Read the edited table back into memory
+                saveTableToMemory();
+            }
+        });
+
+        function saveTableToMemory() {
+            const rows = Array.from(tableBody.querySelectorAll('tr'));
+            const newData = rows.map(tr => {
+                const rowObj = {};
+                const cells = Array.from(tr.querySelectorAll('td'));
+                cells.forEach((td, index) => {
+                    rowObj[currentHeaders[index]] = td.textContent.trim();
+                });
+                return rowObj;
+            });
+            
+            logbookData = newData;
+            localStorage.setItem('barchscan_latest_data', JSON.stringify(logbookData));
+        }
+
+        // 3. DYNAMIC CSV EXPORT
         exportBtn.addEventListener('click', () => {
             if (logbookData.length === 0) return;
 
-            const headers = "Date,Unit ID,Operator,Duration,Status,Notes";
+            // Generate CSV headers from dynamic columns
+            const headers = currentHeaders.map(h => `"${h}"`).join(',');
             
+            // Map rows dynamically
             const rows = logbookData.map(obj => {
-                return [
-                    obj.date || '',
-                    obj.unitId || '',
-                    obj.operator || '',
-                    obj.duration || '',
-                    obj.status || '',
-                    `"${(obj.notes || '').replace(/"/g, '""')}"` // Escape quotes for CSV
-                ].join(',');
+                return currentHeaders.map(header => {
+                    const val = obj[header] || '';
+                    return `"${val.replace(/"/g, '""')}"`;
+                }).join(',');
             }).join('\n');
 
             const csvContent = `${headers}\n${rows}`;
