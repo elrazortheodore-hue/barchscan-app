@@ -345,8 +345,6 @@
 
             try {
                 const optimizedFile = await compressImage(currentFile);
-                
-                // NO MORE MENTION OF GEMINI
                 processBtn.textContent = 'Extracting Logbook Data...';
 
                 const formData = new FormData();
@@ -358,16 +356,25 @@
                 });
 
                 if (!response.ok) {
-                    // Try to grab the exact error from the server
-                    let errorMessage = `HTTP Error ${response.status}`;
+                    // SAFE ERROR READING: Read the stream EXACTLY ONCE as raw text
+                    const rawErrorText = await response.text();
+                    let finalErrorMsg = `Server Error (${response.status})`;
+
                     try {
-                        const errorData = await response.json();
-                        if (errorData.error) errorMessage = errorData.error;
+                        // Attempt to parse the text as JSON
+                        const jsonError = JSON.parse(rawErrorText);
+                        if (jsonError.error) finalErrorMsg = jsonError.error;
                     } catch (e) {
-                        const errorText = await response.text();
-                        if (errorText && !errorText.includes('<html')) errorMessage = errorText;
+                        // If parsing fails, it's a Vercel HTML error page. Let's translate the common ones.
+                        if (response.status === 504) {
+                            finalErrorMsg = "Vercel Timeout: Processing took longer than the 10-second limit.";
+                        } else if (response.status === 413) {
+                            finalErrorMsg = "Payload Too Large: The image is still too big for Vercel's limits.";
+                        } else {
+                            finalErrorMsg = `Unexpected Server Error: Status ${response.status}`;
+                        }
                     }
-                    throw new Error(errorMessage);
+                    throw new Error(finalErrorMsg);
                 }
 
                 const result = await response.json();
@@ -384,7 +391,7 @@
                 processBtn.textContent = 'Processing Failed - Try Again';
                 processBtn.disabled = false;
                 
-                // THIS WILL POP UP ON YOUR PHONE WITH THE EXACT ERROR
+                // Pop the *real* error
                 alert("Debug Error: " + error.message);
             }
         });
