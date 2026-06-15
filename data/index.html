@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarchScan | Data Ledger</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent: #ffffff;
+            --text-primary: #ededed;
+            --text-secondary: #888888;
+            --table-hover: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        @media (min-width: 600px) {
+            .dashboard-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-end;
+            }
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        button.action-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: transparent;
+            color: var(--accent);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        @media (min-width: 600px) {
+            button.action-btn {
+                width: auto;
+            }
+        }
+
+        button.action-btn:hover {
+            background-color: var(--accent);
+            color: var(--bg-color);
+        }
+
+        .table-wrapper {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 600px; /* Forces scroll on mobile instead of squishing */
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        td {
+            font-size: 0.9rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status.cleared { background: rgba(46, 204, 113, 0.15); color: #2ecc71; }
+        .status.flagged { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state a {
+            color: var(--accent);
+            text-decoration: none;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div>
+                <h1>Processed Records</h1>
+                <p class="subtitle">Structured output from the scanner.</p>
+            </div>
+            <button class="action-btn" id="export-csv" style="display: none;">Download CSV</button>
+        </header>
+
+        <div class="table-wrapper" id="table-container" style="display: none;">
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Unit ID</th>
+                        <th>Operator</th>
+                        <th>Duration (Min)</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    </tbody>
+            </table>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+            <p>No logbook data has been processed yet.</p>
+            <a href="/upload">&larr; Go to Scanner</a>
+        </div>
+    </div>
+
+    <script>
+        const tableContainer = document.getElementById('table-container');
+        const tableBody = document.getElementById('table-body');
+        const emptyState = document.getElementById('empty-state');
+        const exportBtn = document.getElementById('export-csv');
+
+        let logbookData = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Retrieve the data passed from the upload page
+            const storedData = localStorage.getItem('barchscan_latest_data');
+            
+            if (storedData) {
+                try {
+                    const parsed = JSON.parse(storedData);
+                    // Ensure it is an array for the table
+                    logbookData = Array.isArray(parsed) ? parsed : [parsed];
+                    
+                    if (logbookData.length > 0) {
+                        populateTable(logbookData);
+                        emptyState.style.display = 'none';
+                        tableContainer.style.display = 'block';
+                        exportBtn.style.display = 'block';
+                    }
+                } catch (e) {
+                    console.error("Could not parse stored data", e);
+                }
+            }
+        });
+
+        function populateTable(data) {
+            tableBody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                // Safety checks in case the AI missed a field
+                const safeDate = row.date || 'N/A';
+                const safeUnit = row.unitId || 'N/A';
+                const safeOp = row.operator || 'N/A';
+                const safeDur = row.duration || '0';
+                const safeStatus = row.status || 'Unknown';
+                const safeNotes = row.notes || 'None';
+
+                const statusClass = safeStatus.toLowerCase().includes('clear') ? 'cleared' : 'flagged';
+
+                tr.innerHTML = `
+                    <td>${safeDate}</td>
+                    <td style="font-family: monospace;">${safeUnit}</td>
+                    <td>${safeOp}</td>
+                    <td>${safeDur}</td>
+                    <td><span class="status ${statusClass}">${safeStatus}</span></td>
+                    <td style="color: var(--text-secondary);">${safeNotes}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        exportBtn.addEventListener('click', () => {
+            if (logbookData.length === 0) return;
+
+            const headers = "Date,Unit ID,Operator,Duration,Status,Notes";
+            
+            const rows = logbookData.map(obj => {
+                return [
+                    obj.date || '',
+                    obj.unitId || '',
+                    obj.operator || '',
+                    obj.duration || '',
+                    obj.status || '',
+                    `"${(obj.notes || '').replace(/"/g, '""')}"` // Escape quotes for CSV
+                ].join(',');
+            }).join('\n');
+
+            const csvContent = `${headers}\n${rows}`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'barchscan_log.csv');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
+</body>
+</html>
