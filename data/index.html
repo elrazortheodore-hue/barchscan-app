@@ -11,9 +11,13 @@
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
             --accent: #ffffff;
+            --accent-inverse: #000000;
             --text-primary: #ededed;
             --text-secondary: #888888;
             --table-hover: rgba(255, 255, 255, 0.05);
+            --hover-overlay: rgba(255, 255, 255, 0.05);
+            --error-color: #ff5555;
+            --success-color: #4ade80;
         }
 
         /* Light Theme Compatibility */
@@ -22,9 +26,11 @@
             --glass-bg: rgba(0, 0, 0, 0.02);
             --glass-border: rgba(0, 0, 0, 0.1);
             --accent: #000000;
+            --accent-inverse: #ffffff;
             --text-primary: #18181b;
             --text-secondary: #71717a;
             --table-hover: rgba(0, 0, 0, 0.05);
+            --hover-overlay: rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -100,23 +106,13 @@
         }
 
         .table-wrapper {
+            background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             overflow-x: auto;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
             z-index: 1;
-        }
-
-        .table-wrapper::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            z-index: -1;
-            border-radius: inherit;
         }
 
         table {
@@ -174,15 +170,302 @@
             margin-top: 1rem;
             display: inline-block;
         }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+        }
+
+        .theme-toggle:hover { background: var(--hover-overlay); }
+
+        /* PASSCODE MODAL STYLES */
+        #passcode-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        #passcode-modal {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            position: relative;
+            z-index: 10001;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #passcode-modal h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        #passcode-modal p {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .passcode-input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        #passcode-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--glass-border);
+            background: var(--hover-overlay);
+            color: var(--text-primary);
+            border-radius: 6px;
+            font-size: 1rem;
+            letter-spacing: 0.15em;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        #passcode-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--hover-overlay);
+        }
+
+        #passcode-input::placeholder {
+            color: var(--text-secondary);
+            letter-spacing: normal;
+        }
+
+        .passcode-error {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            text-align: center;
+            min-height: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #passcode-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--accent);
+            color: var(--accent-inverse);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        #passcode-btn:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+
+        #passcode-btn:disabled {
+            background-color: var(--glass-border);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* SEAMLESS PORTAL DOORS - OPENING ANIMATION */
+        #access-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+            pointer-events: none;
+        }
+
+        .gate-door {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--glass-border);
+            z-index: 10000;
+        }
+
+        .door-left {
+            left: 0;
+            border-right: 1px solid var(--glass-border);
+            transform: translateX(0);
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .door-right {
+            right: 0;
+            border-left: 1px solid var(--glass-border);
+            transform: translateX(0);
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .gate-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10001;
+            color: var(--text-primary);
+            text-align: center;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+
+        #access-gate.open .gate-content {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .gate-spinner {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--glass-border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: gateSpin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes gateSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        #gate-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+        }
+
+        /* Premium Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.75rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            z-index: 10002;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast-success {
+            border-color: var(--success-color);
+            background: rgba(74, 222, 128, 0.05);
+        }
+
+        .toast-error {
+            border-color: var(--error-color);
+            background: rgba(255, 85, 85, 0.05);
+        }
     </style>
 </head>
 <body>
 
+    <!-- PASSCODE MODAL -->
+    <div id="passcode-overlay">
+        <div id="passcode-modal">
+            <h2>🔐 Access Required</h2>
+            <p>Enter the passcode to continue</p>
+            <div class="passcode-input-group">
+                <input 
+                    type="password" 
+                    id="passcode-input" 
+                    placeholder="Enter passcode"
+                    autocomplete="off"
+                >
+            </div>
+            <div class="passcode-error" id="passcode-error"></div>
+            <button id="passcode-btn" class="primary-btn">Verify</button>
+        </div>
+    </div>
+
+    <!-- SEAMLESS PORTAL DOORS OPENING ANIMATION -->
+    <div id="access-gate">
+        <div class="gate-door door-left"></div>
+        <div class="gate-door door-right"></div>
+        <div class="gate-content">
+            <div class="gate-spinner"></div>
+            <div id="gate-text">VERIFYING...</div>
+        </div>
+    </div>
+
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <div>
-                <h1>Processed Records</h1>
-                <p class="subtitle">Structured output from the scanner.</p>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                <div>
+                    <h1>Processed Records</h1>
+                    <p class="subtitle">Structured output from the scanner.</p>
+                </div>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme" style="margin-left: auto;">🌓</button>
             </div>
             <div class="action-group" id="action-buttons" style="display: none;">
                 <button class="action-btn" id="toggle-edit">Enter Edit Mode</button>
@@ -207,10 +490,135 @@
     </div>
 
     <script>
+        const SESSION_KEY = 'barchscan_authenticated';
+        const themeToggle = document.getElementById('theme-toggle');
+        const rootElement = document.documentElement;
+
         // Check for Light Mode
         if (localStorage.getItem('barchscan_theme') === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
+            rootElement.setAttribute('data-theme', 'light');
         }
+
+        themeToggle.addEventListener('click', () => {
+            if (rootElement.getAttribute('data-theme') === 'light') {
+                rootElement.removeAttribute('data-theme');
+                localStorage.setItem('barchscan_theme', 'dark');
+            } else {
+                rootElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('barchscan_theme', 'light');
+            }
+        });
+
+        // PASSCODE AUTHENTICATION
+        const passcodeOverlay = document.getElementById('passcode-overlay');
+        const passcodeInput = document.getElementById('passcode-input');
+        const passcodeBtn = document.getElementById('passcode-btn');
+        const passcodeError = document.getElementById('passcode-error');
+        const accessGate = document.getElementById('access-gate');
+        const gateText = document.getElementById('gate-text');
+
+        let attemptCount = 0;
+        const MAX_ATTEMPTS = 4;
+
+        function isAuthenticated() {
+            return sessionStorage.getItem(SESSION_KEY) === 'true';
+        }
+
+        function setAuthenticated() {
+            sessionStorage.setItem(SESSION_KEY, 'true');
+        }
+
+        function showPasscodeModal() {
+            passcodeOverlay.style.display = 'flex';
+            passcodeInput.focus();
+            attemptCount = 0;
+            passcodeError.textContent = '';
+            passcodeInput.value = '';
+        }
+
+        function hidePasscodeModal() {
+            passcodeOverlay.style.display = 'none';
+        }
+
+        function showAccessGate() {
+            accessGate.style.display = 'block';
+            gateText.textContent = 'VERIFYING...';
+        }
+
+        function openAccessGate() {
+            setTimeout(() => {
+                gateText.textContent = 'ACCESS GRANTED';
+            }, 800);
+
+            setTimeout(() => {
+                accessGate.classList.add('open');
+            }, 50);
+
+            setTimeout(() => {
+                accessGate.style.display = 'none';
+                loadLogbookData();
+            }, 1500);
+        }
+
+        async function validatePasscode(passcode) {
+            try {
+                const response = await fetch('/api/validate-passcode', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ passcode })
+                });
+                const data = await response.json();
+                return data.valid === true;
+            } catch (error) {
+                console.error('Passcode validation error:', error);
+                return false;
+            }
+        }
+
+        passcodeBtn.addEventListener('click', async () => {
+            const passcode = passcodeInput.value.trim();
+            if (!passcode) {
+                passcodeError.textContent = 'Please enter a passcode.';
+                return;
+            }
+
+            passcodeBtn.disabled = true;
+            passcodeBtn.innerHTML = '<span class="spinner"></span>Verifying...';
+
+            const isValid = await validatePasscode(passcode);
+
+            if (isValid) {
+                setAuthenticated();
+                hidePasscodeModal();
+                showAccessGate();
+                openAccessGate();
+                passcodeBtn.disabled = false;
+                passcodeBtn.textContent = 'Verify';
+                attemptCount = 0;
+            } else {
+                attemptCount++;
+                const attemptsLeft = MAX_ATTEMPTS - attemptCount;
+
+                if (attemptsLeft > 0) {
+                    passcodeError.textContent = `Incorrect passcode. Try again ${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} left`;
+                    passcodeInput.value = '';
+                    passcodeInput.focus();
+                    passcodeBtn.disabled = false;
+                    passcodeBtn.textContent = 'Verify';
+                } else {
+                    passcodeError.textContent = 'Maximum attempts exceeded. Access denied.';
+                    passcodeBtn.disabled = true;
+                    passcodeInput.disabled = true;
+                    passcodeBtn.textContent = 'Locked';
+                }
+            }
+        });
+
+        passcodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !passcodeBtn.disabled) {
+                passcodeBtn.click();
+            }
+        });
 
         const tableContainer = document.getElementById('table-container');
         const dataTable = document.getElementById('data-table');
@@ -227,7 +635,24 @@
         let currentHeaders = [];
         let isEditMode = false;
 
-        document.addEventListener('DOMContentLoaded', async () => {
+        function showToast(message, type = 'info') {
+            let toast = document.getElementById('toast-notification');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast-notification';
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+            
+            toast.className = `toast toast-${type} show`;
+            toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '⚠' : 'ℹ'}</span> <span>${message}</span>`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        async function loadLogbookData() {
             try {
                 const response = await fetch('/api/get-logbook');
                 if (!response.ok) throw new Error('Failed to fetch data');
@@ -243,6 +668,15 @@
                 }
             } catch (e) {
                 console.error("Could not retrieve logbook data", e);
+                showToast("Could not retrieve logbook data.", "error");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isAuthenticated()) {
+                showPasscodeModal();
+            } else {
+                loadLogbookData();
             }
         });
 
@@ -251,12 +685,10 @@
             tableHead.innerHTML = '';
             tableBody.innerHTML = '';
             
-            // Auto-detect columns based on whatever Gemini sent
             const headerSet = new Set();
             data.forEach(row => Object.keys(row).forEach(key => headerSet.add(key)));
             currentHeaders = Array.from(headerSet);
 
-            // Build Header Row
             const trHead = document.createElement('tr');
             currentHeaders.forEach(header => {
                 const th = document.createElement('th');
@@ -265,7 +697,6 @@
             });
             tableHead.appendChild(trHead);
 
-            // Build Data Rows
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 currentHeaders.forEach(header => {
@@ -283,19 +714,15 @@
             const cells = tableBody.querySelectorAll('td');
 
             if (isEditMode) {
-                // Enter Excel Mode
                 dataTable.classList.add('excel-mode');
                 toggleEditBtn.textContent = 'Save Changes';
                 toggleEditBtn.classList.add('active');
                 cells.forEach(td => td.contentEditable = "true");
             } else {
-                // Save and Exit Excel Mode
                 dataTable.classList.remove('excel-mode');
                 toggleEditBtn.textContent = 'Enter Edit Mode';
                 toggleEditBtn.classList.remove('active');
                 cells.forEach(td => td.contentEditable = "false");
-                
-                // Read the edited table back into memory
                 saveTableToMemory();
             }
         });
@@ -323,9 +750,10 @@
                     body: JSON.stringify(logbookData)
                 });
                 if (!response.ok) throw new Error('Failed to save to database');
+                showToast('Changes successfully updated!', 'success');
             } catch (e) {
                 console.error('Error saving data:', e);
-                alert('There was an error saving your changes to the database.');
+                showToast('Error saving data to database.', 'error');
             } finally {
                 toggleEditBtn.disabled = false;
                 toggleEditBtn.textContent = 'Enter Edit Mode';
@@ -336,10 +764,7 @@
         exportBtn.addEventListener('click', () => {
             if (logbookData.length === 0) return;
 
-            // Generate CSV headers from dynamic columns
             const headers = currentHeaders.map(h => `"${h}"`).join(',');
-            
-            // Map rows dynamically
             const rows = logbookData.map(obj => {
                 return currentHeaders.map(header => {
                     const val = obj[header] || '';

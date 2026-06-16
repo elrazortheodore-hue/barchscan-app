@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BarchScan | Ingestion</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -234,9 +235,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
+            background: rgba(10, 10, 10, 0.85);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -245,10 +244,8 @@
         }
 
         #passcode-modal {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             border-radius: 12px;
             padding: 2.5rem 2rem;
             max-width: 400px;
@@ -292,8 +289,8 @@
         #passcode-input {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            background: var(--hover-overlay);
             color: var(--text-primary);
             border-radius: 6px;
             font-size: 1rem;
@@ -304,8 +301,8 @@
 
         #passcode-input:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--accent);
+            background: var(--hover-overlay);
         }
 
         #passcode-input::placeholder {
@@ -359,7 +356,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* FROSTED GLASS DOORS - OPENING ANIMATION */
+        /* SEAMLESS PORTAL DOORS - OPENING ANIMATION */
         #access-gate {
             position: fixed;
             top: 0;
@@ -375,23 +372,21 @@
             position: absolute;
             width: 50%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--bg-color);
+            border: 1px solid var(--glass-border);
             z-index: 10000;
         }
 
         .door-left {
             left: 0;
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            border-right: 1px solid var(--glass-border);
             transform: translateX(0);
             transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .door-right {
             right: 0;
-            border-left: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 1px solid var(--glass-border);
             transform: translateX(0);
             transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -441,6 +436,44 @@
             font-size: 0.85rem;
             font-weight: 500;
             letter-spacing: 0.1em;
+        }
+
+        /* Premium Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.75rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            z-index: 10002;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast-success {
+            border-color: var(--success-color);
+            background: rgba(74, 222, 128, 0.05);
+        }
+
+        .toast-error {
+            border-color: var(--error-color);
+            background: rgba(255, 85, 85, 0.05);
         }
     </style>
 </head>
@@ -622,13 +655,14 @@
                     passcodeError.textContent = `Incorrect passcode. Try again ${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} left`;
                     passcodeInput.value = '';
                     passcodeInput.focus();
+                    passcodeBtn.disabled = false;
+                    passcodeBtn.textContent = 'Verify';
                 } else {
                     passcodeError.textContent = 'Maximum attempts exceeded. Access denied.';
                     passcodeBtn.disabled = true;
+                    passcodeInput.disabled = true;
+                    passcodeBtn.textContent = 'Locked';
                 }
-
-                passcodeBtn.disabled = false;
-                passcodeBtn.textContent = 'Verify';
             }
         });
 
@@ -696,9 +730,26 @@
         removeFileBtn.addEventListener('click', resetUI);
         resetBtn.addEventListener('click', resetUI);
 
+        function showToast(message, type = 'info') {
+            let toast = document.getElementById('toast-notification');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast-notification';
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+            
+            toast.className = `toast toast-${type} show`;
+            toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '⚠' : 'ℹ'}</span> <span>${message}</span>`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
         function handleFileSelection(file) {
             if (!file.type.startsWith('image/')) {
-                alert('Invalid format. Please supply an image.');
+                showToast('Invalid format. Please supply an image.', 'error');
                 return;
             }
             currentFile = file;
@@ -825,7 +876,7 @@
             } catch (error) {
                 clearInterval(timerInterval);
                 // Sanitized failure flag – prevents backend fingerprints from reaching the interface.
-                alert("Upload failed: Unable to establish a secure transmission line. Please try again.");
+                showToast("Upload failed: Unable to establish a secure transmission line. Please try again.", "error");
                 resetUI();
             }
         });

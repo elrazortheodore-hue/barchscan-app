@@ -8,6 +8,16 @@
       "permanent": false
     }
   ],
+  "rewrites": [
+    {
+      "source": "/upload",
+      "destination": "/upload/index.html"
+    },
+    {
+      "source": "/data",
+      "destination": "/data/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

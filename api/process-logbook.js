@@ -73,9 +73,37 @@ export default async function handler(req, res) {
 
         const responseText = result.response.text();
         
-        // 7. Sanitize the response to strip out any residual markdown
-        const sanitizedOutput = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
-        let structuredData = JSON.parse(sanitizedOutput);
+        // 7. Extract JSON robustly, cleaning comments, markdown, and trailing commas
+        let structuredData;
+        try {
+            const startArray = responseText.indexOf('[');
+            const startObject = responseText.indexOf('{');
+            let startIdx = -1;
+            let endIdx = -1;
+            
+            if (startArray !== -1 && (startObject === -1 || startArray < startObject)) {
+                startIdx = startArray;
+                endIdx = responseText.lastIndexOf(']');
+            } else if (startObject !== -1) {
+                startIdx = startObject;
+                endIdx = responseText.lastIndexOf('}');
+            }
+            
+            if (startIdx === -1 || endIdx === -1 || endIdx <= startIdx) {
+                throw new Error("Could not find boundaries of JSON in model response");
+            }
+            
+            const rawJson = responseText.substring(startIdx, endIdx + 1);
+            const cleanedJson = rawJson
+                .replace(/,\s*([\]}])/g, '$1')
+                .replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1');
+                
+            structuredData = JSON.parse(cleanedJson);
+        } catch (parseError) {
+            console.error("Advanced JSON parsing failed, fallback to basic sanitization:", parseError);
+            const sanitizedOutput = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
+            structuredData = JSON.parse(sanitizedOutput);
+        }
         
         // Ensure structuredData is an array
         if (!Array.isArray(structuredData)) {
