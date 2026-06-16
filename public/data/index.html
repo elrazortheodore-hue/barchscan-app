@@ -18,9 +18,12 @@
             --hover-overlay: rgba(255, 255, 255, 0.05);
             --error-color: #ff5555;
             --success-color: #4ade80;
+            --warning-color: #facc15;
+            --select-color: rgba(99, 179, 237, 0.18);
+            --select-border: rgba(99, 179, 237, 0.6);
+            --toolbar-bg: rgba(255,255,255,0.04);
         }
 
-        /* Light Theme Compatibility */
         [data-theme="light"] {
             --bg-color: #f4f4f5;
             --glass-bg: rgba(0, 0, 0, 0.02);
@@ -31,80 +34,187 @@
             --text-secondary: #71717a;
             --table-hover: rgba(0, 0, 0, 0.05);
             --hover-overlay: rgba(0, 0, 0, 0.05);
+            --select-color: rgba(59, 130, 246, 0.12);
+            --select-border: rgba(59, 130, 246, 0.5);
+            --toolbar-bg: rgba(0,0,0,0.03);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            padding: 2rem 1rem;
-            display: flex;
-            justify-content: center;
-        }
+        body { background-color: var(--bg-color); color: var(--text-primary); padding: 2rem 1rem; display: flex; justify-content: center; }
 
-        .dashboard-container {
-            width: 100%;
-            max-width: 1200px;
-        }
+        .dashboard-container { width: 100%; max-width: 1400px; }
 
         .dashboard-header {
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.25rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--glass-border);
         }
 
         @media (min-width: 600px) {
-            .dashboard-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: flex-end;
-            }
+            .dashboard-header { flex-direction: row; justify-content: space-between; align-items: flex-end; }
         }
 
         h1 { font-size: 1.8rem; font-weight: 600; }
-        
-        p.subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-top: 0.25rem;
-        }
+        p.subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem; }
 
+        /* ── ACTION GROUP ─────────────────────────────────── */
         .action-group {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
+        /* slim icon+label buttons */
         button.action-btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.45rem 0.9rem;
             background-color: transparent;
-            color: var(--accent);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        button.action-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+        button.action-btn:hover { background-color: var(--table-hover); border-color: var(--text-secondary); }
+        button.action-btn.active { background-color: var(--accent); color: var(--bg-color); border-color: var(--accent); }
+        button.action-btn.active svg { stroke: var(--bg-color); }
+
+        /* danger variant */
+        button.action-btn.danger {
+            color: var(--error-color);
+            border-color: rgba(255,85,85,0.3);
+            font-size: 0.72rem;
+            padding: 0.35rem 0.65rem;
+        }
+        button.action-btn.danger:hover { background: rgba(255,85,85,0.08); border-color: var(--error-color); }
+
+        /* separator */
+        .btn-sep { width: 1px; height: 22px; background: var(--glass-border); margin: 0 2px; }
+
+        /* ── TOOLBAR ─────────────────────────────────────── */
+        #edit-toolbar {
+            display: none;
+            background: var(--toolbar-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+        #edit-toolbar.visible { display: flex; }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .toolbar-sep { width: 1px; height: 20px; background: var(--glass-border); margin: 0 4px; }
+
+        button.tb-btn {
+            padding: 4px 8px;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        button.tb-btn svg { width: 12px; height: 12px; flex-shrink: 0; }
+        button.tb-btn:hover { background: var(--hover-overlay); border-color: var(--glass-border); }
+        button.tb-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        button.tb-btn.tb-active { background: var(--accent); color: var(--bg-color); }
+        button.tb-btn.tb-active svg { stroke: var(--bg-color); }
+
+        /* formula bar */
+        #formula-bar {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            background: var(--toolbar-bg);
             border: 1px solid var(--glass-border);
             border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 600;
+            padding: 4px 10px;
+            margin-bottom: 0.6rem;
+            font-size: 0.8rem;
+        }
+        #formula-bar.visible { display: flex; }
+        #formula-cell-ref {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            min-width: 50px;
+            text-align: center;
+            border-right: 1px solid var(--glass-border);
+            padding-right: 8px;
+        }
+        #formula-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 0.82rem;
+            outline: none;
+        }
+
+        /* filter bar */
+        #filter-bar {
+            display: none;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 0.6rem;
+            align-items: center;
+        }
+        #filter-bar.visible { display: flex; }
+        #filter-input {
+            padding: 4px 10px;
+            background: var(--toolbar-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            outline: none;
+            width: 220px;
+        }
+        #filter-input:focus { border-color: var(--text-secondary); }
+        #filter-col-select {
+            padding: 4px 8px;
+            background: var(--toolbar-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            outline: none;
+        }
+        #filter-clear-btn {
+            padding: 3px 8px;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
+        #filter-clear-btn:hover { background: var(--hover-overlay); }
 
-        button.action-btn:hover {
-            background-color: var(--table-hover);
-        }
-
-        button.action-btn.active {
-            background-color: var(--accent);
-            color: var(--bg-color);
-        }
-
+        /* ── TABLE ──────────────────────────────────────── */
         .table-wrapper {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -115,18 +225,9 @@
             z-index: 1;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            min-width: 600px;
-            transition: all 0.3s ease;
-        }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; transition: all 0.3s ease; }
 
-        th, td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--glass-border);
-        }
+        th, td { padding: 1rem; border-bottom: 1px solid var(--glass-border); }
 
         th {
             font-size: 0.8rem;
@@ -136,72 +237,157 @@
             font-weight: 500;
             background: rgba(0, 0, 0, 0.2);
             white-space: nowrap;
+            position: relative;
         }
 
         td { font-size: 0.9rem; }
-        
         tr:last-child td { border-bottom: none; }
         tr:hover td { background-color: var(--table-hover); }
 
-        /* Excel Edit Mode Styles */
+        /* S/N column (col 0) */
+        th.sn-col, td.sn-col {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-align: center;
+            min-width: 40px;
+            max-width: 50px;
+            padding: 0.6rem 0.5rem;
+            user-select: none;
+            cursor: pointer;
+            border-right: 1px solid var(--glass-border);
+        }
+        td.sn-col:hover { background: var(--hover-overlay) !important; }
+
+        /* hidden horizontal S/N (col-id header) */
+        th[data-col-id] { /* just an attribute, no extra style needed */ }
+
+        /* frozen header */
+        table.frozen-header thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: #111 !important;
+        }
+        [data-theme="light"] table.frozen-header thead th { background: #e4e4e7 !important; }
+
+        /* excel edit mode */
         table.excel-mode td {
-            border: 1px solid var(--glass-border); /* Visible gridlines */
+            border: 1px solid var(--glass-border);
             background: rgba(255, 255, 255, 0.02);
             cursor: text;
-            padding: 0.5rem 1rem; /* Tighter padding like Excel */
-            white-space: nowrap;
+            padding: 0.5rem 1rem;
         }
+        table.excel-mode td:focus { background: rgba(255, 255, 255, 0.08); outline: 2px solid var(--accent); outline-offset: -2px; }
 
-        table.excel-mode td:focus {
-            background: rgba(255, 255, 255, 0.08);
-            outline: 2px solid var(--accent);
-            outline-offset: -2px;
-        }
+        /* editable header */
+        table.excel-mode th.editable-header { cursor: text; }
+        table.excel-mode th.editable-header:focus { outline: 2px solid var(--accent); outline-offset: -2px; background: rgba(255,255,255,0.08); }
 
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-secondary);
-        }
-        
-        .empty-state a {
-            color: var(--accent);
-            text-decoration: none;
-            margin-top: 1rem;
-            display: inline-block;
-        }
+        /* wrap text mode */
+        table.wrap-text td, table.wrap-text th { white-space: normal !important; word-break: break-word; }
 
-        .theme-toggle {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            padding: 0;
-            font-size: 1.1rem;
-            transition: background 0.2s;
-        }
+        /* auto-resize mode */
+        table.auto-cols { table-layout: auto; width: auto; min-width: 100%; }
+        table.auto-cols td, table.auto-cols th { white-space: nowrap; }
 
-        .theme-toggle:hover { background: var(--hover-overlay); }
+        /* selected cell */
+        td.cell-selected { background: var(--select-color) !important; outline: 1px solid var(--select-border); outline-offset: -1px; }
+        td.cell-selected-anchor { outline: 2px solid var(--select-border) !important; }
 
-        /* PASSCODE MODAL STYLES */
-        #passcode-overlay {
+        /* row checkbox */
+        .row-check { width: 14px; height: 14px; cursor: pointer; accent-color: var(--accent); }
+
+        /* ── CONTEXT MENU ───────────────────────────────── */
+        #ctx-menu {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 10, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
             display: none;
+            background: #1a1a1a;
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 4px 0;
+            z-index: 9000;
+            min-width: 160px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            font-size: 0.82rem;
+        }
+        [data-theme="light"] #ctx-menu { background: #ffffff; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        .ctx-item {
+            padding: 7px 14px;
+            cursor: pointer;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.1s;
+        }
+        .ctx-item:hover { background: var(--hover-overlay); }
+        .ctx-item.ctx-danger { color: var(--error-color); }
+        .ctx-item svg { width: 12px; height: 12px; flex-shrink: 0; }
+        .ctx-sep { height: 1px; background: var(--glass-border); margin: 3px 0; }
+
+        /* ── MODALS (generic wrapper) ──────────────────── */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10,10,10,0.82);
+            display: none; justify-content: center; align-items: center;
+            z-index: 9999;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #111;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2rem 1.75rem;
+            max-width: 440px;
+            width: 100%;
+            animation: slideUp 0.28s ease;
+        }
+        [data-theme="light"] .modal-box { background: #f9f9f9; }
+        @keyframes slideUp { from { transform: translateY(28px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-box h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.4rem; }
+        .modal-box p { color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.1rem; line-height: 1.5; }
+
+        .modal-input {
+            width: 100%; padding: 0.65rem 0.85rem;
+            background: var(--hover-overlay);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px; color: var(--text-primary);
+            font-size: 0.9rem; outline: none; margin-bottom: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .modal-input:focus { border-color: var(--text-secondary); }
+        .modal-input.centered { text-align: center; letter-spacing: 0.12em; }
+
+        .modal-btn-row { display: flex; gap: 8px; justify-content: flex-end; }
+        button.modal-btn {
+            padding: 0.55rem 1.1rem;
+            border-radius: 5px; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: opacity 0.2s;
+            border: 1px solid var(--glass-border);
+            background: transparent; color: var(--text-primary);
+        }
+        button.modal-btn:hover { background: var(--hover-overlay); }
+        button.modal-btn.primary { background: var(--accent); color: var(--accent-inverse); border-color: var(--accent); }
+        button.modal-btn.primary:hover { opacity: 0.88; }
+        button.modal-btn.danger { background: var(--error-color); color: #fff; border-color: var(--error-color); }
+        button.modal-btn.danger:hover { opacity: 0.88; }
+        button.modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .modal-error { color: var(--error-color); font-size: 0.8rem; min-height: 18px; margin-bottom: 0.6rem; }
+        .modal-step { display: none; }
+        .modal-step.active { display: block; }
+
+        /* step indicator */
+        .step-indicator { display: flex; gap: 6px; justify-content: center; margin-bottom: 1.2rem; }
+        .step-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--glass-border); transition: background 0.2s; }
+        .step-dot.done { background: var(--error-color); }
+
+        /* ── PASSCODE MODAL (original, kept as-is) ─────── */
+        #passcode-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.85);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; display: none;
         }
 
         #passcode-modal {
@@ -209,600 +395,1655 @@
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             padding: 2.5rem 2rem;
-            max-width: 400px;
-            width: 100%;
+            max-width: 400px; width: 100%;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
             animation: slideUp 0.3s ease;
-            position: relative;
-            z-index: 10001;
+            position: relative; z-index: 10001;
         }
 
-        @keyframes slideUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+        #passcode-modal h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; text-align: center; color: var(--text-primary); }
+        #passcode-modal p { color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem; font-size: 0.95rem; }
 
-        #passcode-modal h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            text-align: center;
-            color: var(--text-primary);
-        }
-
-        #passcode-modal p {
-            color: var(--text-secondary);
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-        }
-
-        .passcode-input-group {
-            margin-bottom: 1.5rem;
-        }
+        .passcode-input-group { margin-bottom: 1.5rem; }
 
         #passcode-input {
-            width: 100%;
-            padding: 0.75rem;
+            width: 100%; padding: 0.75rem;
             border: 1px solid var(--glass-border);
             background: var(--hover-overlay);
             color: var(--text-primary);
-            border-radius: 6px;
-            font-size: 1rem;
-            letter-spacing: 0.15em;
-            text-align: center;
+            border-radius: 6px; font-size: 1rem;
+            letter-spacing: 0.15em; text-align: center;
             transition: border-color 0.2s;
         }
+        #passcode-input:focus { outline: none; border-color: var(--accent); background: var(--hover-overlay); }
+        #passcode-input::placeholder { color: var(--text-secondary); letter-spacing: normal; }
 
-        #passcode-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: var(--hover-overlay);
-        }
-
-        #passcode-input::placeholder {
-            color: var(--text-secondary);
-            letter-spacing: normal;
-        }
-
-        .passcode-error {
-            color: var(--error-color);
-            font-size: 0.85rem;
-            text-align: center;
-            min-height: 1.5rem;
-            margin-bottom: 1rem;
-        }
+        .passcode-error { color: var(--error-color); font-size: 0.85rem; text-align: center; min-height: 1.5rem; margin-bottom: 1rem; }
 
         #passcode-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: var(--accent);
-            color: var(--accent-inverse);
-            border: none;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
+            width: 100%; padding: 0.75rem;
+            background-color: var(--accent); color: var(--accent-inverse);
+            border: none; border-radius: 6px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
             transition: opacity 0.2s ease;
         }
-
-        #passcode-btn:hover:not(:disabled) {
-            opacity: 0.9;
-        }
-
-        #passcode-btn:disabled {
-            background-color: var(--glass-border);
-            color: var(--text-secondary);
-            cursor: not-allowed;
-        }
+        #passcode-btn:hover:not(:disabled) { opacity: 0.9; }
+        #passcode-btn:disabled { background-color: var(--glass-border); color: var(--text-secondary); cursor: not-allowed; }
 
         .spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 0.5rem;
+            display: inline-block; width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: var(--accent); border-radius: 50%;
+            animation: spin 0.6s linear infinite; margin-right: 0.5rem;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* SEAMLESS PORTAL DOORS - OPENING ANIMATION */
+        /* ── ACCESS GATE (original, kept as-is) ─────────── */
         #access-gate {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10000;
-            display: none;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10000; display: none; pointer-events: none;
         }
 
-        .gate-door {
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            background: var(--bg-color);
-            border: 1px solid var(--glass-border);
-            z-index: 10000;
-        }
-
-        .door-left {
-            left: 0;
-            border-right: 1px solid var(--glass-border);
-            transform: translateX(0);
-            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .door-right {
-            right: 0;
-            border-left: 1px solid var(--glass-border);
-            transform: translateX(0);
-            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .gate-door { position: absolute; width: 50%; height: 100%; background: var(--bg-color); border: 1px solid var(--glass-border); z-index: 10000; }
+        .door-left { left: 0; border-right: 1px solid var(--glass-border); transform: translateX(0); transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .door-right { right: 0; border-left: 1px solid var(--glass-border); transform: translateX(0); transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
         .gate-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
+            position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 10001;
-            color: var(--text-primary);
-            text-align: center;
-            opacity: 1;
-            transition: opacity 0.3s;
+            z-index: 10001; color: var(--text-primary); text-align: center;
+            opacity: 1; transition: opacity 0.3s;
         }
-
-        #access-gate.open .gate-content {
-            opacity: 0;
-            pointer-events: none;
-        }
+        #access-gate.open .gate-content { opacity: 0; pointer-events: none; }
 
         .gate-spinner {
-            width: 50px;
-            height: 50px;
-            border: 2px solid var(--glass-border);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: gateSpin 0.8s linear infinite;
+            width: 50px; height: 50px;
+            border: 2px solid var(--glass-border); border-top-color: var(--accent);
+            border-radius: 50%; animation: gateSpin 0.8s linear infinite;
             margin: 0 auto 20px;
         }
+        @keyframes gateSpin { to { transform: rotate(360deg); } }
+        #gate-text { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em; }
 
-        @keyframes gateSpin {
-            to { transform: rotate(360deg); }
-        }
-
-        #gate-text {
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-        }
-
-        /* Premium Toast Notification */
+        /* ── TOAST (original, kept as-is) ──────────────── */
         .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            padding: 0.75rem 1.25rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            z-index: 10002;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transform: translateY(100px);
-            opacity: 0;
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--text-primary); padding: 0.75rem 1.25rem;
+            border-radius: 6px; font-size: 0.85rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            z-index: 10002; display: flex; align-items: center; gap: 8px;
+            transform: translateY(100px); opacity: 0;
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
             pointer-events: none;
         }
+        .toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+        .toast-success { border-color: var(--success-color); background: rgba(74,222,128,0.05); }
+        .toast-error { border-color: var(--error-color); background: rgba(255,85,85,0.05); }
+        .toast-info { border-color: rgba(255,255,255,0.2); }
 
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
+        /* ── FIND & REPLACE MODAL ───────────────────────── */
+        #fnr-modal { max-width: 380px; }
+        #fnr-modal .fnr-row { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+        #fnr-modal label { font-size: 0.78rem; color: var(--text-secondary); min-width: 58px; }
+        #fnr-modal input { flex: 1; padding: 5px 8px; background: var(--hover-overlay); border: 1px solid var(--glass-border); border-radius: 4px; color: var(--text-primary); font-size: 0.82rem; outline: none; }
+        #fnr-modal input:focus { border-color: var(--text-secondary); }
+        #fnr-status { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 8px; min-height: 16px; }
 
-        .toast-success {
-            border-color: var(--success-color);
-            background: rgba(74, 222, 128, 0.05);
+        /* ── MACROS MODAL ──────────────────────────────── */
+        #macro-modal { max-width: 600px; }
+        #macro-code {
+            width: 100%;
+            height: 260px;
+            background: var(--hover-overlay);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            padding: 0.8rem;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 0.75rem;
         }
+        #macro-code::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+            font-style: italic;
+        }
+        #macro-status { font-size: 0.75rem; color: var(--text-secondary); min-height: 16px; margin-bottom: 0.6rem; }
 
-        .toast-error {
-            border-color: var(--error-color);
-            background: rgba(255, 85, 85, 0.05);
+        /* last-synced */
+        #sync-ts { font-size: 0.7rem; color: var(--text-secondary); margin-left: 4px; white-space: nowrap; }
+
+        /* hidden col class */
+        .col-hidden { display: none; }
+
+        /* empty state */
+        .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-secondary); }
+        .empty-state a { color: var(--accent); text-decoration: none; margin-top: 1rem; display: inline-block; }
+
+        /* theme toggle */
+        .theme-toggle {
+            background: transparent; border: 1px solid var(--glass-border);
+            color: var(--text-primary); border-radius: 50%;
+            width: 36px; height: 36px;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; padding: 0; font-size: 1.1rem; transition: background 0.2s;
         }
+        .theme-toggle:hover { background: var(--hover-overlay); }
     </style>
 </head>
 <body>
 
-    <!-- PASSCODE MODAL -->
-    <div id="passcode-overlay">
-        <div id="passcode-modal">
-            <h2>🔐 Access Required</h2>
-            <p>Enter the passcode to continue</p>
-            <div class="passcode-input-group">
-                <input 
-                    type="password" 
-                    id="passcode-input" 
-                    placeholder="Enter passcode"
-                    autocomplete="off"
-                >
+<!-- ═══════════════════════════════════════════
+     ORIGINAL: PASSCODE MODAL (unchanged)
+═══════════════════════════════════════════ -->
+<div id="passcode-overlay">
+    <div id="passcode-modal">
+        <h2>🔐 Access Required</h2>
+        <p>Enter the passcode to continue</p>
+        <div class="passcode-input-group">
+            <input type="password" id="passcode-input" placeholder="Enter passcode" autocomplete="off">
+        </div>
+        <div class="passcode-error" id="passcode-error"></div>
+        <button id="passcode-btn" class="primary-btn">Verify</button>
+    </div>
+</div>
+
+<!-- ORIGINAL: ACCESS GATE (unchanged) -->
+<div id="access-gate">
+    <div class="gate-door door-left"></div>
+    <div class="gate-door door-right"></div>
+    <div class="gate-content">
+        <div class="gate-spinner"></div>
+        <div id="gate-text">VERIFYING...</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     NEW: CLEAR DATABASE MODAL (3-step)
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="clear-db-overlay">
+    <div class="modal-box" id="clear-db-modal">
+        <h2 style="color:var(--error-color)">⚠ Clear Database</h2>
+        <div class="step-indicator">
+            <div class="step-dot" id="sd1"></div>
+            <div class="step-dot" id="sd2"></div>
+            <div class="step-dot" id="sd3"></div>
+        </div>
+
+        <!-- Step 1: type phrase -->
+        <div class="modal-step active" id="cdb-step1">
+            <p>This will permanently erase all records from the local database and the cloud JSONBin. Type <strong style="color:var(--text-primary)">delete my data</strong> exactly to proceed.</p>
+            <input type="text" class="modal-input" id="cdb-phrase" placeholder='Type "delete my data"' autocomplete="off">
+            <div class="modal-error" id="cdb-err1"></div>
+            <div class="modal-btn-row">
+                <button class="modal-btn" id="cdb-cancel1">Cancel</button>
+                <button class="modal-btn danger" id="cdb-next1">Continue</button>
             </div>
-            <div class="passcode-error" id="passcode-error"></div>
-            <button id="passcode-btn" class="primary-btn">Verify</button>
+        </div>
+
+        <!-- Step 2: passcode -->
+        <div class="modal-step" id="cdb-step2">
+            <p>Enter your access passcode to authorise this action.</p>
+            <input type="password" class="modal-input centered" id="cdb-pass" placeholder="Passcode" autocomplete="off">
+            <div class="modal-error" id="cdb-err2"></div>
+            <div class="modal-btn-row">
+                <button class="modal-btn" id="cdb-back2">Back</button>
+                <button class="modal-btn danger" id="cdb-next2">Verify</button>
+            </div>
+        </div>
+
+        <!-- Step 3: final confirm -->
+        <div class="modal-step" id="cdb-step3">
+            <p>Are you absolutely sure? This action <strong style="color:var(--error-color)">cannot be undone.</strong> All records will be deleted.</p>
+            <div class="modal-error" id="cdb-err3"></div>
+            <div class="modal-btn-row">
+                <button class="modal-btn" id="cdb-back3">Back</button>
+                <button class="modal-btn danger" id="cdb-confirm">Yes, Delete Everything</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     NEW: FIND & REPLACE MODAL
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="fnr-overlay">
+    <div class="modal-box" id="fnr-modal">
+        <h2>Find &amp; Replace</h2>
+        <div class="fnr-row"><label>Find</label><input type="text" id="fnr-find" placeholder="Search text…"></div>
+        <div class="fnr-row"><label>Replace</label><input type="text" id="fnr-replace" placeholder="Replace with…"></div>
+        <div id="fnr-status"></div>
+        <div class="modal-btn-row" style="justify-content:space-between">
+            <button class="modal-btn" id="fnr-findnext">Find Next</button>
+            <div style="display:flex;gap:6px">
+                <button class="modal-btn" id="fnr-replaceone">Replace</button>
+                <button class="modal-btn primary" id="fnr-replaceall">Replace All</button>
+                <button class="modal-btn" id="fnr-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     NEW: MACROS MODAL
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="macro-overlay">
+    <div class="modal-box" id="macro-modal">
+        <h2>⚡ Macros</h2>
+        <p>Run custom JavaScript on the current data.</p>
+        <textarea id="macro-code" 
+                  placeholder="Write your macro here…
+
+Available variables:
+  data        – array of row objects
+  headers     – array of column names
+  tableBody   – <tbody> DOM element
+  tableHead   – <thead> DOM element
+  showToast(message, type) – shows a toast notification (type: 'success','error','info')
+
+You can modify data, manipulate the table, fetch APIs, etc.
+Click 'Run' to execute."></textarea>
+        <div id="macro-status"></div>
+        <div class="modal-btn-row" style="justify-content: space-between;">
+            <button class="modal-btn danger" id="macro-clear" title="Clear the editor">Clear</button>
+            <div style="display:flex;gap:6px">
+                <button class="modal-btn primary" id="macro-run">▶ Run</button>
+                <button class="modal-btn" id="macro-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     NEW: CONTEXT MENU
+═══════════════════════════════════════════ -->
+<div id="ctx-menu">
+    <div class="ctx-item" id="ctx-copy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy selection
+    </div>
+    <div class="ctx-item" id="ctx-csv">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Export selection as CSV
+    </div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item ctx-danger" id="ctx-clear">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        Clear cell contents
+    </div>
+    <div class="ctx-item ctx-danger" id="ctx-delrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Delete selected row(s)
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN DASHBOARD
+═══════════════════════════════════════════ -->
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%">
+            <div>
+                <h1>Processed Records</h1>
+                <p class="subtitle">Structured output from the scanner.</p>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme" style="margin-left:auto">🌓</button>
+        </div>
+
+        <div class="action-group" id="action-buttons" style="display:none">
+            <!-- Edit mode toggle -->
+            <button class="action-btn" id="toggle-edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit Mode
+            </button>
+
+            <div class="btn-sep"></div>
+
+            <!-- Exports -->
+            <button class="action-btn" id="export-csv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+                CSV
+            </button>
+            <button class="action-btn" id="export-json">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                JSON
+            </button>
+
+            <div class="btn-sep"></div>
+
+            <!-- Macros -->
+            <button class="action-btn" id="macro-btn" title="Custom JavaScript macros">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                Macros
+            </button>
+
+            <div class="btn-sep"></div>
+
+            <!-- Clear DB – tiny danger -->
+            <button class="action-btn danger" id="clear-db-btn" title="Clear database">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                Clear DB
+            </button>
+        </div>
+    </header>
+
+    <!-- ── EDIT TOOLBAR (visible only in edit mode) ── -->
+    <div id="edit-toolbar">
+        <!-- Group 1: History -->
+        <div class="toolbar-group">
+            <button class="tb-btn" id="tb-undo" title="Undo (Ctrl+Z)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+                Undo
+            </button>
+            <button class="tb-btn" id="tb-redo" title="Redo (Ctrl+Y)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/></svg>
+                Redo
+            </button>
+        </div>
+        <div class="toolbar-sep"></div>
+
+        <!-- Group 2: Find & Sync -->
+        <div class="toolbar-group">
+            <button class="tb-btn" id="tb-find">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Find &amp; Replace
+            </button>
+            <button class="tb-btn" id="tb-sync">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
+                Sync
+            </button>
+            <span id="sync-ts"></span>
+        </div>
+        <div class="toolbar-sep"></div>
+
+        <!-- Group 3: Sort & Filter -->
+        <div class="toolbar-group">
+            <button class="tb-btn" id="tb-sort-asc">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><polyline points="3 6 3 12 3 18"/><polyline points="1 9 3 6 5 9"/></svg>
+                Sort A→Z
+            </button>
+            <button class="tb-btn" id="tb-sort-desc">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><polyline points="3 6 3 12 3 18"/><polyline points="1 15 3 18 5 15"/></svg>
+                Sort Z→A
+            </button>
+            <button class="tb-btn" id="tb-filter">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                Filter
+            </button>
+        </div>
+        <div class="toolbar-sep"></div>
+
+        <!-- Group 4: View -->
+        <div class="toolbar-group">
+            <button class="tb-btn" id="tb-freeze">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                Freeze Header
+            </button>
+            <button class="tb-btn" id="tb-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><path d="M3 12h15a3 3 0 0 1 0 6h-4"/><polyline points="10 15 7 18 10 21"/></svg>
+                Wrap Text
+            </button>
+            <button class="tb-btn" id="tb-autoresize">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                Auto-resize
+            </button>
+        </div>
+        <div class="toolbar-sep"></div>
+
+        <!-- Group 5: Rows -->
+        <div class="toolbar-group">
+            <button class="tb-btn" id="tb-duprow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Dup Row
+            </button>
+            <button class="tb-btn" id="tb-insrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Insert Row
+            </button>
+        </div>
+        <div class="toolbar-sep"></div>
+
+        <!-- Group 6: Formula bar toggle -->
+        <div class="toolbar-group">
+            <button class="tb-btn" id="tb-fbar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                Formula Bar
+            </button>
         </div>
     </div>
 
-    <!-- SEAMLESS PORTAL DOORS OPENING ANIMATION -->
-    <div id="access-gate">
-        <div class="gate-door door-left"></div>
-        <div class="gate-door door-right"></div>
-        <div class="gate-content">
-            <div class="gate-spinner"></div>
-            <div id="gate-text">VERIFYING...</div>
-        </div>
+    <!-- ── FORMULA BAR ── -->
+    <div id="formula-bar">
+        <span id="formula-cell-ref">—</span>
+        <input type="text" id="formula-input" placeholder="Cell value…" spellcheck="false">
     </div>
 
-    <div class="dashboard-container">
-        <header class="dashboard-header">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
-                <div>
-                    <h1>Processed Records</h1>
-                    <p class="subtitle">Structured output from the scanner.</p>
-                </div>
-                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme" style="margin-left: auto;">🌓</button>
-            </div>
-            <div class="action-group" id="action-buttons" style="display: none;">
-                <button class="action-btn" id="toggle-edit">Enter Edit Mode</button>
-                <button class="action-btn" id="export-csv">Download CSV</button>
-                <button class="action-btn" id="export-json">Download JSON</button>
-            </div>
-        </header>
-
-        <div class="table-wrapper" id="table-container" style="display: none;">
-            <table id="data-table">
-                <thead id="table-head">
-                    </thead>
-                <tbody id="table-body">
-                    </tbody>
-            </table>
-        </div>
-
-        <div id="empty-state" class="empty-state">
-            <p>No logbook data has been processed yet.</p>
-            <a href="/upload">&larr; Go to Scanner</a>
-        </div>
+    <!-- ── FILTER BAR ── -->
+    <div id="filter-bar">
+        <select id="filter-col-select"></select>
+        <input type="text" id="filter-input" placeholder="Filter value…">
+        <button id="filter-clear-btn">✕ Clear</button>
     </div>
 
-    <script>
-        const SESSION_KEY = 'barchscan_authenticated';
-        const themeToggle = document.getElementById('theme-toggle');
-        const rootElement = document.documentElement;
+    <!-- ── TABLE ── -->
+    <div class="table-wrapper" id="table-container" style="display:none">
+        <table id="data-table">
+            <thead id="table-head"></thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
 
-        // Check for Light Mode
-        if (localStorage.getItem('barchscan_theme') === 'light') {
-            rootElement.setAttribute('data-theme', 'light');
-        }
+    <div id="empty-state" class="empty-state">
+        <p>No logbook data has been processed yet.</p>
+        <a href="/upload">&larr; Go to Scanner</a>
+    </div>
+</div>
 
-        themeToggle.addEventListener('click', () => {
-            if (rootElement.getAttribute('data-theme') === 'light') {
-                rootElement.removeAttribute('data-theme');
-                localStorage.setItem('barchscan_theme', 'dark');
-            } else {
-                rootElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('barchscan_theme', 'light');
-            }
+<script>
+/* ═══════════════════════════════════════════════════════════
+   ORIGINAL CODE — preserved exactly
+═══════════════════════════════════════════════════════════ */
+const SESSION_KEY = 'barchscan_authenticated';
+const themeToggle = document.getElementById('theme-toggle');
+const rootElement = document.documentElement;
+
+if (localStorage.getItem('barchscan_theme') === 'light') {
+    rootElement.setAttribute('data-theme', 'light');
+}
+
+themeToggle.addEventListener('click', () => {
+    if (rootElement.getAttribute('data-theme') === 'light') {
+        rootElement.removeAttribute('data-theme');
+        localStorage.setItem('barchscan_theme', 'dark');
+    } else {
+        rootElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('barchscan_theme', 'light');
+    }
+});
+
+// PASSCODE AUTHENTICATION
+const passcodeOverlay = document.getElementById('passcode-overlay');
+const passcodeInput   = document.getElementById('passcode-input');
+const passcodeBtn     = document.getElementById('passcode-btn');
+const passcodeError   = document.getElementById('passcode-error');
+const accessGate      = document.getElementById('access-gate');
+const gateText        = document.getElementById('gate-text');
+
+let attemptCount = 0;
+const MAX_ATTEMPTS = 4;
+
+function isAuthenticated()  { return sessionStorage.getItem(SESSION_KEY) === 'true'; }
+function setAuthenticated() { sessionStorage.setItem(SESSION_KEY, 'true'); }
+
+function showPasscodeModal() {
+    passcodeOverlay.style.display = 'flex';
+    passcodeInput.focus();
+    attemptCount = 0;
+    passcodeError.textContent = '';
+    passcodeInput.value = '';
+}
+function hidePasscodeModal() { passcodeOverlay.style.display = 'none'; }
+
+function showAccessGate() { accessGate.style.display = 'block'; gateText.textContent = 'VERIFYING...'; }
+
+function openAccessGate() {
+    setTimeout(() => { gateText.textContent = 'ACCESS GRANTED'; }, 800);
+    setTimeout(() => { accessGate.classList.add('open'); }, 50);
+    setTimeout(() => { accessGate.style.display = 'none'; loadLogbookData(); }, 1500);
+}
+
+async function validatePasscode(passcode) {
+    try {
+        const response = await fetch('/api/validate-passcode', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ passcode })
         });
+        const data = await response.json();
+        return data.valid === true;
+    } catch (error) {
+        console.error('Passcode validation error:', error);
+        return false;
+    }
+}
 
-        // PASSCODE AUTHENTICATION
-        const passcodeOverlay = document.getElementById('passcode-overlay');
-        const passcodeInput = document.getElementById('passcode-input');
-        const passcodeBtn = document.getElementById('passcode-btn');
-        const passcodeError = document.getElementById('passcode-error');
-        const accessGate = document.getElementById('access-gate');
-        const gateText = document.getElementById('gate-text');
+passcodeBtn.addEventListener('click', async () => {
+    const passcode = passcodeInput.value.trim();
+    if (!passcode) { passcodeError.textContent = 'Please enter a passcode.'; return; }
 
-        let attemptCount = 0;
-        const MAX_ATTEMPTS = 4;
+    passcodeBtn.disabled = true;
+    passcodeBtn.innerHTML = '<span class="spinner"></span>Verifying...';
 
-        function isAuthenticated() {
-            return sessionStorage.getItem(SESSION_KEY) === 'true';
-        }
+    const isValid = await validatePasscode(passcode);
 
-        function setAuthenticated() {
-            sessionStorage.setItem(SESSION_KEY, 'true');
-        }
-
-        function showPasscodeModal() {
-            passcodeOverlay.style.display = 'flex';
-            passcodeInput.focus();
-            attemptCount = 0;
-            passcodeError.textContent = '';
+    if (isValid) {
+        setAuthenticated();
+        hidePasscodeModal();
+        showAccessGate();
+        openAccessGate();
+        passcodeBtn.disabled = false;
+        passcodeBtn.textContent = 'Verify';
+        attemptCount = 0;
+    } else {
+        attemptCount++;
+        const attemptsLeft = MAX_ATTEMPTS - attemptCount;
+        if (attemptsLeft > 0) {
+            passcodeError.textContent = `Incorrect passcode. Try again ${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} left`;
             passcodeInput.value = '';
-        }
-
-        function hidePasscodeModal() {
-            passcodeOverlay.style.display = 'none';
-        }
-
-        function showAccessGate() {
-            accessGate.style.display = 'block';
-            gateText.textContent = 'VERIFYING...';
-        }
-
-        function openAccessGate() {
-            setTimeout(() => {
-                gateText.textContent = 'ACCESS GRANTED';
-            }, 800);
-
-            setTimeout(() => {
-                accessGate.classList.add('open');
-            }, 50);
-
-            setTimeout(() => {
-                accessGate.style.display = 'none';
-                loadLogbookData();
-            }, 1500);
-        }
-
-        async function validatePasscode(passcode) {
-            try {
-                const response = await fetch('/api/validate-passcode', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ passcode })
-                });
-                const data = await response.json();
-                return data.valid === true;
-            } catch (error) {
-                console.error('Passcode validation error:', error);
-                return false;
-            }
-        }
-
-        passcodeBtn.addEventListener('click', async () => {
-            const passcode = passcodeInput.value.trim();
-            if (!passcode) {
-                passcodeError.textContent = 'Please enter a passcode.';
-                return;
-            }
-
+            passcodeInput.focus();
+            passcodeBtn.disabled = false;
+            passcodeBtn.textContent = 'Verify';
+        } else {
+            passcodeError.textContent = 'Maximum attempts exceeded. Access denied.';
             passcodeBtn.disabled = true;
-            passcodeBtn.innerHTML = '<span class="spinner"></span>Verifying...';
-
-            const isValid = await validatePasscode(passcode);
-
-            if (isValid) {
-                setAuthenticated();
-                hidePasscodeModal();
-                showAccessGate();
-                openAccessGate();
-                passcodeBtn.disabled = false;
-                passcodeBtn.textContent = 'Verify';
-                attemptCount = 0;
-            } else {
-                attemptCount++;
-                const attemptsLeft = MAX_ATTEMPTS - attemptCount;
-
-                if (attemptsLeft > 0) {
-                    passcodeError.textContent = `Incorrect passcode. Try again ${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} left`;
-                    passcodeInput.value = '';
-                    passcodeInput.focus();
-                    passcodeBtn.disabled = false;
-                    passcodeBtn.textContent = 'Verify';
-                } else {
-                    passcodeError.textContent = 'Maximum attempts exceeded. Access denied.';
-                    passcodeBtn.disabled = true;
-                    passcodeInput.disabled = true;
-                    passcodeBtn.textContent = 'Locked';
-                }
-            }
-        });
-
-        passcodeInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !passcodeBtn.disabled) {
-                passcodeBtn.click();
-            }
-        });
-
-        const tableContainer = document.getElementById('table-container');
-        const dataTable = document.getElementById('data-table');
-        const tableHead = document.getElementById('table-head');
-        const tableBody = document.getElementById('table-body');
-        const emptyState = document.getElementById('empty-state');
-        const actionButtons = document.getElementById('action-buttons');
-        
-        const exportBtn = document.getElementById('export-csv');
-        const exportJsonBtn = document.getElementById('export-json');
-        const toggleEditBtn = document.getElementById('toggle-edit');
-
-        let logbookData = [];
-        let currentHeaders = [];
-        let isEditMode = false;
-
-        function showToast(message, type = 'info') {
-            let toast = document.getElementById('toast-notification');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'toast-notification';
-                toast.className = 'toast';
-                document.body.appendChild(toast);
-            }
-            
-            toast.className = `toast toast-${type} show`;
-            toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '⚠' : 'ℹ'}</span> <span>${message}</span>`;
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
+            passcodeInput.disabled = true;
+            passcodeBtn.textContent = 'Locked';
         }
+    }
+});
 
-        async function loadLogbookData() {
-            try {
-                const response = await fetch('/api/get-logbook');
-                if (!response.ok) throw new Error('Failed to fetch data');
-                
-                const parsed = await response.json();
-                logbookData = Array.isArray(parsed) ? parsed : [parsed];
-                
-                if (logbookData.length > 0) {
-                    buildDynamicTable(logbookData);
-                    emptyState.style.display = 'none';
-                    tableContainer.style.display = 'block';
-                    actionButtons.style.display = 'flex';
-                }
-            } catch (e) {
-                console.error("Could not retrieve logbook data", e);
-                showToast("Could not retrieve logbook data.", "error");
-            }
+passcodeInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !passcodeBtn.disabled) passcodeBtn.click();
+});
+
+// Table elements
+const tableContainer = document.getElementById('table-container');
+const dataTable      = document.getElementById('data-table');
+const tableHead      = document.getElementById('table-head');
+const tableBody      = document.getElementById('table-body');
+const emptyState     = document.getElementById('empty-state');
+const actionButtons  = document.getElementById('action-buttons');
+
+const exportBtn      = document.getElementById('export-csv');
+const exportJsonBtn  = document.getElementById('export-json');
+const toggleEditBtn  = document.getElementById('toggle-edit');
+
+let logbookData    = [];
+let currentHeaders = [];
+let isEditMode     = false;
+
+function showToast(message, type = 'info') {
+    let toast = document.getElementById('toast-notification');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-notification';
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+    }
+    toast.className = `toast toast-${type} show`;
+    toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '⚠' : 'ℹ'}</span> <span>${message}</span>`;
+    setTimeout(() => { toast.classList.remove('show'); }, 4000);
+}
+
+async function loadLogbookData() {
+    try {
+        const response = await fetch('/api/get-logbook');
+        if (!response.ok) throw new Error('Failed to fetch data');
+        const parsed = await response.json();
+        logbookData = Array.isArray(parsed) ? parsed : [parsed];
+        if (logbookData.length > 0) {
+            buildDynamicTable(logbookData);
+            emptyState.style.display = 'none';
+            tableContainer.style.display = 'block';
+            actionButtons.style.display = 'flex';
         }
+    } catch (e) {
+        console.error('Could not retrieve logbook data', e);
+        showToast('Could not retrieve logbook data.', 'error');
+    }
+}
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!isAuthenticated()) {
-                showPasscodeModal();
-            } else {
-                loadLogbookData();
-            }
-        });
+document.addEventListener('DOMContentLoaded', () => {
+    if (!isAuthenticated()) { showPasscodeModal(); } else { loadLogbookData(); }
+});
 
-        // 1. DYNAMIC TABLE BUILDER
-        function buildDynamicTable(data) {
-            tableHead.innerHTML = '';
-            tableBody.innerHTML = '';
-            
-            const headerSet = new Set();
-            data.forEach(row => Object.keys(row).forEach(key => headerSet.add(key)));
-            currentHeaders = Array.from(headerSet);
+/* ───────────────────────────────────────────────────────────
+   ORIGINAL: buildDynamicTable — extended with S/N + col IDs
+─────────────────────────────────────────────────────────── */
+function buildDynamicTable(data) {
+    tableHead.innerHTML = '';
+    tableBody.innerHTML = '';
 
-            const trHead = document.createElement('tr');
-            currentHeaders.forEach(header => {
-                const th = document.createElement('th');
-                th.textContent = header;
-                trHead.appendChild(th);
-            });
-            tableHead.appendChild(trHead);
+    const headerSet = new Set();
+    data.forEach(row => Object.keys(row).forEach(key => headerSet.add(key)));
+    currentHeaders = Array.from(headerSet);
 
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                currentHeaders.forEach(header => {
-                    const td = document.createElement('td');
-                    td.textContent = row[header] !== undefined ? row[header] : "";
-                    tr.appendChild(td);
-                });
-                tableBody.appendChild(tr);
-            });
+    // ── HEADER ROW ──
+    const trHead = document.createElement('tr');
+
+    // S/N header (vertical serial number column)
+    const snTh = document.createElement('th');
+    snTh.className = 'sn-col';
+    snTh.textContent = '#';
+    snTh.title = 'Row number';
+    trHead.appendChild(snTh);
+
+    currentHeaders.forEach((header, colIdx) => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        // hidden horizontal S/N: data attribute gives each column a unique ID
+        th.setAttribute('data-col-id', `C${String(colIdx + 1).padStart(3, '0')}`);
+        if (isEditMode) {
+            th.contentEditable = 'true';
+            th.classList.add('editable-header');
+            th.addEventListener('blur', onHeaderEdit);
         }
+        trHead.appendChild(th);
+    });
+    tableHead.appendChild(trHead);
 
-        // 2. EXCEL EDIT MODE TOGGLE
-        toggleEditBtn.addEventListener('click', () => {
-            isEditMode = !isEditMode;
-            const cells = tableBody.querySelectorAll('td');
+    // ── DATA ROWS ──
+    data.forEach((row, rowIdx) => {
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-row-idx', rowIdx);
 
+        // S/N cell
+        const snTd = document.createElement('td');
+        snTd.className = 'sn-col';
+        snTd.textContent = rowIdx + 1;
+        // clicking S/N selects the whole row
+        snTd.addEventListener('click', (e) => { e.stopPropagation(); selectRow(tr, e.shiftKey); });
+        tr.appendChild(snTd);
+
+        currentHeaders.forEach((header, colIdx) => {
+            const td = document.createElement('td');
+            td.textContent = row[header] !== undefined ? row[header] : '';
+            // cell address stored as attribute: row x col
+            td.setAttribute('data-cell', `R${rowIdx + 1}C${String(colIdx + 1).padStart(3, '0')}`);
+            td.setAttribute('data-row', rowIdx);
+            td.setAttribute('data-col', colIdx);
             if (isEditMode) {
-                dataTable.classList.add('excel-mode');
-                toggleEditBtn.textContent = 'Save Changes';
-                toggleEditBtn.classList.add('active');
-                cells.forEach(td => td.contentEditable = "true");
-            } else {
-                dataTable.classList.remove('excel-mode');
-                toggleEditBtn.textContent = 'Enter Edit Mode';
-                toggleEditBtn.classList.remove('active');
-                cells.forEach(td => td.contentEditable = "false");
-                saveTableToMemory();
+                td.contentEditable = 'true';
+                td.addEventListener('focus', onCellFocus);
+                td.addEventListener('input',  onCellInput);
+                td.addEventListener('mousedown', onCellMouseDown);
             }
+            tr.appendChild(td);
         });
 
-        async function saveTableToMemory() {
-            const rows = Array.from(tableBody.querySelectorAll('tr'));
-            const newData = rows.map(tr => {
-                const rowObj = {};
-                const cells = Array.from(tr.querySelectorAll('td'));
-                cells.forEach((td, index) => {
-                    rowObj[currentHeaders[index]] = td.textContent.trim();
-                });
-                return rowObj;
-            });
-            
-            logbookData = newData;
-            
-            toggleEditBtn.disabled = true;
-            toggleEditBtn.textContent = 'Saving...';
-            
-            try {
-                const response = await fetch('/api/update-logbook', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(logbookData)
-                });
-                if (!response.ok) throw new Error('Failed to save to database');
-                showToast('Changes successfully updated!', 'success');
-            } catch (e) {
-                console.error('Error saving data:', e);
-                showToast('Error saving data to database.', 'error');
-            } finally {
-                toggleEditBtn.disabled = false;
-                toggleEditBtn.textContent = 'Enter Edit Mode';
-            }
+        tableBody.appendChild(tr);
+    });
+
+    updateFilterSelect();
+}
+
+/* ───────────────────────────────────────────────────────────
+   ORIGINAL: toggleEditBtn — extended to show toolbar & 
+   make headers editable
+─────────────────────────────────────────────────────────── */
+toggleEditBtn.addEventListener('click', () => {
+    isEditMode = !isEditMode;
+
+    if (isEditMode) {
+        dataTable.classList.add('excel-mode');
+        toggleEditBtn.textContent = '';
+        toggleEditBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Changes`;
+        toggleEditBtn.classList.add('active');
+
+        // make data cells editable
+        tableBody.querySelectorAll('td:not(.sn-col)').forEach(td => {
+            td.contentEditable = 'true';
+            td.addEventListener('focus',     onCellFocus);
+            td.addEventListener('input',     onCellInput);
+            td.addEventListener('mousedown', onCellMouseDown);
+        });
+
+        // make headers editable
+        tableHead.querySelectorAll('th:not(.sn-col)').forEach(th => {
+            th.contentEditable = 'true';
+            th.classList.add('editable-header');
+            th.addEventListener('blur', onHeaderEdit);
+        });
+
+        document.getElementById('edit-toolbar').classList.add('visible');
+    } else {
+        dataTable.classList.remove('excel-mode');
+        toggleEditBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit Mode`;
+        toggleEditBtn.classList.remove('active');
+
+        tableBody.querySelectorAll('td:not(.sn-col)').forEach(td => { td.contentEditable = 'false'; });
+        tableHead.querySelectorAll('th:not(.sn-col)').forEach(th => {
+            th.contentEditable = 'false';
+            th.classList.remove('editable-header');
+        });
+
+        document.getElementById('edit-toolbar').classList.remove('visible');
+        document.getElementById('formula-bar').classList.remove('visible');
+        document.getElementById('filter-bar').classList.remove('visible');
+        clearSelection();
+        saveTableToMemory();
+    }
+});
+
+/* ORIGINAL: saveTableToMemory — unchanged logic */
+async function saveTableToMemory() {
+    // Read current headers from the TH elements (may have been renamed)
+    const thEls = Array.from(tableHead.querySelectorAll('th:not(.sn-col)'));
+    const liveHeaders = thEls.map(th => th.textContent.trim());
+
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    const newData = rows.map(tr => {
+        const rowObj = {};
+        const cells = Array.from(tr.querySelectorAll('td:not(.sn-col)'));
+        cells.forEach((td, index) => { rowObj[liveHeaders[index]] = td.textContent.trim(); });
+        return rowObj;
+    });
+    logbookData = newData;
+    currentHeaders = liveHeaders;
+
+    toggleEditBtn.disabled = true;
+
+    try {
+        const response = await fetch('/api/update-logbook', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(logbookData)
+        });
+        if (!response.ok) throw new Error('Failed to save to database');
+        showToast('Changes successfully updated!', 'success');
+    } catch (e) {
+        console.error('Error saving data:', e);
+        showToast('Error saving data to database.', 'error');
+    } finally {
+        toggleEditBtn.disabled = false;
+    }
+}
+
+/* ORIGINAL: CSV export — unchanged */
+exportBtn.addEventListener('click', () => {
+    if (logbookData.length === 0) return;
+    const headers = currentHeaders.map(h => `"${h}"`).join(',');
+    const rows = logbookData.map(obj => {
+        return currentHeaders.map(header => {
+            const val = obj[header] || '';
+            return `"${val.replace(/"/g, '""')}"`;
+        }).join(',');
+    }).join('\n');
+    const csvContent = `${headers}\n${rows}`;
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'barchscan_log.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+/* ORIGINAL: JSON export — unchanged */
+exportJsonBtn.addEventListener('click', () => {
+    if (logbookData.length === 0) return;
+    const jsonContent = JSON.stringify(logbookData, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'barchscan_log.json');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+/* ═══════════════════════════════════════════════════════════
+   NEW: UNDO / REDO HISTORY
+═══════════════════════════════════════════════════════════ */
+const undoStack = [];
+const redoStack = [];
+
+function snapshotState() {
+    const thEls = Array.from(tableHead.querySelectorAll('th:not(.sn-col)'));
+    const headers = thEls.map(th => th.textContent.trim());
+    const rows = Array.from(tableBody.querySelectorAll('tr')).map(tr =>
+        Array.from(tr.querySelectorAll('td:not(.sn-col)')).map(td => td.textContent)
+    );
+    return JSON.stringify({ headers, rows });
+}
+
+function pushUndo() {
+    undoStack.push(snapshotState());
+    redoStack.length = 0;
+    updateUndoRedo();
+}
+
+function updateUndoRedo() {
+    document.getElementById('tb-undo').disabled = undoStack.length === 0;
+    document.getElementById('tb-redo').disabled = redoStack.length === 0;
+}
+
+function applySnapshot(snap) {
+    const { headers, rows } = JSON.parse(snap);
+    // update headers
+    const thEls = Array.from(tableHead.querySelectorAll('th:not(.sn-col)'));
+    headers.forEach((h, i) => { if (thEls[i]) thEls[i].textContent = h; });
+    // update cells
+    const trEls = Array.from(tableBody.querySelectorAll('tr'));
+    rows.forEach((rowCells, ri) => {
+        const tds = Array.from(trEls[ri]?.querySelectorAll('td:not(.sn-col)') || []);
+        rowCells.forEach((v, ci) => { if (tds[ci]) tds[ci].textContent = v; });
+    });
+}
+
+document.getElementById('tb-undo').addEventListener('click', () => {
+    if (undoStack.length === 0) return;
+    redoStack.push(snapshotState());
+    applySnapshot(undoStack.pop());
+    updateUndoRedo();
+    showToast('Undo', 'info');
+});
+
+document.getElementById('tb-redo').addEventListener('click', () => {
+    if (redoStack.length === 0) return;
+    undoStack.push(snapshotState());
+    applySnapshot(redoStack.pop());
+    updateUndoRedo();
+    showToast('Redo', 'info');
+});
+
+document.addEventListener('keydown', (e) => {
+    if (!isEditMode) return;
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); document.getElementById('tb-undo').click(); }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'z'))) { e.preventDefault(); document.getElementById('tb-redo').click(); }
+});
+
+/* ═══════════════════════════════════════════════════════════
+   NEW: CELL FOCUS → FORMULA BAR
+═══════════════════════════════════════════════════════════ */
+let activeTd = null;
+
+function onCellFocus(e) {
+    activeTd = e.currentTarget;
+    const ref = activeTd.getAttribute('data-cell') || '—';
+    document.getElementById('formula-cell-ref').textContent = ref;
+    document.getElementById('formula-input').value = activeTd.textContent;
+}
+
+function onCellInput(e) {
+    if (activeTd === e.currentTarget) {
+        document.getElementById('formula-input').value = e.currentTarget.textContent;
+    }
+}
+
+document.getElementById('formula-input').addEventListener('input', (e) => {
+    if (activeTd) { activeTd.textContent = e.target.value; }
+});
+
+document.getElementById('formula-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); if (activeTd) activeTd.focus(); }
+});
+
+/* ═══════════════════════════════════════════════════════════
+   NEW: CELL SELECTION (click-drag + row click on S/N)
+═══════════════════════════════════════════════════════════ */
+let isDragging      = false;
+let dragAnchor      = null;
+let selectedCells   = new Set();
+let selectedRows    = new Set();
+
+function clearSelection() {
+    selectedCells.forEach(td => td.classList.remove('cell-selected', 'cell-selected-anchor'));
+    selectedCells.clear();
+    selectedRows.clear();
+}
+
+function selectCell(td, extend) {
+    if (!extend) clearSelection();
+    td.classList.add('cell-selected', 'cell-selected-anchor');
+    selectedCells.add(td);
+    dragAnchor = td;
+}
+
+function selectRow(tr, extend) {
+    if (!extend) clearSelection();
+    const cells = Array.from(tr.querySelectorAll('td:not(.sn-col)'));
+    cells.forEach(td => { td.classList.add('cell-selected'); selectedCells.add(td); });
+    selectedRows.add(tr);
+}
+
+function selectRange(fromTd, toTd) {
+    const allTds = Array.from(tableBody.querySelectorAll('td:not(.sn-col)'));
+    const fromIdx = allTds.indexOf(fromTd);
+    const toIdx   = allTds.indexOf(toTd);
+    const [lo, hi] = fromIdx < toIdx ? [fromIdx, toIdx] : [toIdx, fromIdx];
+
+    clearSelection();
+    allTds.slice(lo, hi + 1).forEach(td => { td.classList.add('cell-selected'); selectedCells.add(td); });
+    if (dragAnchor) dragAnchor.classList.add('cell-selected-anchor');
+}
+
+function onCellMouseDown(e) {
+    if (!isEditMode) return;
+    const td = e.currentTarget;
+
+    if (e.shiftKey && dragAnchor) {
+        e.preventDefault();
+        selectRange(dragAnchor, td);
+        return;
+    }
+
+    if (!e.ctrlKey && !e.metaKey) {
+        clearSelection();
+        dragAnchor = td;
+    }
+
+    td.classList.add('cell-selected', 'cell-selected-anchor');
+    selectedCells.add(td);
+    isDragging = true;
+
+    const onMove = (ev) => {
+        if (!isDragging) return;
+        const el = document.elementFromPoint(ev.clientX, ev.clientY);
+        const overTd = el?.closest('td:not(.sn-col)');
+        if (overTd && overTd.closest('#table-body')) selectRange(dragAnchor, overTd);
+    };
+
+    const onUp = () => {
+        isDragging = false;
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+}
+
+/* right-click context menu */
+tableBody.addEventListener('contextmenu', (e) => {
+    const td = e.target.closest('td:not(.sn-col)');
+    if (!td || !isEditMode) return;
+    e.preventDefault();
+
+    if (!selectedCells.has(td)) selectCell(td, false);
+
+    const menu = document.getElementById('ctx-menu');
+    menu.style.left = `${Math.min(e.clientX, window.innerWidth - 170)}px`;
+    menu.style.top  = `${Math.min(e.clientY, window.innerHeight - 160)}px`;
+    menu.style.display = 'block';
+});
+
+document.addEventListener('click', () => { document.getElementById('ctx-menu').style.display = 'none'; });
+
+// Context menu actions
+document.getElementById('ctx-copy').addEventListener('click', () => { copySelection(); });
+document.getElementById('ctx-csv').addEventListener('click', () => { exportSelectionCSV(); });
+document.getElementById('ctx-clear').addEventListener('click', () => {
+    if (selectedCells.size === 0) return;
+    pushUndo();
+    selectedCells.forEach(td => { td.textContent = ''; });
+    showToast('Cell contents cleared.', 'info');
+});
+document.getElementById('ctx-delrow').addEventListener('click', () => {
+    const rows = new Set(Array.from(selectedCells).map(td => td.closest('tr')));
+    if (rows.size === 0) return;
+    pushUndo();
+    rows.forEach(tr => tr.remove());
+    renumberSN();
+    showToast(`Deleted ${rows.size} row(s).`, 'info');
+});
+
+function copySelection() {
+    if (selectedCells.size === 0) return;
+    const text = getSelectionText();
+    navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard.', 'success'));
+}
+
+function getSelectionText() {
+    // Group by row
+    const rowMap = new Map();
+    selectedCells.forEach(td => {
+        const tr = td.closest('tr');
+        if (!rowMap.has(tr)) rowMap.set(tr, []);
+        rowMap.get(tr).push(td.textContent);
+    });
+    return Array.from(rowMap.values()).map(r => r.join('\t')).join('\n');
+}
+
+function exportSelectionCSV() {
+    if (selectedCells.size === 0) return;
+
+    // Determine which columns are in the selection
+    const colIndices = new Set();
+    selectedCells.forEach(td => colIndices.add(parseInt(td.getAttribute('data-col'))));
+
+    // Headers for those columns
+    const thEls = Array.from(tableHead.querySelectorAll('th:not(.sn-col)'));
+    const selHeaders = Array.from(colIndices).sort((a,b)=>a-b).map(i => thEls[i]?.textContent || `Col${i+1}`);
+
+    const rowMap = new Map();
+    selectedCells.forEach(td => {
+        const tr = td.closest('tr');
+        if (!rowMap.has(tr)) rowMap.set(tr, new Map());
+        rowMap.get(tr).set(parseInt(td.getAttribute('data-col')), td.textContent);
+    });
+
+    const sortedCols = Array.from(colIndices).sort((a,b)=>a-b);
+    const csvLines = [selHeaders.map(h=>`"${h}"`).join(',')];
+    rowMap.forEach(colMap => {
+        csvLines.push(sortedCols.map(ci => `"${(colMap.get(ci)||'').replace(/"/g,'""')}"`).join(','));
+    });
+
+    const blob = new Blob([csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'selection.csv';
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Selection exported as CSV.', 'success');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW: HEADER EDIT → COLUMN MERGE
+═══════════════════════════════════════════════════════════ */
+function onHeaderEdit(e) {
+    const th = e.currentTarget;
+    const newName = th.textContent.trim();
+    const oldName = th.getAttribute('data-original-name') || newName;
+
+    if (!newName) { th.textContent = oldName; return; }
+
+    const thEls = Array.from(tableHead.querySelectorAll('th:not(.sn-col)'));
+    const colIdx = thEls.indexOf(th);
+
+    // Check if this name already exists in another column
+    const dupIdx = thEls.findIndex((t, i) => i !== colIdx && t.textContent.trim() === newName);
+
+    if (dupIdx !== -1) {
+        // MERGE: move contents of colIdx into dupIdx, then remove colIdx
+        pushUndo();
+
+        const trs = Array.from(tableBody.querySelectorAll('tr'));
+        trs.forEach(tr => {
+            const tds = Array.from(tr.querySelectorAll('td:not(.sn-col)'));
+            const srcTd  = tds[colIdx];
+            const destTd = tds[dupIdx];
+            if (!srcTd || !destTd) return;
+
+            // merge: append non-empty source to destination with space separator
+            const srcVal  = srcTd.textContent.trim();
+            const destVal = destTd.textContent.trim();
+            destTd.textContent = destVal && srcVal ? `${destVal} ${srcVal}` : destVal || srcVal;
+
+            srcTd.remove();
+        });
+
+        // remove the header
+        th.remove();
+
+        // rebuild currentHeaders
+        const newThEls = Array.from(tableHead.querySelectorAll('th:not(.sn-col)'));
+        currentHeaders = newThEls.map(t => t.textContent.trim());
+
+        showToast(`Column merged into "${newName}".`, 'success');
+    } else {
+        th.setAttribute('data-original-name', newName);
+    }
+}
+
+// Store original name when header gains focus
+tableHead.addEventListener('focus', (e) => {
+    const th = e.target.closest('th:not(.sn-col)');
+    if (th && th.contentEditable === 'true') {
+        th.setAttribute('data-original-name', th.textContent.trim());
+    }
+}, true);
+
+/* ═══════════════════════════════════════════════════════════
+   NEW: RENUMBER S/N
+═══════════════════════════════════════════════════════════ */
+function renumberSN() {
+    Array.from(tableBody.querySelectorAll('tr')).forEach((tr, i) => {
+        const sn = tr.querySelector('td.sn-col');
+        if (sn) sn.textContent = i + 1;
+        tr.setAttribute('data-row-idx', i);
+        tr.querySelectorAll('td:not(.sn-col)').forEach((td, ci) => {
+            td.setAttribute('data-cell', `R${i+1}C${String(ci+1).padStart(3,'0')}`);
+            td.setAttribute('data-row', i);
+        });
+    });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW: TOOLBAR FUNCTIONS
+═══════════════════════════════════════════════════════════ */
+
+// ── SYNC ──
+document.getElementById('tb-sync').addEventListener('click', async () => {
+    const btn = document.getElementById('tb-sync');
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="border-top-color:var(--text-primary)"></span>Syncing…`;
+    try {
+        await loadLogbookData();
+        const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('sync-ts').textContent = `Synced ${ts}`;
+        showToast('Data synced successfully.', 'success');
+    } catch {
+        showToast('Sync failed.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg> Sync`;
+    }
+});
+
+// ── SORT ──
+function getSortColumnIndex() {
+    // Sort by first focused column, or first data column
+    if (activeTd) return parseInt(activeTd.getAttribute('data-col'));
+    return 0;
+}
+
+function sortTableBy(colIdx, asc) {
+    pushUndo();
+    const trs = Array.from(tableBody.querySelectorAll('tr'));
+    trs.sort((a, b) => {
+        const aTds = a.querySelectorAll('td:not(.sn-col)');
+        const bTds = b.querySelectorAll('td:not(.sn-col)');
+        const av = aTds[colIdx]?.textContent.trim() || '';
+        const bv = bTds[colIdx]?.textContent.trim() || '';
+        const an = parseFloat(av), bn = parseFloat(bv);
+        if (!isNaN(an) && !isNaN(bn)) {
+            return asc ? an - bn : bn - an;
         }
+        const comp = av.localeCompare(bv);
+        return asc ? comp : -comp;
+    });
 
-        // 3. DYNAMIC CSV EXPORT
-        exportBtn.addEventListener('click', () => {
-            if (logbookData.length === 0) return;
+    tableBody.innerHTML = '';
+    trs.forEach(tr => tableBody.appendChild(tr));
+    renumberSN();
+}
 
-            const headers = currentHeaders.map(h => `"${h}"`).join(',');
-            const rows = logbookData.map(obj => {
-                return currentHeaders.map(header => {
-                    const val = obj[header] || '';
-                    return `"${val.replace(/"/g, '""')}"`;
-                }).join(',');
-            }).join('\n');
+document.getElementById('tb-sort-asc').addEventListener('click', () => {
+    if (!isEditMode) return;
+    const colIdx = getSortColumnIndex();
+    sortTableBy(colIdx, true);
+    showToast(`Sorted column ${colIdx + 1} A→Z`, 'info');
+});
 
-            const csvContent = `${headers}\n${rows}`;
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'barchscan_log.csv');
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
+document.getElementById('tb-sort-desc').addEventListener('click', () => {
+    if (!isEditMode) return;
+    const colIdx = getSortColumnIndex();
+    sortTableBy(colIdx, false);
+    showToast(`Sorted column ${colIdx + 1} Z→A`, 'info');
+});
 
-        // 4. JSON EXPORT
-        exportJsonBtn.addEventListener('click', () => {
-            if (logbookData.length === 0) return;
-            
-            const jsonContent = JSON.stringify(logbookData, null, 2);
-            const blob = new Blob([jsonContent], { type: 'application/json' });
-            const link = document.createElement('a');
-            
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'barchscan_log.json');
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-    </script>
+// ── FILTER ──
+document.getElementById('tb-filter').addEventListener('click', () => {
+    if (!isEditMode) return;
+    const bar = document.getElementById('filter-bar');
+    bar.classList.toggle('visible');
+    if (bar.classList.contains('visible')) {
+        updateFilterSelect();
+        document.getElementById('filter-input').focus();
+    } else {
+        clearFilter();
+    }
+});
+
+function updateFilterSelect() {
+    const sel = document.getElementById('filter-col-select');
+    sel.innerHTML = '';
+    currentHeaders.forEach((h, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = h;
+        sel.appendChild(opt);
+    });
+}
+
+function filterRows() {
+    const colIdx = parseInt(document.getElementById('filter-col-select').value);
+    const term = document.getElementById('filter-input').value.trim().toLowerCase();
+    const rows = tableBody.querySelectorAll('tr');
+    rows.forEach(tr => {
+        const tds = tr.querySelectorAll('td:not(.sn-col)');
+        const cell = tds[colIdx];
+        const val = (cell?.textContent || '').toLowerCase();
+        tr.style.display = term === '' || val.includes(term) ? '' : 'none';
+    });
+}
+
+function clearFilter() {
+    const rows = tableBody.querySelectorAll('tr');
+    rows.forEach(tr => tr.style.display = '');
+    document.getElementById('filter-input').value = '';
+}
+
+document.getElementById('filter-input').addEventListener('input', filterRows);
+document.getElementById('filter-col-select').addEventListener('change', filterRows);
+document.getElementById('filter-clear-btn').addEventListener('click', () => {
+    clearFilter();
+    filterRows();
+});
+
+// ── FREEZE HEADER ──
+document.getElementById('tb-freeze').addEventListener('click', () => {
+    const btn = document.getElementById('tb-freeze');
+    dataTable.classList.toggle('frozen-header');
+    btn.classList.toggle('tb-active', dataTable.classList.contains('frozen-header'));
+    if (dataTable.classList.contains('frozen-header')) {
+        showToast('Header frozen while scrolling', 'info');
+    }
+});
+
+// ── WRAP TEXT ──
+document.getElementById('tb-wrap').addEventListener('click', () => {
+    const btn = document.getElementById('tb-wrap');
+    dataTable.classList.toggle('wrap-text');
+    btn.classList.toggle('tb-active', dataTable.classList.contains('wrap-text'));
+    showToast(dataTable.classList.contains('wrap-text') ? 'Text wrapping on' : 'Text wrapping off', 'info');
+});
+
+// ── AUTO-RESIZE ──
+document.getElementById('tb-autoresize').addEventListener('click', () => {
+    const btn = document.getElementById('tb-autoresize');
+    dataTable.classList.toggle('auto-cols');
+    btn.classList.toggle('tb-active', dataTable.classList.contains('auto-cols'));
+    showToast(dataTable.classList.contains('auto-cols') ? 'Auto-resize columns on' : 'Auto-resize columns off', 'info');
+});
+
+// ── DUPLICATE ROW ──
+document.getElementById('tb-duprow').addEventListener('click', () => {
+    if (!isEditMode) return;
+    if (selectedCells.size === 0 && selectedRows.size === 0) {
+        showToast('Select at least one row (click S/N) or cells to duplicate.', 'error');
+        return;
+    }
+    pushUndo();
+    let rowsToDup = new Set();
+    if (selectedRows.size > 0) {
+        selectedRows.forEach(tr => rowsToDup.add(tr));
+    } else {
+        selectedCells.forEach(td => rowsToDup.add(td.closest('tr')));
+    }
+    rowsToDup.forEach(tr => {
+        const clone = tr.cloneNode(true);
+        // Reset any selection classes
+        clone.querySelectorAll('td').forEach(td => td.classList.remove('cell-selected', 'cell-selected-anchor'));
+        // Make editable if in edit mode
+        if (isEditMode) {
+            clone.querySelectorAll('td:not(.sn-col)').forEach(td => {
+                td.contentEditable = 'true';
+                td.addEventListener('focus', onCellFocus);
+                td.addEventListener('input', onCellInput);
+                td.addEventListener('mousedown', onCellMouseDown);
+            });
+        }
+        tr.after(clone);
+    });
+    renumberSN();
+    clearSelection();
+    showToast(`Duplicated ${rowsToDup.size} row(s).`, 'success');
+});
+
+// ── INSERT BLANK ROW ──
+document.getElementById('tb-insrow').addEventListener('click', () => {
+    if (!isEditMode) return;
+    pushUndo();
+    const newRow = document.createElement('tr');
+    // S/N cell
+    const snTd = document.createElement('td');
+    snTd.className = 'sn-col';
+    snTd.textContent = ''; // renumber will fill
+    snTd.addEventListener('click', (e) => { e.stopPropagation(); selectRow(newRow, e.shiftKey); });
+    newRow.appendChild(snTd);
+    // Add empty data cells for all current headers
+    currentHeaders.forEach((_, colIdx) => {
+        const td = document.createElement('td');
+        td.textContent = '';
+        td.setAttribute('data-cell', '');
+        td.setAttribute('data-row', '');
+        td.setAttribute('data-col', colIdx);
+        if (isEditMode) {
+            td.contentEditable = 'true';
+            td.addEventListener('focus', onCellFocus);
+            td.addEventListener('input', onCellInput);
+            td.addEventListener('mousedown', onCellMouseDown);
+        }
+        newRow.appendChild(td);
+    });
+    // Insert above selected row or at end
+    if (selectedCells.size > 0) {
+        const refRow = selectedCells.values().next().value.closest('tr');
+        refRow.before(newRow);
+    } else if (selectedRows.size > 0) {
+        const refRow = selectedRows.values().next().value;
+        refRow.before(newRow);
+    } else {
+        tableBody.appendChild(newRow);
+    }
+    renumberSN();
+    clearSelection();
+    showToast('Inserted blank row.', 'success');
+});
+
+// ── FORMULA BAR TOGGLE ──
+document.getElementById('tb-fbar').addEventListener('click', () => {
+    const bar = document.getElementById('formula-bar');
+    bar.classList.toggle('visible');
+    if (bar.classList.contains('visible') && activeTd) {
+        document.getElementById('formula-cell-ref').textContent = activeTd.getAttribute('data-cell') || '—';
+        document.getElementById('formula-input').value = activeTd.textContent;
+    }
+    document.getElementById('tb-fbar').classList.toggle('tb-active', bar.classList.contains('visible'));
+});
+
+// ── FIND & REPLACE ──
+const fnrOverlay = document.getElementById('fnr-overlay');
+const fnrFind = document.getElementById('fnr-find');
+const fnrReplace = document.getElementById('fnr-replace');
+const fnrStatus = document.getElementById('fnr-status');
+let lastFindIdx = -1;
+
+document.getElementById('tb-find').addEventListener('click', () => {
+    if (!isEditMode) return;
+    fnrOverlay.classList.add('open');
+    fnrFind.focus();
+    lastFindIdx = -1;
+    fnrStatus.textContent = '';
+});
+
+document.getElementById('fnr-close').addEventListener('click', () => {
+    fnrOverlay.classList.remove('open');
+});
+
+function getAllDataCells() {
+    return Array.from(tableBody.querySelectorAll('td:not(.sn-col)'));
+}
+
+function findNext() {
+    const cells = getAllDataCells();
+    if (cells.length === 0) return -1;
+    const term = fnrFind.value.trim();
+    if (!term) {
+        fnrStatus.textContent = 'Enter search text';
+        return -1;
+    }
+    const start = lastFindIdx + 1;
+    for (let i = start; i < cells.length; i++) {
+        if (cells[i].textContent.includes(term)) {
+            lastFindIdx = i;
+            return i;
+        }
+    }
+    // wrap around
+    for (let i = 0; i < start; i++) {
+        if (cells[i].textContent.includes(term)) {
+            lastFindIdx = i;
+            return i;
+        }
+    }
+    return -1;
+}
+
+function highlightCell(idx) {
+    clearSelection();
+    const cells = getAllDataCells();
+    if (idx >= 0 && idx < cells.length) {
+        cells[idx].scrollIntoView({ block: 'nearest' });
+        cells[idx].classList.add('cell-selected', 'cell-selected-anchor');
+        selectedCells.add(cells[idx]);
+        activeTd = cells[idx];
+        // update formula bar if visible
+        if (document.getElementById('formula-bar').classList.contains('visible')) {
+            document.getElementById('formula-cell-ref').textContent = activeTd.getAttribute('data-cell') || '—';
+            document.getElementById('formula-input').value = activeTd.textContent;
+        }
+    }
+}
+
+document.getElementById('fnr-findnext').addEventListener('click', () => {
+    const idx = findNext();
+    if (idx >= 0) {
+        highlightCell(idx);
+        fnrStatus.textContent = `Found at cell ${getAllDataCells()[idx].getAttribute('data-cell')}`;
+    } else {
+        fnrStatus.textContent = 'No more occurrences';
+        lastFindIdx = -1;
+    }
+});
+
+document.getElementById('fnr-replaceone').addEventListener('click', () => {
+    if (lastFindIdx === -1 || lastFindIdx >= getAllDataCells().length) {
+        findNext();
+    }
+    if (lastFindIdx >= 0) {
+        pushUndo();
+        const cell = getAllDataCells()[lastFindIdx];
+        cell.textContent = fnrReplace.value;
+        fnrStatus.textContent = 'Replaced. Find next...';
+    }
+});
+
+document.getElementById('fnr-replaceall').addEventListener('click', () => {
+    const term = fnrFind.value.trim();
+    if (!term) {
+        fnrStatus.textContent = 'Enter search text';
+        return;
+    }
+    pushUndo();
+    let count = 0;
+    const cells = getAllDataCells();
+    cells.forEach(cell => {
+        if (cell.textContent.includes(term)) {
+            cell.textContent = cell.textContent.replaceAll(term, fnrReplace.value);
+            count++;
+        }
+    });
+    fnrStatus.textContent = `Replaced ${count} occurrence(s)`;
+    showToast(`Replaced ${count} occurrence(s)`, 'success');
+});
+
+// ── CLEAR DATABASE MODAL ──
+const cdbOverlay = document.getElementById('clear-db-overlay');
+const cdbStep1 = document.getElementById('cdb-step1');
+const cdbStep2 = document.getElementById('cdb-step2');
+const cdbStep3 = document.getElementById('cdb-step3');
+const sdDots = [document.getElementById('sd1'), document.getElementById('sd2'), document.getElementById('sd3')];
+let cdbCurrentStep = 1;
+
+function resetClearDBModal() {
+    cdbCurrentStep = 1;
+    document.querySelectorAll('#clear-db-modal .modal-step').forEach(el => el.classList.remove('active'));
+    cdbStep1.classList.add('active');
+    document.getElementById('cdb-phrase').value = '';
+    document.getElementById('cdb-pass').value = '';
+    document.getElementById('cdb-err1').textContent = '';
+    document.getElementById('cdb-err2').textContent = '';
+    document.getElementById('cdb-err3').textContent = '';
+    sdDots.forEach(d => d.classList.remove('done'));
+}
+
+document.getElementById('clear-db-btn').addEventListener('click', () => {
+    cdbOverlay.classList.add('open');
+    resetClearDBModal();
+});
+
+function goToStep(step) {
+    document.querySelectorAll('#clear-db-modal .modal-step').forEach(el => el.classList.remove('active'));
+    document.getElementById(`cdb-step${step}`).classList.add('active');
+    cdbCurrentStep = step;
+    sdDots.forEach((d, i) => {
+        if (i + 1 < step) d.classList.add('done');
+        else d.classList.remove('done');
+    });
+}
+
+document.getElementById('cdb-cancel1').addEventListener('click', () => cdbOverlay.classList.remove('open'));
+document.getElementById('cdb-next1').addEventListener('click', () => {
+    const phrase = document.getElementById('cdb-phrase').value.trim();
+    if (phrase !== 'delete my data') {
+        document.getElementById('cdb-err1').textContent = 'You must type "delete my data" exactly.';
+        return;
+    }
+    document.getElementById('cdb-err1').textContent = '';
+    goToStep(2);
+});
+
+document.getElementById('cdb-back2').addEventListener('click', () => goToStep(1));
+document.getElementById('cdb-next2').addEventListener('click', async () => {
+    const pass = document.getElementById('cdb-pass').value.trim();
+    if (!pass) {
+        document.getElementById('cdb-err2').textContent = 'Passcode required.';
+        return;
+    }
+    const btn = document.getElementById('cdb-next2');
+    btn.disabled = true;
+    const valid = await validatePasscode(pass);
+    btn.disabled = false;
+    if (valid) {
+        document.getElementById('cdb-err2').textContent = '';
+        goToStep(3);
+    } else {
+        document.getElementById('cdb-err2').textContent = 'Incorrect passcode.';
+    }
+});
+
+document.getElementById('cdb-back3').addEventListener('click', () => goToStep(2));
+document.getElementById('cdb-confirm').addEventListener('click', async () => {
+    const btn = document.getElementById('cdb-confirm');
+    btn.disabled = true;
+    try {
+        const response = await fetch('/api/clear-database', { method: 'DELETE' });
+        if (!response.ok) throw new Error('Server error');
+        showToast('All records have been deleted.', 'success');
+        cdbOverlay.classList.remove('open');
+        // Clear UI
+        tableHead.innerHTML = '';
+        tableBody.innerHTML = '';
+        logbookData = [];
+        currentHeaders = [];
+        emptyState.style.display = 'block';
+        tableContainer.style.display = 'none';
+        actionButtons.style.display = 'none';
+        isEditMode = false;
+        dataTable.classList.remove('excel-mode');
+        toggleEditBtn.classList.remove('active');
+        toggleEditBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit Mode`;
+        document.getElementById('edit-toolbar').classList.remove('visible');
+        document.getElementById('formula-bar').classList.remove('visible');
+        document.getElementById('filter-bar').classList.remove('visible');
+        clearSelection();
+        undoStack.length = 0;
+        redoStack.length = 0;
+        updateUndoRedo();
+    } catch (e) {
+        showToast('Failed to clear database.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+/* ═══════════════════════════════════════════════════════════
+   NEW: MACROS MODAL
+═══════════════════════════════════════════════════════════ */
+const macroOverlay = document.getElementById('macro-overlay');
+const macroCode    = document.getElementById('macro-code');
+const macroStatus  = document.getElementById('macro-status');
+
+document.getElementById('macro-btn').addEventListener('click', () => {
+    macroOverlay.classList.add('open');
+    macroCode.focus();
+});
+
+document.getElementById('macro-close').addEventListener('click', () => {
+    macroOverlay.classList.remove('open');
+});
+
+document.getElementById('macro-clear').addEventListener('click', () => {
+    macroCode.value = '';
+    macroStatus.textContent = '';
+});
+
+document.getElementById('macro-run').addEventListener('click', () => {
+    const code = macroCode.value.trim();
+    if (!code) {
+        macroStatus.textContent = 'No macro code to run.';
+        return;
+    }
+
+    // Expose helpful variables to the macro environment
+    const data = logbookData;
+    const headers = currentHeaders;
+    const table = dataTable;
+    const toast = showToast;
+
+    try {
+        // Use a Function constructor to evaluate in the global scope
+        const macroFn = new Function('data', 'headers', 'tableBody', 'tableHead', 'showToast', 'table', code);
+        macroFn(data, headers, tableBody, tableHead, showToast, dataTable);
+        macroStatus.textContent = 'Macro executed successfully.';
+        showToast('Macro ran without errors.', 'success');
+    } catch (err) {
+        macroStatus.textContent = `Error: ${err.message}`;
+        showToast(`Macro error: ${err.message}`, 'error');
+        console.error('Macro error:', err);
+    }
+});
+
+// Close macro modal on overlay click
+macroOverlay.addEventListener('click', (e) => {
+    if (e.target === macroOverlay) macroOverlay.classList.remove('open');
+});
+
+// ── INITIAL SYNC TIMESTAMP ON LOAD ──
+const initialTs = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+document.getElementById('sync-ts').textContent = `Loaded ${initialTs}`;
+
+// Ensure filter select updates on table rebuild
+const origBuildDynamicTable = buildDynamicTable;
+buildDynamicTable = function(data) {
+    origBuildDynamicTable(data);
+    updateFilterSelect();
+    if (document.getElementById('filter-bar').classList.contains('visible')) {
+        clearFilter();
+    }
+};
+
+// Clean up global reference for undo/redo integration in original cell edits
+// We'll hook into the existing onCellInput to push undo on first edit
+const origOnCellInput = onCellInput;
+onCellInput = function(e) {
+    if (!e.target.dataset._editTracked) {
+        pushUndo();
+        e.target.dataset._editTracked = 'true';
+    }
+    origOnCellInput(e);
+};
+
+// When a cell loses focus, reset tracking
+tableBody.addEventListener('blur', (e) => {
+    const td = e.target.closest('td:not(.sn-col)');
+    if (td) td.dataset._editTracked = '';
+}, true);
+
+// Also track header edits via blur
+tableHead.addEventListener('blur', (e) => {
+    const th = e.target.closest('th:not(.sn-col)');
+    if (th && th.contentEditable === 'true') {
+        if (!th.dataset._editTracked) {
+            pushUndo();
+            th.dataset._editTracked = 'true';
+        }
+        th.dataset._editTracked = '';
+    }
+}, true);
+
+// Keyboard shortcuts for filter bar dismissal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (document.getElementById('filter-bar').classList.contains('visible')) {
+            document.getElementById('tb-filter').click();
+        }
+    }
+});
+
+// ── CLOSE SCRIPT ──
+</script>
 </body>
 </html>
