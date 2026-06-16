@@ -13,8 +13,9 @@
             --accent-inverse: #000000;
             --text-primary: #ededed;
             --text-secondary: #888888;
-            --progress-bg: #222222;
             --hover-overlay: rgba(255, 255, 255, 0.05);
+            --error-color: #ff5555;
+            --success-color: #4ade80;
         }
 
         [data-theme="light"] {
@@ -25,7 +26,6 @@
             --accent-inverse: #ffffff;
             --text-primary: #18181b;
             --text-secondary: #71717a;
-            --progress-bg: #e4e4e7;
             --hover-overlay: rgba(0, 0, 0, 0.05);
         }
 
@@ -58,6 +58,8 @@
             max-width: 500px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .card-header {
@@ -152,23 +154,6 @@
             word-break: break-all;
         }
 
-        .progress-container {
-            display: none;
-            width: 100%;
-            height: 4px;
-            background-color: var(--progress-bg);
-            border-radius: 2px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background-color: var(--accent);
-            transition: width 0.3s ease;
-        }
-
         button.primary-btn {
             width: 100%;
             padding: 1rem;
@@ -183,9 +168,63 @@
         }
 
         button.primary-btn:disabled {
-            background-color: var(--progress-bg);
+            background-color: var(--glass-border);
             color: var(--text-secondary);
             cursor: not-allowed;
+        }
+
+        /* Dynamic View Containers */
+        #upload-view, #loading-view, #success-view {
+            width: 100%;
+        }
+
+        #loading-view, #success-view {
+            display: none;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        /* Circular Timer SVG styling */
+        .timer-svg {
+            transform: rotate(-90deg);
+            margin: 0 auto;
+            display: block;
+        }
+
+        .timer-circle-bg {
+            fill: none;
+            stroke: var(--glass-border);
+            stroke-width: 6;
+        }
+
+        .timer-circle-progress {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 6;
+            stroke-linecap: round;
+            /* Circumference = 2 * PI * 52 ≈ 326.72 */
+            stroke-dasharray: 326.72;
+            stroke-dashoffset: 326.72;
+            transition: stroke-dashoffset 0.05s linear, stroke 0.3s ease;
+        }
+
+        .view-title {
+            margin-top: 1.5rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .view-subtitle {
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            color: var(--success-color);
+            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -198,26 +237,40 @@
         </div>
         <p class="subtitle">Securely process visual records into structured data.</p>
 
-        <div class="drop-zone" id="drop-zone">
-            <p class="drop-zone-text">Select your input method</p>
-            <div class="action-buttons">
-                <button class="secondary-btn" id="trigger-camera">📷 Scan Document</button>
-                <button class="secondary-btn" id="trigger-upload">📁 Browse Gallery</button>
+        <div id="upload-view">
+            <div class="drop-zone" id="drop-zone">
+                <p class="drop-zone-text">Select your input method</p>
+                <div class="action-buttons">
+                    <button class="secondary-btn" id="trigger-camera">📷 Scan Document</button>
+                    <button class="secondary-btn" id="trigger-upload">📁 Browse Gallery</button>
+                </div>
+                <input type="file" id="camera-input" accept="image/*" capture="environment">
+                <input type="file" id="file-input" accept="image/*">
             </div>
-            <input type="file" id="camera-input" accept="image/*" capture="environment">
-            <input type="file" id="file-input" accept="image/*">
+
+            <div id="file-preview">
+                <span id="filename">No document selected</span>
+                <span id="remove-file" style="cursor: pointer; color: var(--error-color); padding-left: 15px; font-weight: bold;">&times;</span>
+            </div>
+
+            <button class="primary-btn" id="process-btn" disabled>Initialize Processing</button>
         </div>
 
-        <div id="file-preview">
-            <span id="filename">No document selected</span>
-            <span id="remove-file" style="cursor: pointer; color: #ff5555; padding-left: 15px; font-weight: bold;">&times;</span>
+        <div id="loading-view">
+            <svg width="120" height="120" viewBox="0 0 120 120" class="timer-svg">
+                <circle cx="60" cy="60" r="52" class="timer-circle-bg" />
+                <circle cx="60" cy="60" r="52" class="timer-circle-progress" id="loading-circle" />
+            </svg>
+            <div class="view-title">Transmitting...</div>
+            <div class="view-subtitle">Establishing secure connection</div>
         </div>
 
-        <div class="progress-container" id="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
+        <div id="success-view">
+            <div class="success-icon">✓</div>
+            <div class="view-title">Transmission Complete</div>
+            <div class="view-subtitle" style="margin-bottom: 2rem;">The record has been securely ingested.</div>
+            <button class="secondary-btn" id="reset-btn" style="width: 100%;">Submit Another Record</button>
         </div>
-
-        <button class="primary-btn" id="process-btn" disabled>Initialize Processing</button>
     </div>
 
     <script>
@@ -237,6 +290,7 @@
             }
         });
 
+        // DOM Elements
         const dropZone = document.getElementById('drop-zone');
         const triggerCamera = document.getElementById('trigger-camera');
         const triggerUpload = document.getElementById('trigger-upload');
@@ -246,10 +300,16 @@
         const filenameDisplay = document.getElementById('filename');
         const removeFileBtn = document.getElementById('remove-file');
         const processBtn = document.getElementById('process-btn');
-        const progressContainer = document.getElementById('progress-container');
-        const progressBar = document.getElementById('progress-bar');
+        const resetBtn = document.getElementById('reset-btn');
+        
+        const uploadView = document.getElementById('upload-view');
+        const loadingView = document.getElementById('loading-view');
+        const successView = document.getElementById('success-view');
+        const loadingCircle = document.getElementById('loading-circle');
 
+        const CIRCUMFERENCE = 326.72; 
         let currentFile = null;
+        let timerInterval = null;
 
         triggerCamera.addEventListener('click', () => cameraInput.click());
         triggerUpload.addEventListener('click', () => fileInput.click());
@@ -260,11 +320,12 @@
 
         cameraInput.addEventListener('change', handleInputEvent);
         fileInput.addEventListener('change', handleInputEvent);
-        removeFileBtn.addEventListener('click', resetSelection);
+        removeFileBtn.addEventListener('click', resetUI);
+        resetBtn.addEventListener('click', resetUI);
 
         function handleFileSelection(file) {
             if (!file.type.startsWith('image/')) {
-                alert('Please supply an image format.');
+                alert('Invalid format. Please supply an image.');
                 return;
             }
             currentFile = file;
@@ -274,16 +335,20 @@
             processBtn.disabled = false;
         }
 
-        function resetSelection() {
+        function resetUI() {
             currentFile = null;
             cameraInput.value = '';
             fileInput.value = '';
             dropZone.style.display = 'block';
             filePreview.style.display = 'none';
             processBtn.disabled = true;
-            progressContainer.style.display = 'none';
-            progressBar.style.width = '0%';
-            processBtn.textContent = 'Initialize Processing';
+            
+            uploadView.style.display = 'block';
+            loadingView.style.display = 'none';
+            successView.style.display = 'none';
+            
+            loadingCircle.style.strokeDashoffset = CIRCUMFERENCE;
+            loadingCircle.style.stroke = "var(--accent)";
         }
 
         function compressImage(file, maxWidth = 1200) {
@@ -332,21 +397,34 @@
         processBtn.addEventListener('click', async () => {
             if (!currentFile) return;
 
-            processBtn.disabled = true;
-            processBtn.textContent = 'Optimizing Image...';
-            progressContainer.style.display = 'block';
+            // Transition to the isolated loading state
+            uploadView.style.display = 'none';
+            loadingView.style.display = 'block';
 
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 10;
-                if (progress > 90) progress = 90; 
-                progressBar.style.width = `${progress}%`;
-            }, 300);
+            // Begin continuous timer routine (60s threshold)
+            let startTime = Date.now();
+            let hasCrossedThreshold = false;
+
+            timerInterval = setInterval(() => {
+                let elapsed = Date.now() - startTime;
+                
+                if (elapsed <= 60000) {
+                    let progress = elapsed / 60000;
+                    loadingCircle.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+                } else {
+                    if (!hasCrossedThreshold) {
+                        hasCrossedThreshold = true;
+                        loadingCircle.style.stroke = "var(--error-color)";
+                    }
+                    // Loop the animation if it breaches the optimal window
+                    let overtime = elapsed - 60000;
+                    let progress = (overtime % 60000) / 60000;
+                    loadingCircle.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+                }
+            }, 50);
 
             try {
                 const optimizedFile = await compressImage(currentFile);
-                processBtn.textContent = 'Extracting Logbook Data...';
-
                 const formData = new FormData();
                 formData.append('file', optimizedFile);
 
@@ -356,43 +434,28 @@
                 });
 
                 if (!response.ok) {
-                    // SAFE ERROR READING: Read the stream EXACTLY ONCE as raw text
-                    const rawErrorText = await response.text();
-                    let finalErrorMsg = `Server Error (${response.status})`;
-
-                    try {
-                        // Attempt to parse the text as JSON
-                        const jsonError = JSON.parse(rawErrorText);
-                        if (jsonError.error) finalErrorMsg = jsonError.error;
-                    } catch (e) {
-                        // If parsing fails, it's a Vercel HTML error page. Let's translate the common ones.
-                        if (response.status === 504) {
-                            finalErrorMsg = "Vercel Timeout: Processing took longer than the 10-second limit.";
-                        } else if (response.status === 413) {
-                            finalErrorMsg = "Payload Too Large: The image is still too big for Vercel's limits.";
-                        } else {
-                            finalErrorMsg = `Unexpected Server Error: Status ${response.status}`;
-                        }
-                    }
-                    throw new Error(finalErrorMsg);
+                    // Force a standard exception block. Raw backend issues will be sanitized below.
+                    throw new Error("Generic failure."); 
                 }
 
+                // Silently parse and cache the data for local routing/admin use.
+                // The uploader is not redirected, maintaining the security boundary.
                 const result = await response.json();
                 localStorage.setItem('barchscan_latest_data', JSON.stringify(result));
+                
+                clearInterval(timerInterval);
+                loadingCircle.style.strokeDashoffset = 0;
 
-                clearInterval(interval);
-                progressBar.style.width = '100%';
-                processBtn.textContent = 'Transmission Complete';
-
-                setTimeout(() => { window.location.href = '/data'; }, 800);
+                setTimeout(() => {
+                    loadingView.style.display = 'none';
+                    successView.style.display = 'block';
+                }, 500);
 
             } catch (error) {
-                clearInterval(interval);
-                processBtn.textContent = 'Processing Failed - Try Again';
-                processBtn.disabled = false;
-                
-                // Pop the *real* error
-                alert("Debug Error: " + error.message);
+                clearInterval(timerInterval);
+                // Sanitized failure flag – prevents backend fingerprints from reaching the interface.
+                alert("Upload failed: Unable to establish a secure transmission line. Please try again.");
+                resetUI();
             }
         });
     </script>
