@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BarchScan | Ingestion</title>
+    <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -442,6 +443,28 @@
             font-weight: 500;
             letter-spacing: 0.1em;
         }
+
+        /* SESSION TIMEOUT BANNER */
+        #session-timeout-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 85, 85, 0.1);
+            border-top: 1px solid rgba(255, 85, 85, 0.3);
+            backdrop-filter: blur(8px);
+            padding: 1rem;
+            text-align: center;
+            color: var(--error-color);
+            font-size: 0.9rem;
+            z-index: 9998;
+            display: none;
+        }
+
+        #session-timeout-banner.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -472,6 +495,11 @@
             <div class="gate-spinner"></div>
             <div id="gate-text">VERIFYING...</div>
         </div>
+    </div>
+
+    <!-- SESSION TIMEOUT BANNER -->
+    <div id="session-timeout-banner">
+        Session expires in <span id="timeout-minutes">60</span>m. <a href="#" onclick="extendSession(); return false;" style="color: inherit; text-decoration: underline;">Extend</a>
     </div>
 
     <div class="ingestion-card">
@@ -518,26 +546,93 @@
     </div>
 
     <script>
-        // PASSCODE AUTHENTICATION
+        // PASSCODE AUTHENTICATION WITH 1-HOUR SESSION TIMEOUT
         const passcodeOverlay = document.getElementById('passcode-overlay');
         const passcodeInput = document.getElementById('passcode-input');
         const passcodeBtn = document.getElementById('passcode-btn');
         const passcodeError = document.getElementById('passcode-error');
         const accessGate = document.getElementById('access-gate');
         const gateText = document.getElementById('gate-text');
+        const sessionBanner = document.getElementById('session-timeout-banner');
+        const timeoutMinutes = document.getElementById('timeout-minutes');
 
         let attemptCount = 0;
         const MAX_ATTEMPTS = 4;
         const SESSION_KEY = 'barchscan_authenticated';
+        const SESSION_TIMESTAMP_KEY = 'barchscan_session_time';
+        const SESSION_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+        let sessionTimeoutInterval = null;
+        let warningShown = false;
 
         // Check if user is already authenticated in this session
         function isAuthenticated() {
-            return sessionStorage.getItem(SESSION_KEY) === 'true';
+            const authenticated = sessionStorage.getItem(SESSION_KEY) === 'true';
+            const sessionTime = parseInt(sessionStorage.getItem(SESSION_TIMESTAMP_KEY)) || 0;
+            const now = Date.now();
+
+            // Check if session has expired
+            if (authenticated && (now - sessionTime) > SESSION_DURATION) {
+                clearSession();
+                return false;
+            }
+
+            return authenticated;
         }
 
         // Set session as authenticated
         function setAuthenticated() {
             sessionStorage.setItem(SESSION_KEY, 'true');
+            sessionStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
+            startSessionTimer();
+        }
+
+        // Clear session
+        function clearSession() {
+            sessionStorage.removeItem(SESSION_KEY);
+            sessionStorage.removeItem(SESSION_TIMESTAMP_KEY);
+            warningShown = false;
+            if (sessionTimeoutInterval) clearInterval(sessionTimeoutInterval);
+            sessionBanner.classList.remove('show');
+        }
+
+        // Start session timeout timer
+        function startSessionTimer() {
+            if (sessionTimeoutInterval) clearInterval(sessionTimeoutInterval);
+
+            sessionTimeoutInterval = setInterval(() => {
+                const sessionTime = parseInt(sessionStorage.getItem(SESSION_TIMESTAMP_KEY)) || 0;
+                const now = Date.now();
+                const elapsed = now - sessionTime;
+                const remaining = SESSION_DURATION - elapsed;
+
+                // Show warning at 10 minutes remaining
+                if (remaining < 10 * 60 * 1000 && remaining > 0 && !warningShown) {
+                    warningShown = true;
+                    sessionBanner.classList.add('show');
+                    updateTimeoutDisplay(remaining);
+                } else if (remaining > 10 * 60 * 1000) {
+                    updateTimeoutDisplay(remaining);
+                }
+
+                // Session expired
+                if (remaining <= 0) {
+                    clearSession();
+                    alert('Your session has expired. Please log in again.');
+                    location.reload();
+                }
+            }, 1000);
+        }
+
+        // Update timeout display
+        function updateTimeoutDisplay(milliseconds) {
+            const minutes = Math.ceil(milliseconds / 60000);
+            timeoutMinutes.textContent = minutes;
+        }
+
+        // Extend session
+        function extendSession() {
+            setAuthenticated();
+            sessionBanner.classList.remove('show');
         }
 
         // Show passcode modal
@@ -643,6 +738,8 @@
         window.addEventListener('load', () => {
             if (!isAuthenticated()) {
                 showPasscodeModal();
+            } else {
+                startSessionTimer();
             }
         });
 
