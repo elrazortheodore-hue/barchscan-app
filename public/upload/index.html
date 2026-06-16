@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BarchScan | Ingestion</title>
+    <title>BarchScan | Data Ledger</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <style>
         :root {
@@ -14,11 +14,13 @@
             --accent-inverse: #000000;
             --text-primary: #ededed;
             --text-secondary: #888888;
+            --table-hover: rgba(255, 255, 255, 0.05);
             --hover-overlay: rgba(255, 255, 255, 0.05);
             --error-color: #ff5555;
             --success-color: #4ade80;
         }
 
+        /* Light Theme Compatibility */
         [data-theme="light"] {
             --bg-color: #f4f4f5;
             --glass-bg: rgba(0, 0, 0, 0.02);
@@ -27,6 +29,7 @@
             --accent-inverse: #ffffff;
             --text-primary: #18181b;
             --text-secondary: #71717a;
+            --table-hover: rgba(0, 0, 0, 0.05);
             --hover-overlay: rgba(0, 0, 0, 0.05);
         }
 
@@ -40,37 +43,133 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
+            padding: 2rem 1rem;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 1.5rem;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .ingestion-card {
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        @media (min-width: 600px) {
+            .dashboard-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-end;
+            }
+        }
+
+        h1 { font-size: 1.8rem; font-weight: 600; }
+        
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button.action-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: transparent;
+            color: var(--accent);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button.action-btn:hover {
+            background-color: var(--table-hover);
+        }
+
+        button.action-btn.active {
+            background-color: var(--accent);
+            color: var(--bg-color);
+        }
+
+        .table-wrapper {
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
-            padding: 2.5rem 1.5rem;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+            overflow-x: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
-            overflow: hidden;
+            z-index: 1;
         }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 600px;
+            transition: all 0.3s ease;
         }
 
-        h1 { font-size: 1.5rem; font-weight: 600; }
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+
+        td { font-size: 0.9rem; }
+        
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: var(--table-hover); }
+
+        /* Excel Edit Mode Styles */
+        table.excel-mode td {
+            border: 1px solid var(--glass-border); /* Visible gridlines */
+            background: rgba(255, 255, 255, 0.02);
+            cursor: text;
+            padding: 0.5rem 1rem; /* Tighter padding like Excel */
+            white-space: nowrap;
+        }
+
+        table.excel-mode td:focus {
+            background: rgba(255, 255, 255, 0.08);
+            outline: 2px solid var(--accent);
+            outline-offset: -2px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state a {
+            color: var(--accent);
+            text-decoration: none;
+            margin-top: 1rem;
+            display: inline-block;
+        }
 
         .theme-toggle {
             background: transparent;
@@ -89,144 +188,6 @@
         }
 
         .theme-toggle:hover { background: var(--hover-overlay); }
-
-        p.subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
-        }
-
-        .drop-zone {
-            border: 2px dashed var(--glass-border);
-            border-radius: 8px;
-            padding: 2rem 1rem;
-            text-align: center;
-            background: var(--glass-bg);
-            margin-bottom: 1.5rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .drop-zone-text {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        @media (min-width: 400px) {
-            .action-buttons { flex-direction: row; }
-        }
-
-        .secondary-btn {
-            flex: 1;
-            padding: 0.75rem;
-            background: transparent;
-            color: var(--text-primary);
-            border: 1px solid var(--glass-border);
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .secondary-btn:hover {
-            background: var(--hover-overlay);
-            border-color: var(--accent);
-        }
-
-        input[type="file"] { display: none; }
-
-        #file-preview {
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            background: var(--hover-overlay);
-            border: 1px solid var(--glass-border);
-            border-radius: 6px;
-            margin-bottom: 1.5rem;
-            font-size: 0.85rem;
-            word-break: break-all;
-        }
-
-        button.primary-btn {
-            width: 100%;
-            padding: 1rem;
-            background-color: var(--accent);
-            color: var(--accent-inverse);
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-        }
-
-        button.primary-btn:disabled {
-            background-color: var(--glass-border);
-            color: var(--text-secondary);
-            cursor: not-allowed;
-        }
-
-        /* Dynamic View Containers */
-        #upload-view, #loading-view, #success-view {
-            width: 100%;
-        }
-
-        #loading-view, #success-view {
-            display: none;
-            text-align: center;
-            padding: 1rem 0;
-        }
-
-        /* Circular Timer SVG styling */
-        .timer-svg {
-            transform: rotate(-90deg);
-            margin: 0 auto;
-            display: block;
-        }
-
-        .timer-circle-bg {
-            fill: none;
-            stroke: var(--glass-border);
-            stroke-width: 6;
-        }
-
-        .timer-circle-progress {
-            fill: none;
-            stroke: var(--accent);
-            stroke-width: 6;
-            stroke-linecap: round;
-            /* Circumference = 2 * PI * 52 ≈ 326.72 */
-            stroke-dasharray: 326.72;
-            stroke-dashoffset: 326.72;
-            transition: stroke-dashoffset 0.05s linear, stroke 0.3s ease;
-        }
-
-        .view-title {
-            margin-top: 1.5rem;
-            font-weight: 600;
-            font-size: 1.2rem;
-            color: var(--text-primary);
-        }
-
-        .view-subtitle {
-            margin-top: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        
-        .success-icon {
-            font-size: 4rem;
-            color: var(--success-color);
-            margin-bottom: 1rem;
-        }
 
         /* PASSCODE MODAL STYLES */
         #passcode-overlay {
@@ -336,7 +297,7 @@
         }
 
         #passcode-btn:disabled {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: var(--glass-border);
             color: var(--text-secondary);
             cursor: not-allowed;
         }
@@ -391,23 +352,13 @@
             transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* OPENED STATE: Doors slide out revealing the app */
-        #access-gate.open .door-left {
-            transform: translateX(-100%);
-        }
-
-        #access-gate.open .door-right {
-            transform: translateX(100%);
-        }
-
         .gate-content {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10001;
-            color: rgba(255, 255, 255, 0.8);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-primary);
             text-align: center;
             opacity: 1;
             transition: opacity 0.3s;
@@ -421,8 +372,8 @@
         .gate-spinner {
             width: 50px;
             height: 50px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--glass-border);
+            border-top-color: var(--accent);
             border-radius: 50%;
             animation: gateSpin 0.8s linear infinite;
             margin: 0 auto 20px;
@@ -497,7 +448,7 @@
         </div>
     </div>
 
-    <!-- FROSTED GLASS DOORS OPENING ANIMATION -->
+    <!-- SEAMLESS PORTAL DOORS OPENING ANIMATION -->
     <div id="access-gate">
         <div class="gate-door door-left"></div>
         <div class="gate-door door-right"></div>
@@ -507,50 +458,57 @@
         </div>
     </div>
 
-    <div class="ingestion-card">
-        <div class="card-header">
-            <h1>Logbook Scanner</h1>
-            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">🌓</button>
-        </div>
-        <p class="subtitle">Securely process visual records into structured data.</p>
-
-        <div id="upload-view">
-            <div class="drop-zone" id="drop-zone">
-                <p class="drop-zone-text">Select your input method</p>
-                <div class="action-buttons">
-                    <button class="secondary-btn" id="trigger-camera">📷 Scan Document</button>
-                    <button class="secondary-btn" id="trigger-upload">📁 Browse Gallery</button>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                <div>
+                    <h1>Processed Records</h1>
+                    <p class="subtitle">Structured output from the scanner.</p>
                 </div>
-                <input type="file" id="camera-input" accept="image/*" capture="environment">
-                <input type="file" id="file-input" accept="image/*">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme" style="margin-left: auto;">🌓</button>
             </div>
-
-            <div id="file-preview">
-                <span id="filename">No document selected</span>
-                <span id="remove-file" style="cursor: pointer; color: var(--error-color); padding-left: 15px; font-weight: bold;">&times;</span>
+            <div class="action-group" id="action-buttons" style="display: none;">
+                <button class="action-btn" id="toggle-edit">Enter Edit Mode</button>
+                <button class="action-btn" id="export-csv">Download CSV</button>
+                <button class="action-btn" id="export-json">Download JSON</button>
             </div>
+        </header>
 
-            <button class="primary-btn" id="process-btn" disabled>Initialize Processing</button>
+        <div class="table-wrapper" id="table-container" style="display: none;">
+            <table id="data-table">
+                <thead id="table-head">
+                    </thead>
+                <tbody id="table-body">
+                    </tbody>
+            </table>
         </div>
 
-        <div id="loading-view">
-            <svg width="120" height="120" viewBox="0 0 120 120" class="timer-svg">
-                <circle cx="60" cy="60" r="52" class="timer-circle-bg" />
-                <circle cx="60" cy="60" r="52" class="timer-circle-progress" id="loading-circle" />
-            </svg>
-            <div class="view-title">Transmitting...</div>
-            <div class="view-subtitle">Establishing secure connection</div>
-        </div>
-
-        <div id="success-view">
-            <div class="success-icon">✓</div>
-            <div class="view-title">Transmission Complete</div>
-            <div class="view-subtitle" style="margin-bottom: 2rem;">The record has been securely ingested.</div>
-            <button class="secondary-btn" id="reset-btn" style="width: 100%;">Submit Another Record</button>
+        <div id="empty-state" class="empty-state">
+            <p>No logbook data has been processed yet.</p>
+            <a href="/upload">&larr; Go to Scanner</a>
         </div>
     </div>
 
     <script>
+        const SESSION_KEY = 'barchscan_authenticated';
+        const themeToggle = document.getElementById('theme-toggle');
+        const rootElement = document.documentElement;
+
+        // Check for Light Mode
+        if (localStorage.getItem('barchscan_theme') === 'light') {
+            rootElement.setAttribute('data-theme', 'light');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (rootElement.getAttribute('data-theme') === 'light') {
+                rootElement.removeAttribute('data-theme');
+                localStorage.setItem('barchscan_theme', 'dark');
+            } else {
+                rootElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('barchscan_theme', 'light');
+            }
+        });
+
         // PASSCODE AUTHENTICATION
         const passcodeOverlay = document.getElementById('passcode-overlay');
         const passcodeInput = document.getElementById('passcode-input');
@@ -561,19 +519,15 @@
 
         let attemptCount = 0;
         const MAX_ATTEMPTS = 4;
-        const SESSION_KEY = 'barchscan_authenticated';
 
-        // Check if user is already authenticated in this session
         function isAuthenticated() {
             return sessionStorage.getItem(SESSION_KEY) === 'true';
         }
 
-        // Set session as authenticated
         function setAuthenticated() {
             sessionStorage.setItem(SESSION_KEY, 'true');
         }
 
-        // Show passcode modal
         function showPasscodeModal() {
             passcodeOverlay.style.display = 'flex';
             passcodeInput.focus();
@@ -582,18 +536,15 @@
             passcodeInput.value = '';
         }
 
-        // Hide passcode modal
         function hidePasscodeModal() {
             passcodeOverlay.style.display = 'none';
         }
 
-        // Show access gate (frosted glass doors)
         function showAccessGate() {
             accessGate.style.display = 'block';
             gateText.textContent = 'VERIFYING...';
         }
 
-        // Open access gate (doors slide out)
         function openAccessGate() {
             setTimeout(() => {
                 gateText.textContent = 'ACCESS GRANTED';
@@ -605,10 +556,10 @@
 
             setTimeout(() => {
                 accessGate.style.display = 'none';
+                loadLogbookData();
             }, 1500);
         }
 
-        // Validate passcode with server
         async function validatePasscode(passcode) {
             try {
                 const response = await fetch('/api/validate-passcode', {
@@ -616,7 +567,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ passcode })
                 });
-
                 const data = await response.json();
                 return data.valid === true;
             } catch (error) {
@@ -625,10 +575,8 @@
             }
         }
 
-        // Handle passcode submission
         passcodeBtn.addEventListener('click', async () => {
             const passcode = passcodeInput.value.trim();
-            
             if (!passcode) {
                 passcodeError.textContent = 'Please enter a passcode.';
                 return;
@@ -666,69 +614,26 @@
             }
         });
 
-        // Allow Enter key to submit
         passcodeInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !passcodeBtn.disabled) {
                 passcodeBtn.click();
             }
         });
 
-        // Initialize passcode check on page load
-        window.addEventListener('load', () => {
-            if (!isAuthenticated()) {
-                showPasscodeModal();
-            }
-        });
-
-        // EXISTING CODE
-        const themeToggle = document.getElementById('theme-toggle');
-        const rootElement = document.documentElement;
+        const tableContainer = document.getElementById('table-container');
+        const dataTable = document.getElementById('data-table');
+        const tableHead = document.getElementById('table-head');
+        const tableBody = document.getElementById('table-body');
+        const emptyState = document.getElementById('empty-state');
+        const actionButtons = document.getElementById('action-buttons');
         
-        const savedTheme = localStorage.getItem('barchscan_theme') || 'dark';
-        if (savedTheme === 'light') rootElement.setAttribute('data-theme', 'light');
+        const exportBtn = document.getElementById('export-csv');
+        const exportJsonBtn = document.getElementById('export-json');
+        const toggleEditBtn = document.getElementById('toggle-edit');
 
-        themeToggle.addEventListener('click', () => {
-            if (rootElement.getAttribute('data-theme') === 'light') {
-                rootElement.removeAttribute('data-theme');
-                localStorage.setItem('barchscan_theme', 'dark');
-            } else {
-                rootElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('barchscan_theme', 'light');
-            }
-        });
-
-        // DOM Elements
-        const dropZone = document.getElementById('drop-zone');
-        const triggerCamera = document.getElementById('trigger-camera');
-        const triggerUpload = document.getElementById('trigger-upload');
-        const cameraInput = document.getElementById('camera-input');
-        const fileInput = document.getElementById('file-input');
-        const filePreview = document.getElementById('file-preview');
-        const filenameDisplay = document.getElementById('filename');
-        const removeFileBtn = document.getElementById('remove-file');
-        const processBtn = document.getElementById('process-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        
-        const uploadView = document.getElementById('upload-view');
-        const loadingView = document.getElementById('loading-view');
-        const successView = document.getElementById('success-view');
-        const loadingCircle = document.getElementById('loading-circle');
-
-        const CIRCUMFERENCE = 326.72; 
-        let currentFile = null;
-        let timerInterval = null;
-
-        triggerCamera.addEventListener('click', () => cameraInput.click());
-        triggerUpload.addEventListener('click', () => fileInput.click());
-
-        const handleInputEvent = (e) => {
-            if (e.target.files.length) handleFileSelection(e.target.files[0]);
-        };
-
-        cameraInput.addEventListener('change', handleInputEvent);
-        fileInput.addEventListener('change', handleInputEvent);
-        removeFileBtn.addEventListener('click', resetUI);
-        resetBtn.addEventListener('click', resetUI);
+        let logbookData = [];
+        let currentHeaders = [];
+        let isEditMode = false;
 
         function showToast(message, type = 'info') {
             let toast = document.getElementById('toast-notification');
@@ -747,138 +652,156 @@
             }, 4000);
         }
 
-        function handleFileSelection(file) {
-            if (!file.type.startsWith('image/')) {
-                showToast('Invalid format. Please supply an image.', 'error');
-                return;
+        async function loadLogbookData() {
+            try {
+                const response = await fetch('/api/get-logbook');
+                if (!response.ok) throw new Error('Failed to fetch data');
+                
+                const parsed = await response.json();
+                logbookData = Array.isArray(parsed) ? parsed : [parsed];
+                
+                if (logbookData.length > 0) {
+                    buildDynamicTable(logbookData);
+                    emptyState.style.display = 'none';
+                    tableContainer.style.display = 'block';
+                    actionButtons.style.display = 'flex';
+                }
+            } catch (e) {
+                console.error("Could not retrieve logbook data", e);
+                showToast("Could not retrieve logbook data.", "error");
             }
-            currentFile = file;
-            filenameDisplay.textContent = file.name;
-            dropZone.style.display = 'none';
-            filePreview.style.display = 'flex';
-            processBtn.disabled = false;
         }
 
-        function resetUI() {
-            currentFile = null;
-            cameraInput.value = '';
-            fileInput.value = '';
-            dropZone.style.display = 'block';
-            filePreview.style.display = 'none';
-            processBtn.disabled = true;
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isAuthenticated()) {
+                showPasscodeModal();
+            } else {
+                loadLogbookData();
+            }
+        });
+
+        // 1. DYNAMIC TABLE BUILDER
+        function buildDynamicTable(data) {
+            tableHead.innerHTML = '';
+            tableBody.innerHTML = '';
             
-            uploadView.style.display = 'block';
-            loadingView.style.display = 'none';
-            successView.style.display = 'none';
-            
-            loadingCircle.style.strokeDashoffset = CIRCUMFERENCE;
-            loadingCircle.style.stroke = "var(--accent)";
-        }
+            const headerSet = new Set();
+            data.forEach(row => Object.keys(row).forEach(key => headerSet.add(key)));
+            currentHeaders = Array.from(headerSet);
 
-        function compressImage(file, maxWidth = 1200) {
-            return new Promise((resolve) => {
-                const timeoutFailsafe = setTimeout(() => resolve(file), 3000);
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onerror = () => { clearTimeout(timeoutFailsafe); resolve(file); };
+            const trHead = document.createElement('tr');
+            currentHeaders.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                trHead.appendChild(th);
+            });
+            tableHead.appendChild(trHead);
 
-                reader.onload = event => {
-                    const img = new Image();
-                    img.onerror = () => { clearTimeout(timeoutFailsafe); resolve(file); };
-                    img.onload = () => {
-                        try {
-                            let width = img.width;
-                            let height = img.height;
-                            if (width > maxWidth) {
-                                height = Math.round((height * maxWidth) / width);
-                                width = maxWidth;
-                            }
-                            const canvas = document.createElement('canvas');
-                            canvas.width = width;
-                            canvas.height = height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.fillStyle = "#FFFFFF";
-                            ctx.fillRect(0, 0, width, height);
-                            ctx.drawImage(img, 0, 0, width, height);
-
-                            canvas.toBlob((blob) => {
-                                clearTimeout(timeoutFailsafe);
-                                if (blob) {
-                                    const newFilename = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
-                                    resolve(new File([blob], newFilename, { type: 'image/jpeg' }));
-                                } else resolve(file);
-                            }, 'image/jpeg', 0.7);
-                        } catch (err) {
-                            clearTimeout(timeoutFailsafe);
-                            resolve(file);
-                        }
-                    };
-                    img.src = event.target.result;
-                };
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                currentHeaders.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = row[header] !== undefined ? row[header] : "";
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
             });
         }
 
-        processBtn.addEventListener('click', async () => {
-            if (!currentFile) return;
+        // 2. EXCEL EDIT MODE TOGGLE
+        toggleEditBtn.addEventListener('click', () => {
+            isEditMode = !isEditMode;
+            const cells = tableBody.querySelectorAll('td');
 
-            // Transition to the isolated loading state
-            uploadView.style.display = 'none';
-            loadingView.style.display = 'block';
-
-            // Begin continuous timer routine (60s threshold)
-            let startTime = Date.now();
-            let hasCrossedThreshold = false;
-
-            timerInterval = setInterval(() => {
-                let elapsed = Date.now() - startTime;
-                
-                if (elapsed <= 60000) {
-                    let progress = elapsed / 60000;
-                    loadingCircle.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
-                } else {
-                    if (!hasCrossedThreshold) {
-                        hasCrossedThreshold = true;
-                        loadingCircle.style.stroke = "var(--error-color)";
-                    }
-                    // Loop the animation if it breaches the optimal window
-                    let overtime = elapsed - 60000;
-                    let progress = (overtime % 60000) / 60000;
-                    loadingCircle.style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
-                }
-            }, 50);
-
-            try {
-                const optimizedFile = await compressImage(currentFile);
-                const formData = new FormData();
-                formData.append('file', optimizedFile);
-
-                const response = await fetch('/api/process-logbook', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    // Force a standard exception block. Raw backend issues will be sanitized below.
-                    throw new Error("Generic failure."); 
-                }
-
-                // The uploader is not redirected, maintaining the security boundary.
-                const result = await response.json();
-                
-                clearInterval(timerInterval);
-                loadingCircle.style.strokeDashoffset = 0;
-
-                setTimeout(() => {
-                    loadingView.style.display = 'none';
-                    successView.style.display = 'block';
-                }, 500);
-
-            } catch (error) {
-                clearInterval(timerInterval);
-                // Sanitized failure flag – prevents backend fingerprints from reaching the interface.
-                showToast("Upload failed: Unable to establish a secure transmission line. Please try again.", "error");
-                resetUI();
+            if (isEditMode) {
+                dataTable.classList.add('excel-mode');
+                toggleEditBtn.textContent = 'Save Changes';
+                toggleEditBtn.classList.add('active');
+                cells.forEach(td => td.contentEditable = "true");
+            } else {
+                dataTable.classList.remove('excel-mode');
+                toggleEditBtn.textContent = 'Enter Edit Mode';
+                toggleEditBtn.classList.remove('active');
+                cells.forEach(td => td.contentEditable = "false");
+                saveTableToMemory();
             }
+        });
+
+        async function saveTableToMemory() {
+            const rows = Array.from(tableBody.querySelectorAll('tr'));
+            const newData = rows.map(tr => {
+                const rowObj = {};
+                const cells = Array.from(tr.querySelectorAll('td'));
+                cells.forEach((td, index) => {
+                    rowObj[currentHeaders[index]] = td.textContent.trim();
+                });
+                return rowObj;
+            });
+            
+            logbookData = newData;
+            
+            toggleEditBtn.disabled = true;
+            toggleEditBtn.textContent = 'Saving...';
+            
+            try {
+                const response = await fetch('/api/update-logbook', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(logbookData)
+                });
+                if (!response.ok) throw new Error('Failed to save to database');
+                showToast('Changes successfully updated!', 'success');
+            } catch (e) {
+                console.error('Error saving data:', e);
+                showToast('Error saving data to database.', 'error');
+            } finally {
+                toggleEditBtn.disabled = false;
+                toggleEditBtn.textContent = 'Enter Edit Mode';
+            }
+        }
+
+        // 3. DYNAMIC CSV EXPORT
+        exportBtn.addEventListener('click', () => {
+            if (logbookData.length === 0) return;
+
+            const headers = currentHeaders.map(h => `"${h}"`).join(',');
+            const rows = logbookData.map(obj => {
+                return currentHeaders.map(header => {
+                    const val = obj[header] || '';
+                    return `"${val.replace(/"/g, '""')}"`;
+                }).join(',');
+            }).join('\n');
+
+            const csvContent = `${headers}\n${rows}`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'barchscan_log.csv');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // 4. JSON EXPORT
+        exportJsonBtn.addEventListener('click', () => {
+            if (logbookData.length === 0) return;
+            
+            const jsonContent = JSON.stringify(logbookData, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json' });
+            const link = document.createElement('a');
+            
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'barchscan_log.json');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         });
     </script>
 </body>
