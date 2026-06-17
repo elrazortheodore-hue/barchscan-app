@@ -1648,79 +1648,6 @@
         #new-sheet-btn:active {
             transform: scale(0.97);
         }
-        
-                /* ----- Cloudinary image list (sidebar) ----- */
-        .cloudinary-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 6px 8px;
-            background: var(--bg-surface);
-            border-radius: 6px;
-            border: 1px solid var(--glass-border);
-            transition: background 0.2s;
-        }
-        .cloudinary-item:hover {
-            background: var(--hover-overlay);
-        }
-        .cloudinary-item img {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
-            border-radius: 4px;
-            border: 1px solid var(--glass-border);
-            flex-shrink: 0;
-            cursor: pointer;
-        }
-        .cloudinary-item .info {
-            flex: 1;
-            min-width: 0;
-        }
-        .cloudinary-item .info .name {
-            font-size: 0.7rem;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .cloudinary-item .info .date {
-            font-size: 0.6rem;
-            color: var(--text-secondary);
-        }
-        .cloudinary-item .actions {
-            display: flex;
-            gap: 4px;
-        }
-        .cloudinary-item .actions button {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-size: 0.6rem;
-            cursor: pointer;
-            color: var(--text-primary);
-            transition: all 0.15s;
-            white-space: nowrap;
-        }
-        .cloudinary-item .actions button:hover {
-            background: var(--hover-overlay);
-            border-color: var(--accent);
-        }
-        .cloudinary-item .actions .reprocess-btn {
-            border-color: var(--info-color);
-        }
-        .cloudinary-item .actions .reprocess-btn:hover {
-            background: rgba(96, 165, 250, 0.1);
-            border-color: var(--info-color);
-        }
-        .cloudinary-item .actions .delete-btn {
-            border-color: var(--error-color);
-        }
-        .cloudinary-item .actions .delete-btn:hover {
-            background: rgba(255, 85, 85, 0.1);
-            border-color: var(--error-color);
-        }
-        
     </style>
 </head>
 <body>
@@ -1909,54 +1836,33 @@ Click 'Run' to execute."></textarea>
         </div>
     </div>
 
+    <!-- ===== SIDEBAR BACKDROP ===== -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
-
-<!-- ===== SIDEBAR BACKDROP ===== --😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭>
-<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
-
-<!-- SIDEBAR (left) -->
-<div class="sidebar" id="sidebar">
-    <button class="sidebar-close-btn" id="sidebar-close-btn">✕</button>
-    <h3>📋 Sheets</h3>
-    <button id="new-sheet-btn">+ New Sheet</button>
-    <ul id="sheet-list" class="sheet-list"></ul>
-
-    <!-- ===== CLOUDINARY IMAGES SECTION ===== -->
-    <hr style="border-color: var(--glass-border); margin: 0.8rem 0;" />
-    <div id="cloudinary-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-            <h3 style="font-size: 0.95rem; font-weight: 600;">🖼️ Uploaded Images</h3>
-            <button id="refresh-cloudinary" style="padding: 2px 8px; font-size: 0.7rem; background: var(--bg-surface); border: 1px solid var(--glass-border); border-radius: 4px; color: var(--text-primary); cursor: pointer;">
-                ⟳ Refresh
-            </button>
+    <!-- ===== SIDEBAR (left) ===== -->
+    <div class="sidebar" id="sidebar">
+        <button class="sidebar-close-btn" id="sidebar-close-btn">✕</button>
+        <h3>📋 Sheets</h3>
+        <button id="new-sheet-btn">+ New Sheet</button>
+        <ul id="sheet-list" class="sheet-list"></ul>
+        <div class="sidebar-actions">
+            <button id="sidebar-macro-btn">⚡ Macros</button>
+            <button id="sidebar-clear-db-btn" style="color:var(--error)">🗑️ Clear DB</button>
         </div>
-        <div id="cloudinary-list" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-            <!-- Images will be rendered here -->
-            <div style="color: var(--text-secondary); font-size: 0.75rem; text-align: center; padding: 0.5rem;">
-                No images loaded. Click Refresh.
-            </div>
-        </div>
+        <small style="color:var(--text-muted);margin-top:auto;font-size:0.7rem">Sheets saved on device only</small>
     </div>
-    <!-- ===== END CLOUDINARY SECTION ===== -->
 
-    <div class="sidebar-actions">
-        <button id="sidebar-macro-btn">⚡ Macros</button>
-        <!-- Clear DB button removed from sidebar (only in dropdown) -->
-    </div>
-    <small style="color:var(--text-muted);margin-top:auto;font-size:0.7rem">Sheets saved locally</small>
-</div>
-
-</div>    <!-- ===== MAIN DASHBOARD ===== -->
+    <!-- ===== MAIN DASHBOARD ===== -->
     <div class="dashboard-container">
         <header class="dashboard-header">
             <div class="header-left">
                 <button class="action-btn" id="sidebar-toggle" title="Sheets">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
                 </button>
-                <div class="brand-icon"></div>
+                <div class="brand-icon">📊</div>
                 <div>
                     <h1>BarchScan</h1>
-                    <div class="subtitle">Data Ledger · Structured scanned output</div>
+                    <div class="subtitle">Data Ledger · Structured scanner output</div>
                 </div>
             </div>
             <div class="header-actions">
@@ -2114,8 +2020,6 @@ Click 'Run' to execute."></textarea>
             <a href="/upload">&larr; Go to Scanner</a>
         </div>
     </div>
-
-    
 
     <!-- ============================================================ -->
     <!-- ===== JAVASCRIPT (functionality unchanged) ===== -->
@@ -3916,170 +3820,6 @@ Click 'Run' to execute."></textarea>
         console.log('✅ BarchScan loaded with glass design.');
         console.log('📌 Keyboard shortcuts: 1=Save, 2=Edit, 3=Undo, 4=Redo, 5=Find, 6=Filter, 7=Sort↑, 8=Sort↓, 9=Freeze, 0=Wrap');
         console.log('📌 Edit → Save morphs; Cancel discards changes.');
-
-    // ============================================================
-//   CLOUDINARY IMAGES – Safe implementation😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭
-// ============================================================
-
-async function loadCloudinaryImages() {
-    const container = document.getElementById('cloudinary-list');
-    if (!container) return; // safety
-
-    container.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.75rem; text-align: center; padding: 0.5rem;">Loading...</div>';
-
-    try {
-        const res = await fetch('/api/cloudinary-images');
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        const images = data.images || [];
-
-        if (images.length === 0) {
-            container.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.75rem; text-align: center; padding: 0.5rem;">No images found.</div>';
-            return;
-        }
-
-        container.innerHTML = '';
-        images.forEach(img => {
-            const item = document.createElement('div');
-            item.className = 'cloudinary-item';
-
-            // Thumbnail – click to enlarge
-            const thumb = document.createElement('img');
-            thumb.src = img.url;
-            thumb.alt = img.public_id;
-            thumb.loading = 'lazy';
-            thumb.addEventListener('click', () => {
-                window.open(img.url, '_blank');
-            });
-
-            const info = document.createElement('div');
-            info.className = 'info';
-            const nameSpan = document.createElement('div');
-            nameSpan.className = 'name';
-            nameSpan.textContent = img.public_id.split('/').pop() || img.public_id;
-            const dateSpan = document.createElement('div');
-            dateSpan.className = 'date';
-            dateSpan.textContent = img.uploadedAt ? new Date(img.uploadedAt).toLocaleDateString() : '';
-
-            info.appendChild(nameSpan);
-            info.appendChild(dateSpan);
-
-            const actions = document.createElement('div');
-            actions.className = 'actions';
-
-            // Download button
-            const downloadBtn = document.createElement('button');
-            downloadBtn.textContent = '⬇';
-            downloadBtn.title = 'Download image';
-            downloadBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.open(img.url, '_blank');
-            });
-
-            // Reprocess button
-            const reprocessBtn = document.createElement('button');
-            reprocessBtn.textContent = '↻';
-            reprocessBtn.className = 'reprocess-btn';
-            reprocessBtn.title = 'Reprocess this image';
-            reprocessBtn.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                reprocessBtn.disabled = true;
-                reprocessBtn.textContent = '…';
-                try {
-                    const res = await fetch('/api/reprocess-image', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ public_id: img.public_id, imageUrl: img.url })
-                    });
-                    const data = await res.json();
-                    if (res.ok) {
-                        showToast('Image reprocessed successfully!', 'success');
-                    } else {
-                        showToast('Reprocess failed: ' + (data.error || 'unknown error'), 'error');
-                    }
-                } catch (err) {
-                    showToast('Error reprocessing image.', 'error');
-                } finally {
-                    reprocessBtn.disabled = false;
-                    reprocessBtn.textContent = '↻';
-                }
-            });
-
-            // Delete button
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = '✕';
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.title = 'Delete image from Cloudinary';
-            deleteBtn.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                if (!confirm(`Delete "${img.public_id}" permanently?`)) return;
-                deleteBtn.disabled = true;
-                deleteBtn.textContent = '…';
-                try {
-                    const res = await fetch('/api/delete-image', {
-                        method: 'DELETE',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ public_id: img.public_id })
-                    });
-                    if (res.ok) {
-                        showToast('Image deleted successfully.', 'success');
-                        loadCloudinaryImages(); // refresh the list
-                    } else {
-                        const data = await res.json();
-                        showToast('Delete failed: ' + (data.error || 'unknown error'), 'error');
-                    }
-                } catch (err) {
-                    showToast('Error deleting image.', 'error');
-                } finally {
-                    deleteBtn.disabled = false;
-                    deleteBtn.textContent = '✕';
-                }
-            });
-
-            actions.appendChild(downloadBtn);
-            actions.appendChild(reprocessBtn);
-            actions.appendChild(deleteBtn);
-
-            item.appendChild(thumb);
-            item.appendChild(info);
-            item.appendChild(actions);
-            container.appendChild(item);
-        });
-
-    } catch (err) {
-        console.error('Failed to load Cloudinary images:', err);
-        container.innerHTML = '<div style="color: var(--error-color); font-size: 0.75rem; text-align: center; padding: 0.5rem;">⚠️ Failed to load images.</div>';
-        showToast('Could not load uploaded images.', 'error');
-    }
-}
-
-// ---- Attach event listeners safely ----
-document.addEventListener('DOMContentLoaded', function() {
-    const refreshBtn = document.getElementById('refresh-cloudinary');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', loadCloudinaryImages);
-    }
-
-    // Auto-load when sidebar opens (patch the existing openSidebar)
-    const originalOpenSidebar = window.openSidebar;
-    if (typeof originalOpenSidebar === 'function') {
-        window.openSidebar = function() {
-            originalOpenSidebar();
-            const list = document.getElementById('cloudinary-list');
-            if (list && list.children.length <= 1) {
-                loadCloudinaryImages();
-            }
-        };
-    } else {
-        // Fallback: load when sidebar toggle is clicked
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function() {
-                setTimeout(loadCloudinaryImages, 400);
-            });
-        }
-    }
-});
     </script>
 </body>
 </html>
