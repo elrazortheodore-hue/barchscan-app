@@ -4098,6 +4098,32 @@ Click 'Run' to execute."></textarea>
             }
         }
 
+        // Override browser alert with a custom UI modal
+window.originalAlert = window.alert;
+window.alert = function(message) {
+    let overlay = document.getElementById('custom-alert-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'custom-alert-overlay';
+        overlay.className = 'modal-overlay';
+        overlay.style.display = 'flex';
+        overlay.innerHTML = `
+            <div class="modal-box" style="max-width:400px;">
+                <p id="custom-alert-message" style="margin-bottom:1.5rem; word-break:break-word;"></p>
+                <div class="modal-btn-row" style="justify-content:center;">
+                    <button class="modal-btn primary" id="custom-alert-ok">OK</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        overlay.querySelector('#custom-alert-ok').addEventListener('click', function() {
+            overlay.style.display = 'none';
+        });
+    }
+    const msgEl = overlay.querySelector('#custom-alert-message');
+    if (msgEl) msgEl.textContent = String(message);
+    overlay.style.display = 'flex';
+};
         
     </script>
 </body>
