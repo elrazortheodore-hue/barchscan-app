@@ -157,7 +157,7 @@ EXTRACTION RULES:
             console.warn("Could not remove temporary file:", cleanupError);
         }
 
-        // 6. Append to JSONBin
+        // 6. Append to JSONBin with Deduplication
         if (JSONBIN_MASTER_KEY && JSONBIN_BIN_ID) {
             try {
                 const getRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
@@ -171,22 +171,82 @@ EXTRACTION RULES:
                     if (!Array.isArray(currentData)) currentData = [];
                 }
 
-                const mergedData = [...currentData, ...structuredData];
+                // --- Deduplication Logic ---
+                const uniqueNewData = [];
 
-                const putRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': JSONBIN_MASTER_KEY
-                    },
-                    body: JSON.stringify(mergedData)
-                });
+                for (const newRow of structuredData) {
+                    if (typeof newRow !== 'object' || newRow === null) continue;
 
-                if (!putRes.ok) {
-                    console.error("Failed to update JSONBin:", await putRes.text());
-                } else {
-                    structuredData = mergedData;
+                    let isDuplicate = false;
+
+                    // 1. Check against existing JSONBin data
+                    for (const existingRow of currentData) {
+                        if (typeof existingRow !== 'object' || existingRow === null) continue;
+
+                        const allKeys = new Set([...Object.keys(newRow), ...Object.keys(existingRow)]);
+                        let diffCount = 0;
+
+                        for (const key of allKeys) {
+                            if (newRow[key] !== existingRow[key]) {
+                                diffCount++;
+                            }
+                        }
+
+                        // If 0 or 1 field differs, it's considered a duplicate
+                        if (diffCount <= 1) {
+                            isDuplicate = true;
+                            break;
+                        }
+                    }
+
+                    // 2. Check against already processed uniqueNewData (handles Gemini outputting double rows)
+                    if (!isDuplicate) {
+                        for (const addedRow of uniqueNewData) {
+                            const allKeys = new Set([...Object.keys(newRow), ...Object.keys(addedRow)]);
+                            let diffCount = 0;
+                            for (const key of allKeys) {
+                                if (newRow[key] !== addedRow[key]) {
+                                    diffCount++;
+                                }
+                            }
+
+                            if (diffCount <= 1) {
+                                isDuplicate = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!isDuplicate) {
+                        uniqueNewData.push(newRow);
+                    } else {
+                        console.log("Duplicate row prevented:", newRow);
+                    }
                 }
+
+                // Only perform the PUT request if there is actually new data to append
+                if (uniqueNewData.length > 0) {
+                    const mergedData = [...currentData, ...uniqueNewData];
+
+                    const putRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': JSONBIN_MASTER_KEY
+                        },
+                        body: JSON.stringify(mergedData)
+                    });
+
+                    if (!putRes.ok) {
+                        console.error("Failed to update JSONBin:", await putRes.text());
+                    } else {
+                        structuredData = mergedData;
+                    }
+                } else {
+                    console.log("No new unique data to append. Skipping JSONBin update.");
+                    structuredData = currentData; // Return the current state without pushing empty edits
+                }
+
             } catch (dbError) {
                 console.error("Database Error:", dbError);
             }
