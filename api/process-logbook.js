@@ -72,6 +72,7 @@ Here is one sample row showing the expected format for each field:
 ${JSON.stringify(sampleRow)}
 
 MATCHING RULES (follow strictly):
+- If from the image you notice the headers take them then
 - If a field in the new document clearly and confidently represents the same information as an existing header, reuse that EXACT header name (same spelling, case, and wording).
 - Only create a new header if you are confident the field does not match any existing header in meaning.
 - Do NOT create near-duplicate headers (e.g. do not create "Date" if "date" already exists, do not create "Officer" if "Officer Name" already exists). When in doubt about whether two headers mean the same thing, prefer reusing the existing one only if you are highly confident; otherwise create a new, clearly distinct header.
@@ -80,14 +81,14 @@ MATCHING RULES (follow strictly):
         }
 
         const defaultPrompt = `
-You are extracting structured data from a photographed logbook page. Your output will be merged into an existing dataset, so consistency with the existing schema matters.
+You are extracting structured data from a photographed page. Your output will be merged into an existing dataset, so consistency with the existing schema matters.
 
 ${schemaContext}
 
 EXTRACTION RULES:
 1. Identify every column/field visible in the document, including handwritten annotations, stamps, marginal notes, and partially legible text — do not skip or summarize any visible data.
 2. Map each field to an existing header if the matching rules above apply; otherwise infer a clear, descriptive new header.
-3. Preserve all original values exactly as written — do not paraphrase, correct spelling, normalize formatting, or infer values that are not visibly present. If a value is illegible, set it to null rather than guessing.
+3. Preserve all original values exactly as written — do not paraphrase, correct spelling, normalize formatting, or infer values that are not visibly present. If a value is illegible, set it to null then put your suggested value in bracket.
 4. Each row in the document becomes one object in the output array.
 5. Output strictly a valid JSON array. No conversational text, no markdown wrappers, no backticks, no explanations.
 `;
