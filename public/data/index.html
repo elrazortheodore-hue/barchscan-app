@@ -1911,8 +1911,7 @@ Click 'Run' to execute."></textarea>
 
     <!-- ===== SIDEBAR BACKDROP ===== -->
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
-
-  <!-- SIDEBAR (left) -->
+<!-- SIDEBAR (left) -->
 <div class="sidebar" id="sidebar">
     <button class="sidebar-close-btn" id="sidebar-close-btn">✕</button>
     <h3>📋 Sheets</h3>
@@ -1935,13 +1934,15 @@ Click 'Run' to execute."></textarea>
             </div>
         </div>
     </div>
-    <!-- ===== END NEW SECTION ===== -->
+    <!-- ===== END NEW SECTION ===== 😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭-->
 
     <div class="sidebar-actions">
         <button id="sidebar-macro-btn">⚡ Macros</button>
+        
     </div>
     <small style="color:var(--text-muted);margin-top:auto;font-size:0.7rem">Sheets saved locally</small>
 </div>
+    
     <!-- ===== MAIN DASHBOARD ===== -->
     <div class="dashboard-container">
         <header class="dashboard-header">
@@ -1952,7 +1953,7 @@ Click 'Run' to execute."></textarea>
                 <div class="brand-icon">📊</div>
                 <div>
                     <h1>BarchScan</h1>
-                    <div class="subtitle">Data Ledger · Structured scanner output</div>
+                    <div class="subtitle">Data Ledger · Structured scanned output</div>
                 </div>
             </div>
             <div class="header-actions">
@@ -3913,11 +3914,14 @@ Click 'Run' to execute."></textarea>
         console.log('📌 Keyboard shortcuts: 1=Save, 2=Edit, 3=Undo, 4=Redo, 5=Find, 6=Filter, 7=Sort↑, 8=Sort↓, 9=Freeze, 0=Wrap');
         console.log('📌 Edit → Save morphs; Cancel discards changes.');
 
-        // ============================================================
-//   CLOUDINARY IMAGES – Load, render, and manage in sidebar
+    // ============================================================
+//   CLOUDINARY IMAGES – Safe implementation😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭
 // ============================================================
+
 async function loadCloudinaryImages() {
     const container = document.getElementById('cloudinary-list');
+    if (!container) return; // safety
+
     container.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.75rem; text-align: center; padding: 0.5rem;">Loading...</div>';
 
     try {
@@ -4041,31 +4045,38 @@ async function loadCloudinaryImages() {
 
     } catch (err) {
         console.error('Failed to load Cloudinary images:', err);
-        container.innerHTML = '<div style="color: var(--error-color); font-size: 0.75rem; text-align: center; padding: 0.5rem;"> Failed to load images.</div>';
+        container.innerHTML = '<div style="color: var(--error-color); font-size: 0.75rem; text-align: center; padding: 0.5rem;">⚠️ Failed to load images.</div>';
         showToast('Could not load uploaded images.', 'error');
     }
 }
 
-// Refresh button
-document.getElementById('refresh-cloudinary').addEventListener('click', loadCloudinaryImages);
+// ---- Attach event listeners safely ----
+document.addEventListener('DOMContentLoaded', function() {
+    const refreshBtn = document.getElementById('refresh-cloudinary');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', loadCloudinaryImages);
+    }
 
-// Auto-load when sidebar opens (patch the existing openSidebar function)
-const originalOpenSidebar = window.openSidebar;
-if (typeof originalOpenSidebar === 'function') {
-    window.openSidebar = function() {
-        originalOpenSidebar();
-        // Load images if not already loaded
-        const list = document.getElementById('cloudinary-list');
-        if (list && list.children.length <= 1) {
-            loadCloudinaryImages();
+    // Auto-load when sidebar opens (patch the existing openSidebar)
+    const originalOpenSidebar = window.openSidebar;
+    if (typeof originalOpenSidebar === 'function') {
+        window.openSidebar = function() {
+            originalOpenSidebar();
+            const list = document.getElementById('cloudinary-list');
+            if (list && list.children.length <= 1) {
+                loadCloudinaryImages();
+            }
+        };
+    } else {
+        // Fallback: load when sidebar toggle is clicked
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                setTimeout(loadCloudinaryImages, 400);
+            });
         }
-    };
-} else {
-    // If openSidebar is not defined (unlikely), just add a separate listener
-    document.getElementById('sidebar-toggle').addEventListener('click', () => {
-        setTimeout(loadCloudinaryImages, 300);
-    });
-}
+    }
+});
     </script>
 </body>
 </html>
