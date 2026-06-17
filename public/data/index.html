@@ -87,7 +87,7 @@
 
         body {
             min-height: 100vh;
-            padding: 1.5rem 1rem;
+            padding: 0.5rem 1rem 1.5rem 1rem;
             display: flex;
             justify-content: center;
             background: var(--bg-primary);
@@ -118,15 +118,29 @@
             max-width: 1440px;
             position: relative;
             padding: 0 0.5rem;
-        }
-
-        /* ----- HEADER (glass) ----- */
-        .dashboard-header {
             display: flex;
             flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* ----- STICKY HEADERS (Desktop First) ----- */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-primary);
+            padding-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--radius-lg);
+        }
+
+        .dashboard-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
             gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding: 1.25rem 1.5rem;
+            padding: 0.75rem 1.5rem;
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
@@ -136,14 +150,6 @@
             transition: background var(--duration-fast) ease;
         }
 
-        @media (min-width: 640px) {
-            .dashboard-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
         .header-left {
             display: flex;
             align-items: center;
@@ -151,22 +157,20 @@
         }
 
         .header-left .brand-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: var(--accent);
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            font-weight: 700;
             color: #fff;
             box-shadow: 0 4px 12px var(--accent-glow);
             flex-shrink: 0;
         }
 
         .header-left h1 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 600;
             letter-spacing: -0.02em;
             background: linear-gradient(135deg, var(--text-primary) 60%, var(--text-secondary));
@@ -176,7 +180,7 @@
         }
 
         .header-left .subtitle {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
             margin-top: 2px;
             -webkit-text-fill-color: var(--text-secondary);
@@ -189,7 +193,15 @@
             flex-wrap: wrap;
         }
 
-        /* ----- BUTTONS (Fluent style) ----- */
+        /* ----- ACTION BUTTONS (Fluent style) ----- */
+        .action-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0.5rem 0.5rem 0 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
         button {
             font-family: var(--font);
             cursor: pointer;
@@ -199,12 +211,12 @@
         }
 
         .action-btn {
-            padding: 0.45rem 0.9rem;
+            padding: 0.4rem 0.8rem;
             background: var(--bg-surface);
             color: var(--text-primary);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-sm);
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
@@ -327,15 +339,12 @@
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-md);
             padding: 6px 12px;
-            margin-bottom: 0.75rem;
             flex-wrap: wrap;
             gap: 4px;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.20);
             transition: all var(--duration-med) ease;
+            margin-top: 2px;
         }
         #edit-toolbar.visible {
             display: flex;
@@ -487,9 +496,9 @@
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-md);
             padding: 4px 14px;
-            margin-bottom: 0.6rem;
             font-size: 0.82rem;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+            margin-top: 2px;
         }
         #formula-bar.visible {
             display: flex;
@@ -524,7 +533,6 @@
             display: none;
             gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 0.6rem;
             align-items: center;
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
@@ -533,6 +541,7 @@
             border-radius: var(--radius-md);
             padding: 6px 14px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+            margin-top: 2px;
         }
         #filter-bar.visible {
             display: flex;
@@ -595,6 +604,8 @@
             z-index: 1;
             width: 100%;
             transition: all var(--duration-med) ease;
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
         }
 
         /* ----- TABLE ----- */
@@ -1175,145 +1186,6 @@
             border-color: var(--glass-border);
         }
 
-        /* ----- SIDEBAR (glass, left) ----- */
-        .sidebar {
-            position: fixed;
-            left: -340px;
-            top: 0;
-            width: 320px;
-            height: 100%;
-            background: var(--bg-secondary);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-right: 1px solid var(--glass-border);
-            z-index: 1100;
-            transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-            padding: 1.5rem 1.2rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            box-shadow: 8px 0 40px rgba(0, 0, 0, 0.30);
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .sidebar-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.40);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            z-index: 1099;
-            display: none;
-        }
-        .sidebar-backdrop.visible {
-            display: block;
-            animation: fadeIn var(--duration-med) ease;
-        }
-
-        .sidebar h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.2rem;
-            letter-spacing: -0.01em;
-        }
-        .sidebar input {
-            width: 100%;
-            padding: 0.4rem 0.7rem;
-            background: var(--bg-surface);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            outline: none;
-            transition: border var(--duration-fast) ease;
-        }
-        .sidebar input:focus {
-            border-color: var(--accent);
-        }
-        .sheet-list {
-            list-style: none;
-            max-height: 220px;
-            overflow-y: auto;
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-sm);
-            background: var(--bg-surface);
-        }
-        .sheet-list li {
-            padding: 0.45rem 0.7rem;
-            cursor: pointer;
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            transition: background var(--duration-fast) ease;
-        }
-        .sheet-list li:last-child {
-            border-bottom: none;
-        }
-        .sheet-list li.active {
-            background: var(--accent-glow);
-            font-weight: 600;
-            border-left: 3px solid var(--accent);
-        }
-        .sheet-list li:hover {
-            background: var(--bg-surface);
-        }
-        .sheet-list li button {
-            background: none;
-            border: none;
-            color: var(--error);
-            cursor: pointer;
-            font-size: 0.8rem;
-            padding: 2px 6px;
-            border-radius: var(--radius-sm);
-            transition: background var(--duration-fast) ease;
-        }
-        .sheet-list li button:hover {
-            background: rgba(255, 107, 107, 0.10);
-        }
-        .sidebar-actions {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .sidebar-actions button {
-            flex: 1;
-            min-width: 70px;
-            padding: 0.4rem 0.5rem;
-            background: var(--bg-surface);
-            color: var(--text-primary);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all var(--duration-fast) ease;
-        }
-        .sidebar-actions button:hover {
-            background: var(--glass-border);
-        }
-        .sidebar-close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: color var(--duration-fast) ease;
-            padding: 4px 8px;
-            border-radius: var(--radius-sm);
-        }
-        .sidebar-close-btn:hover {
-            color: var(--text-primary);
-            background: var(--bg-surface);
-        }
-
         /* ----- GLOBAL ERROR (glass) ----- */
         #global-error-container {
             position: fixed;
@@ -1457,28 +1329,28 @@
         /* ----- RESPONSIVE ----- */
         @media (max-width: 640px) {
             body {
-                padding: 0.75rem 0.5rem;
+                padding: 0.5rem 0.25rem;
             }
             .dashboard-header {
-                padding: 1rem;
+                padding: 0.75rem;
                 flex-direction: column;
                 align-items: stretch;
-                gap: 0.75rem;
+                gap: 0.5rem;
             }
             .header-left h1 {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
             }
             .header-left .brand-icon {
-                width: 34px;
-                height: 34px;
-                font-size: 1rem;
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
             }
             .header-actions {
                 justify-content: flex-start;
             }
             .action-btn {
-                padding: 0.35rem 0.7rem;
-                font-size: 0.7rem;
+                padding: 0.3rem 0.6rem;
+                font-size: 0.65rem;
             }
             .modal-box {
                 padding: 1.5rem 1.2rem;
@@ -1487,11 +1359,6 @@
             #passcode-modal {
                 padding: 1.8rem 1.2rem;
                 max-width: 94%;
-            }
-            .sidebar {
-                width: 280px;
-                left: -300px;
-                padding: 1.2rem 1rem;
             }
             .toast {
                 bottom: 16px;
@@ -1503,7 +1370,7 @@
             table td,
             table th {
                 padding: 0.4rem 0.6rem;
-                font-size: 0.78rem;
+                font-size: 0.75rem;
             }
             #edit-toolbar {
                 padding: 4px 8px;
@@ -1513,8 +1380,8 @@
                 padding: 3px 5px;
             }
             .tb-btn svg {
-                width: 13px;
-                height: 13px;
+                width: 12px;
+                height: 12px;
             }
             #install-banner {
                 flex-direction: column;
@@ -1527,7 +1394,10 @@
                 justify-content: center;
             }
             #filter-input {
-                width: 140px;
+                width: 120px;
+            }
+            .table-wrapper {
+                max-height: calc(100vh - 400px);
             }
         }
 
@@ -1627,26 +1497,89 @@
             font-weight: 400;
         }
 
-        /* ===== BUTTON: new sheet ===== */
-        #new-sheet-btn {
-            width: 100%;
-            padding: 0.45rem;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 0.82rem;
+        /* ===== CLOUDINARY PANEL ===== */
+        #cloudinary-panel {
+            display: none;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1rem;
+            margin-top: 2px;
+        }
+        #cloudinary-panel.visible {
+            display: block;
+            animation: slideDown var(--duration-med) var(--ease-spring);
+        }
+        .cloudinary-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 8px;
+            background: var(--bg-surface);
+            border-radius: 6px;
+            border: 1px solid var(--glass-border);
+            transition: background 0.2s;
+        }
+        .cloudinary-item:hover {
+            background: var(--hover-overlay);
+        }
+        .cloudinary-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--glass-border);
+            flex-shrink: 0;
             cursor: pointer;
-            transition: all var(--duration-fast) ease;
-            box-shadow: 0 4px 12px var(--accent-glow);
         }
-        #new-sheet-btn:hover {
-            opacity: 0.88;
-            transform: translateY(-1px);
+        .cloudinary-item .info {
+            flex: 1;
+            min-width: 0;
         }
-        #new-sheet-btn:active {
-            transform: scale(0.97);
+        .cloudinary-item .info .name {
+            font-size: 0.7rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .cloudinary-item .info .date {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+        }
+        .cloudinary-item .actions {
+            display: flex;
+            gap: 4px;
+        }
+        .cloudinary-item .actions button {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .cloudinary-item .actions button:hover {
+            background: var(--hover-overlay);
+            border-color: var(--accent);
+        }
+        .cloudinary-item .actions .reprocess-btn {
+            border-color: var(--info-color);
+        }
+        .cloudinary-item .actions .reprocess-btn:hover {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: var(--info-color);
+        }
+        .cloudinary-item .actions .delete-btn {
+            border-color: var(--error-color);
+        }
+        .cloudinary-item .actions .delete-btn:hover {
+            background: rgba(255, 85, 85, 0.1);
+            border-color: var(--error-color);
         }
     </style>
 </head>
@@ -1667,10 +1600,15 @@
     <!-- ===== PASSCODE MODAL (text input, no password save) ===== -->
     <div id="passcode-overlay">
         <div id="passcode-modal">
-            <h2>🔐 Access Required</h2>
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;vertical-align:middle;margin-right:8px;">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Access Required
+            </h2>
             <p>Enter the passcode to continue</p>
             <div class="passcode-input-group">
-                <!-- type="text" so browser never offers to save password -->
                 <input type="text" id="passcode-input" placeholder="Enter passcode" autocomplete="off" spellcheck="false">
             </div>
             <div class="passcode-error" id="passcode-error"></div>
@@ -1691,7 +1629,13 @@
     <!-- ===== CLEAR DATABASE MODAL ===== -->
     <div class="modal-overlay" id="clear-db-overlay">
         <div class="modal-box" id="clear-db-modal">
-            <h2 style="color:var(--error)">⚠ Clear Database</h2>
+            <h2 style="color:var(--error)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                Clear Database
+            </h2>
             <div class="step-indicator">
                 <div class="step-dot" id="sd1"></div>
                 <div class="step-dot" id="sd2"></div>
@@ -1747,7 +1691,12 @@
     <!-- ===== MACROS MODAL ===== -->
     <div class="modal-overlay" id="macro-overlay">
         <div class="modal-box" id="macro-modal">
-            <h2>⚡ Macros</h2>
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                Macros
+            </h2>
             <p>Run custom JavaScript on the current data.</p>
             <textarea id="macro-code" placeholder="Write your macro here…
 
@@ -1774,7 +1723,14 @@ Click 'Run' to execute."></textarea>
     <!-- ===== EXPORT MODAL ===== -->
     <div class="modal-overlay" id="export-overlay">
         <div class="modal-box" style="max-width:300px">
-            <h2>📤 Export Data</h2>
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Export Data
+            </h2>
             <p>Choose format:</p>
             <select id="export-format" class="modal-input">
                 <option value="csv">CSV</option>
@@ -1790,7 +1746,14 @@ Click 'Run' to execute."></textarea>
     <!-- ===== IMPORT MODAL ===== -->
     <div class="modal-overlay" id="import-overlay">
         <div class="modal-box" style="max-width:350px">
-            <h2>📥 Import Data</h2>
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Import Data
+            </h2>
             <p>Select a CSV or JSON file. New rows will be appended.</p>
             <input type="file" id="import-file" accept=".csv,.json" class="modal-input">
             <div id="import-status" style="color:var(--error);font-size:0.8rem;margin-bottom:0.6rem"></div>
@@ -1804,10 +1767,41 @@ Click 'Run' to execute."></textarea>
     <!-- ===== THEME MODAL ===== -->
     <div class="modal-overlay" id="theme-overlay">
         <div class="modal-box" style="max-width:280px">
-            <h2>🎨 Choose Theme</h2>
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                Choose Theme
+            </h2>
             <div class="modal-btn-row" style="flex-direction:column;gap:0.5rem">
-                <button class="modal-btn primary" id="theme-light">☀️ Light</button>
-                <button class="modal-btn" id="theme-dark">🌙 Dark</button>
+                <button class="modal-btn primary" id="theme-light">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    Light
+                </button>
+                <button class="modal-btn" id="theme-dark">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                    Dark
+                </button>
             </div>
             <div class="modal-btn-row" style="margin-top:1rem">
                 <button class="modal-btn" id="theme-close">Cancel</button>
@@ -1836,175 +1830,207 @@ Click 'Run' to execute."></textarea>
         </div>
     </div>
 
-    <!-- ===== SIDEBAR BACKDROP ===== -->
-    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
-
-    <!-- ===== SIDEBAR (left) ===== -->
-    <div class="sidebar" id="sidebar">
-        <button class="sidebar-close-btn" id="sidebar-close-btn">✕</button>
-        <h3>📋 Sheets</h3>
-        <button id="new-sheet-btn">+ New Sheet</button>
-        <ul id="sheet-list" class="sheet-list"></ul>
-        <div class="sidebar-actions">
-            <button id="sidebar-macro-btn">⚡ Macros</button>
-            <button id="sidebar-clear-db-btn" style="color:var(--error)">🗑️ Clear DB</button>
-        </div>
-        <small style="color:var(--text-muted);margin-top:auto;font-size:0.7rem">Sheets saved on device only</small>
-    </div>
-
-    <!-- ===== MAIN DASHBOARD ===== -->
+    <!-- ============================================================ -->
+    <!-- ===== MAIN DASHBOARD (Sticky Header Container) ===== -->
+    <!-- ============================================================ -->
     <div class="dashboard-container">
-        <header class="dashboard-header">
-            <div class="header-left">
-                <button class="action-btn" id="sidebar-toggle" title="Sheets">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                </button>
-                <div class="brand-icon">📊</div>
-                <div>
-                    <h1>BarchScan</h1>
-                    <div class="subtitle">Data Ledger · Structured scanner output</div>
-                </div>
-            </div>
-            <div class="header-actions">
-                <button class="action-btn" id="reload-btn" title="Reload page" onclick="location.reload()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="23 4 23 10 17 10"></polyline>
-                        <polyline points="1 20 1 14 7 14"></polyline>
-                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
-                        <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
-                    </svg>
-                </button>
-            </div>
-        </header>
 
-        <!-- ===== ACTION BUTTONS ===== -->
-        <div class="action-group" id="action-buttons" style="display:none; margin-bottom:0.75rem; flex-wrap:wrap; gap:6px;">
-            <!-- Edit toggle -->
-            <button class="action-btn" id="toggle-edit" title="Edit Mode">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                Edit
-            </button>
-
-            <div class="btn-sep"></div>
-
-            <!-- More Actions dropdown -->
-            <div class="dropdown">
-                <button class="action-btn" id="more-actions-btn" title="More actions">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px">
-                        <line x1="4" y1="6" x2="20" y2="6"></line>
-                        <line x1="4" y1="12" x2="20" y2="12"></line>
-                        <line x1="4" y1="18" x2="20" y2="18"></line>
-                    </svg>
-                </button>
-                <div class="dropdown-menu" id="more-actions-dropdown">
-                    <div class="dropdown-item" id="dropdown-export-btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
-                        Export
+        <!-- Sticky Header Area -->
+        <div class="sticky-header">
+            <!-- Main Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <div class="brand-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="width:20px;height:20px;">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                            <line x1="6.5" y1="6.5" x2="6.5" y2="6.5"/>
+                            <line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/>
+                            <line x1="6.5" y1="17.5" x2="6.5" y2="17.5"/>
+                            <line x1="17.5" y1="17.5" x2="17.5" y2="17.5"/>
+                        </svg>
                     </div>
-                    <div class="dropdown-item" id="dropdown-import-btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        Import
-                    </div>
-                    <div class="dropdown-item" id="dropdown-theme-btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                        Theme
-                    </div>
-                    <div class="dropdown-item danger" id="dropdown-clear-db-btn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                        Clear DB
+                    <div>
+                        <h1>BarchScan</h1>
+                        <div class="subtitle">Data Ledger · Structured output</div>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div class="header-actions">
+                    <button class="action-btn" id="macro-btn" title="Macros">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        Macros
+                    </button>
+                    <button class="action-btn" id="cloudinary-toggle-btn" title="Uploaded Images">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/>
+                        </svg>
+                        Images
+                    </button>
+                    <button class="action-btn" id="theme-toggle-btn" title="Theme">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn danger" id="logout-btn" title="Logout & Clear Cache">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
 
-        <!-- ===== EDIT TOOLBAR ===== -->
-        <div id="edit-toolbar">
-            <div class="toolbar-group">
-                <button class="tb-btn" id="tb-undo" title="Undo (Ctrl+Z)" disabled>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+            <!-- Action Buttons -->
+            <div class="action-group" id="action-buttons" style="display:none;">
+                <button class="action-btn" id="toggle-edit" title="Edit Mode">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Edit
                 </button>
-                <button class="tb-btn" id="tb-redo" title="Redo (Ctrl+Y)" disabled>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/></svg>
-                </button>
+                <div class="btn-sep"></div>
+                <div class="dropdown">
+                    <button class="action-btn" id="more-actions-btn" title="More actions">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px">
+                            <line x1="4" y1="6" x2="20" y2="6"></line>
+                            <line x1="4" y1="12" x2="20" y2="12"></line>
+                            <line x1="4" y1="18" x2="20" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu" id="more-actions-dropdown">
+                        <div class="dropdown-item" id="dropdown-export-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Export
+                        </div>
+                        <div class="dropdown-item" id="dropdown-import-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Import
+                        </div>
+                        <div class="dropdown-item danger" id="dropdown-clear-db-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                            Clear DB
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="toolbar-sep"></div>
-            <div class="toolbar-group">
-                <button class="tb-btn" id="tb-find" title="Find &amp; Replace">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </button>
-                <button class="tb-btn" id="tb-sync" title="Sync data">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
-                </button>
-                <span id="sync-ts"></span>
-            </div>
-            <div class="toolbar-sep"></div>
-            <div class="toolbar-group">
-                <button class="tb-btn" id="tb-sort-asc" title="Sort A→Z">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><polyline points="3 6 3 12 3 18"/><polyline points="1 9 3 6 5 9"/></svg>
-                </button>
-                <button class="tb-btn" id="tb-sort-desc" title="Sort Z→A">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><polyline points="3 6 3 12 3 18"/><polyline points="1 15 3 18 5 15"/></svg>
-                </button>
-                <button class="tb-btn" id="tb-filter" title="Filter">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-                </button>
-            </div>
-            <div class="toolbar-sep"></div>
-            <div class="toolbar-group">
-                <button class="tb-btn" id="tb-freeze" title="Freeze Header">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-                </button>
-                <button class="tb-btn" id="tb-wrap" title="Wrap Text">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><path d="M3 12h15a3 3 0 0 1 0 6h-4"/><polyline points="10 15 7 18 10 21"/></svg>
-                </button>
-                <button class="tb-btn" id="tb-autoresize" title="Auto-resize columns">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-                </button>
-            </div>
-            <div class="toolbar-sep"></div>
-            <div class="toolbar-group">
-                <button class="tb-btn" id="tb-duprow" title="Duplicate Row">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                </button>
-                <button class="tb-btn" id="tb-insrow" title="Insert Row">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </button>
-            </div>
-            <div class="toolbar-sep"></div>
-            <div class="toolbar-group">
-                <button class="tb-btn" id="tb-fbar" title="Formula Bar">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
-                </button>
-            </div>
-            <div class="toolbar-sep"></div>
-            <!-- SAVE + CANCEL (Save morphs from Edit) -->
-            <div class="toolbar-group">
-                <button class="tb-btn tb-save" id="tb-save" title="Save Changes">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                    Save
-                </button>
-                <button class="tb-btn tb-cancel" id="tb-cancel" title="Cancel Edit">✕ Cancel</button>
-            </div>
-            <div class="toolbar-sep"></div>
-            <!-- ZOOM -->
-            <div class="toolbar-group zoom-group">
-                <button id="zoom-out" title="Zoom Out">−</button>
-                <span class="zoom-level" id="zoom-level">100%</span>
-                <button id="zoom-in" title="Zoom In">+</button>
-            </div>
-        </div>
 
-        <!-- ===== FORMULA BAR ===== -->
-        <div id="formula-bar">
-            <span id="formula-cell-ref">—</span>
-            <input type="text" id="formula-input" placeholder="Cell value…" spellcheck="false">
-        </div>
+            <!-- Edit Toolbar -->
+            <div id="edit-toolbar">
+                <div class="toolbar-group">
+                    <button class="tb-btn" id="tb-undo" title="Undo (Ctrl+Z)" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+                    </button>
+                    <button class="tb-btn" id="tb-redo" title="Redo (Ctrl+Y)" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/></svg>
+                    </button>
+                </div>
+                <div class="toolbar-sep"></div>
+                <div class="toolbar-group">
+                    <button class="tb-btn" id="tb-find" title="Find &amp; Replace">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </button>
+                    <button class="tb-btn" id="tb-sync" title="Sync data">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
+                    </button>
+                    <span id="sync-ts"></span>
+                </div>
+                <div class="toolbar-sep"></div>
+                <div class="toolbar-group">
+                    <button class="tb-btn" id="tb-sort-asc" title="Sort A→Z">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><polyline points="3 6 3 12 3 18"/><polyline points="1 9 3 6 5 9"/></svg>
+                    </button>
+                    <button class="tb-btn" id="tb-sort-desc" title="Sort Z→A">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><polyline points="3 6 3 12 3 18"/><polyline points="1 15 3 18 5 15"/></svg>
+                    </button>
+                    <button class="tb-btn" id="tb-filter" title="Filter">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    </button>
+                </div>
+                <div class="toolbar-sep"></div>
+                <div class="toolbar-group">
+                    <button class="tb-btn" id="tb-freeze" title="Freeze Header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                    </button>
+                    <button class="tb-btn" id="tb-wrap" title="Wrap Text">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><path d="M3 12h15a3 3 0 0 1 0 6h-4"/><polyline points="10 15 7 18 10 21"/></svg>
+                    </button>
+                    <button class="tb-btn" id="tb-autoresize" title="Auto-resize columns">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                    </button>
+                </div>
+                <div class="toolbar-sep"></div>
+                <div class="toolbar-group">
+                    <button class="tb-btn" id="tb-duprow" title="Duplicate Row">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                    <button class="tb-btn" id="tb-insrow" title="Insert Row">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
+                <div class="toolbar-sep"></div>
+                <div class="toolbar-group">
+                    <button class="tb-btn" id="tb-fbar" title="Formula Bar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                    </button>
+                </div>
+                <div class="toolbar-sep"></div>
+                <div class="toolbar-group">
+                    <button class="tb-btn tb-save" id="tb-save" title="Save Changes">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        Save
+                    </button>
+                    <button class="tb-btn tb-cancel" id="tb-cancel" title="Cancel Edit">✕ Cancel</button>
+                </div>
+                <div class="toolbar-sep"></div>
+                <div class="toolbar-group zoom-group">
+                    <button id="zoom-out" title="Zoom Out">−</button>
+                    <span class="zoom-level" id="zoom-level">100%</span>
+                    <button id="zoom-in" title="Zoom In">+</button>
+                </div>
+            </div>
 
-        <!-- ===== FILTER BAR ===== -->
-        <div id="filter-bar">
-            <select id="filter-col-select"></select>
-            <input type="text" id="filter-input" placeholder="Filter value…">
-            <button id="filter-clear-btn">✕ Clear</button>
+            <!-- Formula Bar -->
+            <div id="formula-bar">
+                <span id="formula-cell-ref">—</span>
+                <input type="text" id="formula-input" placeholder="Cell value…" spellcheck="false">
+            </div>
+
+            <!-- Filter Bar -->
+            <div id="filter-bar">
+                <select id="filter-col-select"></select>
+                <input type="text" id="filter-input" placeholder="Filter value…">
+                <button id="filter-clear-btn">✕ Clear</button>
+            </div>
+
+            <!-- Cloudinary Panel -->
+            <div id="cloudinary-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h3 style="font-size: 0.95rem; font-weight: 600;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;vertical-align:middle;margin-right:6px;">
+                            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/>
+                        </svg>
+                        Uploaded Images
+                    </h3>
+                    <button id="cloudinary-close-btn" class="tb-btn" style="font-size:1.2rem;">✕</button>
+                </div>
+                <div id="cloudinary-list" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                    <div style="color: var(--text-secondary); font-size: 0.75rem; text-align: center; padding: 0.5rem;">
+                        No images loaded. Click Refresh.
+                    </div>
+                </div>
+                <button id="refresh-cloudinary" class="action-btn" style="margin-top: 0.5rem;">⟳ Refresh</button>
+            </div>
         </div>
 
         <!-- ===== TABLE ===== -->
@@ -2022,7 +2048,7 @@ Click 'Run' to execute."></textarea>
     </div>
 
     <!-- ============================================================ -->
-    <!-- ===== JAVASCRIPT (functionality unchanged) ===== -->
+    <!-- ===== JAVASCRIPT (functionality unchanged except UI hooks) ===== -->
     <!-- ============================================================ -->
     <script>
         // ============================================================
@@ -2513,6 +2539,11 @@ Click 'Run' to execute."></textarea>
             document.getElementById('theme-overlay').classList.remove('open');
         });
 
+        // Hook up the new theme toggle button in the header
+        document.getElementById('theme-toggle-btn').addEventListener('click', () => {
+            document.getElementById('theme-overlay').classList.add('open');
+        });
+
         const passcodeOverlay = document.getElementById('passcode-overlay');
         const passcodeInput = document.getElementById('passcode-input');
         const passcodeBtn = document.getElementById('passcode-btn');
@@ -2661,7 +2692,6 @@ Click 'Run' to execute."></textarea>
         function setActiveSheet(name) {
             activeSheetName = name;
             localStorage.setItem(ACTIVE_SHEET_KEY, name);
-            updateSheetList();
         }
 
         function loadActiveSheet() {
@@ -2677,7 +2707,6 @@ Click 'Run' to execute."></textarea>
                 loadLogbookData();
                 activeSheetName = 'Server Data';
             }
-            updateSheetList();
         }
 
         const origLoadLogbookData = loadLogbookData;
@@ -2685,30 +2714,8 @@ Click 'Run' to execute."></textarea>
             await origLoadLogbookData();
             if (!localStorage.getItem(ACTIVE_SHEET_KEY)) {
                 activeSheetName = 'Server Data';
-                updateSheetList();
             }
         };
-
-        function updateSheetList() {
-            const list = document.getElementById('sheet-list');
-            const names = getSheetNames();
-            list.innerHTML = '';
-            const allNames = ['Server Data', ...names];
-            allNames.forEach(name => {
-                const li = document.createElement('li');
-                li.textContent = name;
-                if (name === activeSheetName) li.classList.add('active');
-                li.addEventListener('click', () => switchSheet(name));
-                if (name !== 'Server Data') {
-                    const delBtn = document.createElement('button');
-                    delBtn.textContent = '✕';
-                    delBtn.addEventListener('click', (e) => { e.stopPropagation();
-                        deleteSheet(name); });
-                    li.appendChild(delBtn);
-                }
-                list.appendChild(li);
-            });
-        }
 
         function switchSheet(name) {
             if (name === activeSheetName) return;
@@ -2723,7 +2730,6 @@ Click 'Run' to execute."></textarea>
             buildDynamicTable(logbookData);
             emptyState.style.display = logbookData.length ? 'none' : 'block';
             tableContainer.style.display = logbookData.length ? 'block' : 'none';
-            updateSheetList();
             undoStack.length = 0;
             redoStack.length = 0;
             updateUndoRedo();
@@ -2742,7 +2748,6 @@ Click 'Run' to execute."></textarea>
             buildDynamicTable([]);
             emptyState.style.display = 'block';
             tableContainer.style.display = 'none';
-            updateSheetList();
             showToast(`Sheet "${name}" created`, 'success');
         }
 
@@ -2757,7 +2762,6 @@ Click 'Run' to execute."></textarea>
                     loadLogbookData();
                 }
             }
-            updateSheetList();
             showToast(`Sheet "${name}" deleted`, 'success');
         }
 
@@ -2788,44 +2792,12 @@ Click 'Run' to execute."></textarea>
             return origSaveToMemory();
         };
 
-        const sidebar = document.getElementById('sidebar');
-        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
-
-        function openSidebar() {
-            sidebar.classList.add('open');
-            sidebarBackdrop.classList.add('visible');
-        }
-
-        function closeSidebar() {
-            sidebar.classList.remove('open');
-            sidebarBackdrop.classList.remove('visible');
-        }
-
-        sidebarToggle.addEventListener('click', openSidebar);
-        sidebarCloseBtn.addEventListener('click', closeSidebar);
-        sidebarBackdrop.addEventListener('click', closeSidebar);
-
-        document.getElementById('sidebar-macro-btn').addEventListener('click', () => {
-            document.getElementById('macro-overlay').classList.add('open');
-            document.getElementById('macro-code').focus();
-        });
-        document.getElementById('sidebar-clear-db-btn').addEventListener('click', () => {
-            document.getElementById('clear-db-overlay').classList.add('open');
-            resetClearDBModal();
-        });
-
         document.getElementById('dropdown-export-btn').addEventListener('click', () => {
             document.getElementById('export-overlay').classList.add('open');
             document.getElementById('more-actions-dropdown').classList.remove('open');
         });
         document.getElementById('dropdown-import-btn').addEventListener('click', () => {
             document.getElementById('import-overlay').classList.add('open');
-            document.getElementById('more-actions-dropdown').classList.remove('open');
-        });
-        document.getElementById('dropdown-theme-btn').addEventListener('click', () => {
-            document.getElementById('theme-overlay').classList.add('open');
             document.getElementById('more-actions-dropdown').classList.remove('open');
         });
         document.getElementById('dropdown-clear-db-btn').addEventListener('click', () => {
@@ -3820,6 +3792,216 @@ Click 'Run' to execute."></textarea>
         console.log('✅ BarchScan loaded with glass design.');
         console.log('📌 Keyboard shortcuts: 1=Save, 2=Edit, 3=Undo, 4=Redo, 5=Find, 6=Filter, 7=Sort↑, 8=Sort↓, 9=Freeze, 0=Wrap');
         console.log('📌 Edit → Save morphs; Cancel discards changes.');
+
+        // ============================================================
+        //   CLOUDINARY IMAGES – Moved to a toggleable panel
+        // ============================================================
+
+        async function loadCloudinaryImages() {
+            const container = document.getElementById('cloudinary-list');
+            if (!container) return;
+
+            container.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.75rem; text-align: center; padding: 0.5rem;">Loading...</div>';
+
+            try {
+                const res = await fetch('/api/cloudinary-images');
+                if (!res.ok) throw new Error('Failed to fetch');
+                const data = await res.json();
+                const images = data.images || [];
+
+                if (images.length === 0) {
+                    container.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.75rem; text-align: center; padding: 0.5rem;">No images found.</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                images.forEach(img => {
+                    const item = document.createElement('div');
+                    item.className = 'cloudinary-item';
+
+                    const thumb = document.createElement('img');
+                    thumb.src = img.url;
+                    thumb.alt = img.public_id;
+                    thumb.loading = 'lazy';
+                    thumb.addEventListener('click', () => window.open(img.url, '_blank'));
+
+                    const info = document.createElement('div');
+                    info.className = 'info';
+                    const nameSpan = document.createElement('div');
+                    nameSpan.className = 'name';
+                    nameSpan.textContent = img.public_id.split('/').pop() || img.public_id;
+                    const dateSpan = document.createElement('div');
+                    dateSpan.className = 'date';
+                    dateSpan.textContent = img.uploadedAt ? new Date(img.uploadedAt).toLocaleDateString() : '';
+                    info.appendChild(nameSpan);
+                    info.appendChild(dateSpan);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'actions';
+
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.textContent = '⬇';
+                    downloadBtn.title = 'Download';
+                    downloadBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        window.open(img.url, '_blank');
+                    });
+
+                    const reprocessBtn = document.createElement('button');
+                    reprocessBtn.textContent = '↻';
+                    reprocessBtn.className = 'reprocess-btn';
+                    reprocessBtn.title = 'Reprocess';
+                    reprocessBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        reprocessBtn.disabled = true;
+                        reprocessBtn.textContent = '…';
+                        try {
+                            const res = await fetch('/api/reprocess-image', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ public_id: img.public_id, imageUrl: img.url })
+                            });
+                            const data = await res.json();
+                            if (res.ok) {
+                                showToast('Image reprocessed!', 'success');
+                            } else {
+                                showToast('Reprocess failed: ' + (data.error || 'unknown'), 'error');
+                            }
+                        } catch (err) {
+                            showToast('Error reprocessing.', 'error');
+                        } finally {
+                            reprocessBtn.disabled = false;
+                            reprocessBtn.textContent = '↻';
+                        }
+                    });
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = '✕';
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.title = 'Delete';
+                    deleteBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        if (!confirm(`Delete "${img.public_id}" permanently?`)) return;
+                        deleteBtn.disabled = true;
+                        deleteBtn.textContent = '…';
+                        try {
+                            const res = await fetch('/api/delete-image', {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ public_id: img.public_id })
+                            });
+                            if (res.ok) {
+                                showToast('Image deleted.', 'success');
+                                loadCloudinaryImages();
+                            } else {
+                                const data = await res.json();
+                                showToast('Delete failed: ' + (data.error || 'unknown'), 'error');
+                            }
+                        } catch (err) {
+                            showToast('Error deleting.', 'error');
+                        } finally {
+                            deleteBtn.disabled = false;
+                            deleteBtn.textContent = '✕';
+                        }
+                    });
+
+                    actions.appendChild(downloadBtn);
+                    actions.appendChild(reprocessBtn);
+                    actions.appendChild(deleteBtn);
+
+                    item.appendChild(thumb);
+                    item.appendChild(info);
+                    item.appendChild(actions);
+                    container.appendChild(item);
+                });
+
+            } catch (err) {
+                console.error('Cloudinary load error:', err);
+                container.innerHTML = '<div style="color: var(--error-color); font-size: 0.75rem; text-align: center; padding: 0.5rem;">⚠️ Failed to load images.</div>';
+                showToast('Could not load uploaded images.', 'error');
+            }
+        }
+
+        // ---- Cloudinary panel toggle ----
+        const cloudinaryPanel = document.getElementById('cloudinary-panel');
+        const cloudinaryToggle = document.getElementById('cloudinary-toggle-btn');
+        const cloudinaryClose = document.getElementById('cloudinary-close-btn');
+        const refreshCloudinary = document.getElementById('refresh-cloudinary');
+
+        function toggleCloudinaryPanel() {
+            cloudinaryPanel.classList.toggle('visible');
+            if (cloudinaryPanel.classList.contains('visible')) {
+                loadCloudinaryImages();
+            }
+        }
+
+        if (cloudinaryToggle) {
+            cloudinaryToggle.addEventListener('click', toggleCloudinaryPanel);
+        }
+        if (cloudinaryClose) {
+            cloudinaryClose.addEventListener('click', () => {
+                cloudinaryPanel.classList.remove('visible');
+            });
+        }
+        if (refreshCloudinary) {
+            refreshCloudinary.addEventListener('click', loadCloudinaryImages);
+        }
+
+        // ============================================================
+        //   MACROS – Hook up the header button
+        // ============================================================
+        document.getElementById('macro-btn').addEventListener('click', () => {
+            document.getElementById('macro-overlay').classList.add('open');
+            document.getElementById('macro-code').focus();
+        });
+
+        // ============================================================
+        //   LOGOUT – Clear everything and reset
+        // ============================================================
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            if (confirm('Logout will clear all local data and cache. You will need to re-enter the passcode. Continue?')) {
+                // Clear all storage
+                localStorage.clear();
+                sessionStorage.clear();
+                // Reset UI state
+                location.reload();
+            }
+        });
+
+        // ============================================================
+        //   NEW SHEET – quick add (no sidebar, but kept via prompt)
+        // ============================================================
+        // (The new-sheet-btn still exists in the header via the dropdown? No, we removed the sidebar.
+        // We'll keep it accessible via the "More Actions" dropdown or a hidden prompt.)
+        // I'll add a "New Sheet" option to the More Actions dropdown.
+        const dropdownMenu = document.getElementById('more-actions-dropdown');
+        if (dropdownMenu) {
+            const newSheetItem = document.createElement('div');
+            newSheetItem.className = 'dropdown-item';
+            newSheetItem.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+                New Sheet
+            `;
+            newSheetItem.addEventListener('click', () => {
+                const name = prompt('Enter sheet name:');
+                if (name) createSheet(name.trim());
+                document.getElementById('more-actions-dropdown').classList.remove('open');
+            });
+            // Insert it before the Export item (or at the top)
+            const exportItem = document.getElementById('dropdown-export-btn');
+            if (exportItem) {
+                dropdownMenu.insertBefore(newSheetItem, exportItem);
+                // Add a separator after it
+                const sep = document.createElement('div');
+                sep.className = 'ctx-sep';
+                sep.style.margin = '3px 12px';
+                dropdownMenu.insertBefore(sep, exportItem);
+            } else {
+                dropdownMenu.appendChild(newSheetItem);
+            }
+        }
+
+        console.log('✅ UI overhaul complete: Sidebar removed, Macros/Images/Logout in header, sticky headers.');
     </script>
 </body>
 </html>
