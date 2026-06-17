@@ -6,10 +6,10 @@ export default async function handler(req, res) {
 
   // 2. Env var validation — fail loudly and clearly if misconfigured
   const BIN_ID = process.env.JSONBIN_BIN_ID;
-  const API_KEY = process.env.JSONBIN_API_KEY;
+  const API_KEY = process.env.JSONBIN_MASTER_KEY;
 
   if (!BIN_ID || !API_KEY) {
-    console.error('Missing JSONBin env vars: BIN_ID or API_KEY not set.');
+    console.error('Missing JSONBin env vars: BIN_ID or MASTER_KEY not set.');
     return res.status(500).json({
       error: 'Server misconfigured: missing JSONBin credentials.'
     });
