@@ -1,207 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BarchScan | Data Ledger</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <!-- PWA manifest -->
-    <link rel="manifest" href="/manifest.json">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BarchScan · Data Ledger</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- ===== MICROSOFT FLUENT / GLASS DESIGN ===== -->
     <style>
-        :root {
-            --bg-color: #0a0a0a;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --accent: #ffffff;
-            --accent-inverse: #000000;
-            --text-primary: #ededed;
-            --text-secondary: #888888;
-            --table-hover: rgba(255, 255, 255, 0.05);
-            --hover-overlay: rgba(255, 255, 255, 0.05);
-            --error-color: #ff5555;
-            --success-color: #4ade80;
-            --warning-color: #facc15;
-            --info-color: #60a5fa;
-            --select-color: rgba(99, 179, 237, 0.18);
-            --select-border: rgba(99, 179, 237, 0.6);
-            --toolbar-bg: rgba(255, 255, 255, 0.04);
-            --sidebar-bg: #111;
-            --dropdown-bg: #1a1a1a;
-            --day-colors: #ff6b6b, #ffa94d, #ffd93d, #6bcb77, #4d96ff, #9b59b6, #ff6b9d, #00d2d3, #f368e0;
-        }
-
-        [data-theme="light"] {
-            --bg-color: #f4f4f5;
-            --glass-bg: rgba(0, 0, 0, 0.02);
-            --glass-border: rgba(0, 0, 0, 0.1);
-            --accent: #000000;
-            --accent-inverse: #ffffff;
-            --text-primary: #18181b;
-            --text-secondary: #71717a;
-            --table-hover: rgba(0, 0, 0, 0.05);
-            --hover-overlay: rgba(0, 0, 0, 0.05);
-            --select-color: rgba(59, 130, 246, 0.12);
-            --select-border: rgba(59, 130, 246, 0.5);
-            --toolbar-bg: rgba(0, 0, 0, 0.03);
-            --sidebar-bg: #e4e4e7;
-            --dropdown-bg: #ffffff;
-        }
-
+        /* ----- RESET & BASE ----- */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            /* ---- Glass / Acrylic ---- */
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.10);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.40);
+            --glass-blur: blur(18px);
+
+            /* ---- Colors (dark default) ---- */
+            --bg-primary: #0b0b0e;
+            --bg-secondary: #131316;
+            --bg-surface: rgba(255, 255, 255, 0.04);
+            --text-primary: #f0f0f4;
+            --text-secondary: #9a9aa8;
+            --text-muted: #6b6b7a;
+            --accent: #5b9cf5;
+            --accent-hover: #7ab0ff;
+            --accent-glow: rgba(91, 156, 245, 0.25);
+            --success: #4ade80;
+            --error: #ff6b6b;
+            --warning: #facc15;
+            --info: #60a5fa;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+
+            /* ---- Typography ---- */
+            --font: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            --font-mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+
+            /* ---- Spacing ---- */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+
+            /* ---- Transitions ---- */
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+            --duration-fast: 0.15s;
+            --duration-med: 0.30s;
+            --duration-slow: 0.50s;
+
+            /* ---- Day colours (kept from original) ---- */
+            --day-colors: #ff6b6b, #ffa94d, #ffd93d, #6bcb77, #4d96ff, #9b59b6, #ff6b9d, #00d2d3, #f368e0;
+        }
+
+        /* ----- LIGHT THEME ----- */
+        [data-theme="light"] {
+            --bg-primary: #f2f2f5;
+            --bg-secondary: #eaeaee;
+            --bg-surface: rgba(0, 0, 0, 0.03);
+            --text-primary: #1a1a1f;
+            --text-secondary: #6b6b7a;
+            --text-muted: #8e8e9a;
+            --glass-bg: rgba(255, 255, 255, 0.50);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+            --border-subtle: rgba(0, 0, 0, 0.06);
+            --accent: #2b6ed7;
+            --accent-hover: #4a8af0;
+            --accent-glow: rgba(43, 110, 215, 0.18);
+            --bg-surface: rgba(0, 0, 0, 0.02);
+        }
+
+        html {
+            font-family: var(--font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            scroll-behavior: smooth;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            padding: 2rem 1rem;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
             display: flex;
             justify-content: center;
-            min-height: 100vh;
+            background: var(--bg-primary);
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(91, 156, 245, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(91, 156, 245, 0.04) 0%, transparent 50%);
         }
 
+        /* ----- SCROLLBAR ----- */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-muted);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* ----- DASHBOARD CONTAINER (glass card) ----- */
         .dashboard-container {
             width: 100%;
-            max-width: 100%;
-            /* wider: removed 1400px limit */
+            max-width: 1440px;
             position: relative;
             padding: 0 0.5rem;
         }
 
+        /* ----- HEADER (glass) ----- */
         .dashboard-header {
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            margin-bottom: 1.25rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 1.5rem;
+            padding: 1.25rem 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--glass-shadow);
+            transition: background var(--duration-fast) ease;
         }
 
-        @media (min-width: 600px) {
+        @media (min-width: 640px) {
             .dashboard-header {
                 flex-direction: row;
                 justify-content: space-between;
-                align-items: flex-end;
+                align-items: center;
             }
         }
 
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-        p.subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-top: 0.25rem;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
-        .action-group {
+        .header-left .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 4px 12px var(--accent-glow);
+            flex-shrink: 0;
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-primary) 60%, var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-left .subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            -webkit-text-fill-color: var(--text-secondary);
+        }
+
+        .header-actions {
             display: flex;
             gap: 6px;
-            flex-wrap: wrap;
             align-items: center;
+            flex-wrap: wrap;
         }
 
-        button.action-btn {
+        /* ----- BUTTONS (Fluent style) ----- */
+        button {
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+            border: none;
+            outline: none;
+        }
+
+        .action-btn {
             padding: 0.45rem 0.9rem;
-            background-color: transparent;
+            background: var(--bg-surface);
             color: var(--text-primary);
             border: 1px solid var(--glass-border);
-            border-radius: 5px;
-            font-size: 0.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
             font-weight: 500;
-            cursor: pointer;
-            transition: all 0.18s ease;
             display: inline-flex;
             align-items: center;
             gap: 5px;
             white-space: nowrap;
+            backdrop-filter: blur(4px);
+            transition: all var(--duration-fast) ease;
         }
-        button.action-btn svg {
-            width: 13px;
-            height: 13px;
-            flex-shrink: 0;
-        }
-        button.action-btn:hover {
-            background-color: var(--table-hover);
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
             border-color: var(--text-secondary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
-        button.action-btn.active {
-            background-color: var(--accent);
-            color: var(--bg-color);
+        .action-btn:active {
+            transform: scale(0.97);
+        }
+        .action-btn svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            stroke: currentColor;
+        }
+        .action-btn.active {
+            background: var(--accent);
+            color: #fff;
             border-color: var(--accent);
+            box-shadow: 0 4px 16px var(--accent-glow);
         }
-        button.action-btn.active svg {
-            stroke: var(--bg-color);
+        .action-btn.active svg {
+            stroke: #fff;
         }
 
-        button.action-btn.danger {
-            color: var(--error-color);
-            border-color: rgba(255, 85, 85, 0.3);
-            font-size: 0.72rem;
-            padding: 0.35rem 0.65rem;
+        .action-btn.danger {
+            color: var(--error);
+            border-color: rgba(255, 107, 107, 0.25);
         }
-        button.action-btn.danger:hover {
-            background: rgba(255, 85, 85, 0.08);
-            border-color: var(--error-color);
+        .action-btn.danger:hover {
+            background: rgba(255, 107, 107, 0.08);
+            border-color: var(--error);
         }
 
         .btn-sep {
             width: 1px;
-            height: 22px;
+            height: 26px;
             background: var(--glass-border);
-            margin: 0 2px;
+            margin: 0 4px;
         }
 
-        /* dropdown */
+        /* ----- DROPDOWN (glass) ----- */
         .dropdown {
             position: relative;
         }
         .dropdown-menu {
             position: absolute;
             right: 0;
-            top: 100%;
-            margin-top: 4px;
-            background: var(--dropdown-bg);
+            top: calc(100% + 6px);
+            background: var(--bg-secondary);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             padding: 6px 0;
-            min-width: 180px;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+            min-width: 190px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.50);
             z-index: 500;
             display: none;
+            overflow: hidden;
         }
         .dropdown-menu.open {
             display: block;
+            animation: dropIn var(--duration-med) var(--ease-spring);
         }
+        @keyframes dropIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
         .dropdown-item {
-            padding: 8px 14px;
+            padding: 8px 16px;
             cursor: pointer;
             font-size: 0.8rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             color: var(--text-primary);
-            transition: background 0.1s;
+            transition: background var(--duration-fast) ease;
+            border-left: 2px solid transparent;
         }
         .dropdown-item:hover {
-            background: var(--hover-overlay);
+            background: var(--bg-surface);
+            border-left-color: var(--accent);
         }
         .dropdown-item svg {
-            width: 13px;
-            height: 13px;
+            width: 14px;
+            height: 14px;
             flex-shrink: 0;
+            stroke: currentColor;
+        }
+        .dropdown-item.danger {
+            color: var(--error);
+        }
+        .dropdown-item.danger:hover {
+            background: rgba(255, 107, 107, 0.06);
+            border-left-color: var(--error);
         }
 
+        /* ----- EDIT TOOLBAR (glass) ----- */
         #edit-toolbar {
             display: none;
-            background: var(--toolbar-bg);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            padding: 6px 10px;
+            border-radius: var(--radius-md);
+            padding: 6px 12px;
             margin-bottom: 0.75rem;
             flex-wrap: wrap;
             gap: 4px;
@@ -209,9 +334,22 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.20);
+            transition: all var(--duration-med) ease;
         }
         #edit-toolbar.visible {
             display: flex;
+            animation: slideDown var(--duration-med) var(--ease-spring);
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-12px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .toolbar-group {
@@ -221,199 +359,319 @@
         }
         .toolbar-sep {
             width: 1px;
-            height: 20px;
+            height: 22px;
             background: var(--glass-border);
             margin: 0 4px;
         }
 
-        button.tb-btn {
-            padding: 4px 6px;
+        .tb-btn {
+            padding: 5px 7px;
             background: transparent;
             color: var(--text-primary);
             border: 1px solid transparent;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s;
+            transition: all var(--duration-fast) ease;
             font-size: 0;
         }
-        button.tb-btn svg {
-            width: 14px;
-            height: 14px;
+        .tb-btn svg {
+            width: 15px;
+            height: 15px;
             flex-shrink: 0;
+            stroke: currentColor;
         }
-        button.tb-btn:hover {
-            background: var(--hover-overlay);
+        .tb-btn:hover {
+            background: var(--bg-surface);
             border-color: var(--glass-border);
         }
-        button.tb-btn:disabled {
-            opacity: 0.35;
+        .tb-btn:disabled {
+            opacity: 0.30;
             cursor: not-allowed;
+            pointer-events: none;
         }
-        button.tb-btn.tb-active {
+        .tb-btn.tb-active {
             background: var(--accent);
-            color: var(--bg-color);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 2px 12px var(--accent-glow);
         }
-        button.tb-btn.tb-active svg {
-            stroke: var(--bg-color);
+        .tb-btn.tb-active svg {
+            stroke: #fff;
         }
 
-        /* Save button - icon only */
-        button.tb-btn.tb-save {
-            background: var(--success-color);
+        /* Save button – morphs from edit */
+        .tb-btn.tb-save {
+            background: var(--success);
             color: #000;
-            border-color: var(--success-color);
-            padding: 4px 8px;
+            border-color: var(--success);
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            gap: 5px;
+            border-radius: var(--radius-sm);
+            transition: all var(--duration-med) var(--ease-spring);
         }
-        button.tb-btn.tb-save:hover {
-            opacity: 0.85;
-        }
-        button.tb-btn.tb-save svg {
+        .tb-btn.tb-save svg {
             stroke: #000;
+            width: 14px;
+            height: 14px;
+        }
+        .tb-btn.tb-save:hover {
+            opacity: 0.85;
+            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(74, 222, 128, 0.30);
+        }
+        .tb-btn.tb-save:active {
+            transform: scale(0.96);
         }
 
-        /* Zoom buttons */
+        /* Cancel button (appears next to Save) */
+        .tb-btn.tb-cancel {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            gap: 5px;
+            border-radius: var(--radius-sm);
+        }
+        .tb-btn.tb-cancel:hover {
+            background: rgba(255, 107, 107, 0.08);
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        /* ----- ZOOM ----- */
         .zoom-group {
             display: flex;
             align-items: center;
             gap: 2px;
         }
         .zoom-group button {
-            padding: 2px 6px;
+            padding: 2px 8px;
             background: transparent;
             color: var(--text-primary);
             border: 1px solid var(--glass-border);
-            border-radius: 3px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 0.85rem;
             font-weight: 600;
-            line-height: 1.2;
-            min-width: 22px;
+            line-height: 1.4;
+            min-width: 26px;
+            transition: all var(--duration-fast) ease;
         }
         .zoom-group button:hover {
-            background: var(--hover-overlay);
+            background: var(--bg-surface);
+            border-color: var(--text-secondary);
         }
         .zoom-level {
             font-size: 0.7rem;
             color: var(--text-secondary);
-            min-width: 32px;
+            min-width: 36px;
             text-align: center;
+            font-weight: 500;
         }
 
+        /* ----- FORMULA BAR (glass) ----- */
         #formula-bar {
             display: none;
             align-items: center;
-            gap: 8px;
-            background: var(--toolbar-bg);
+            gap: 10px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
-            border-radius: 6px;
-            padding: 4px 10px;
+            border-radius: var(--radius-md);
+            padding: 4px 14px;
             margin-bottom: 0.6rem;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
         }
         #formula-bar.visible {
             display: flex;
+            animation: slideDown var(--duration-med) var(--ease-spring);
         }
         #formula-cell-ref {
             color: var(--text-secondary);
-            font-size: 0.75rem;
-            min-width: 50px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            min-width: 56px;
             text-align: center;
             border-right: 1px solid var(--glass-border);
-            padding-right: 8px;
+            padding-right: 10px;
+            font-family: var(--font-mono);
         }
         #formula-input {
             flex: 1;
             background: transparent;
             border: none;
             color: var(--text-primary);
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             outline: none;
+            font-family: var(--font-mono);
+            padding: 4px 0;
+        }
+        #formula-input::placeholder {
+            color: var(--text-muted);
         }
 
+        /* ----- FILTER BAR (glass) ----- */
         #filter-bar {
             display: none;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
             margin-bottom: 0.6rem;
             align-items: center;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 6px 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
         }
         #filter-bar.visible {
             display: flex;
+            animation: slideDown var(--duration-med) var(--ease-spring);
         }
         #filter-input {
-            padding: 4px 10px;
-            background: var(--toolbar-bg);
+            padding: 5px 12px;
+            background: var(--bg-surface);
             border: 1px solid var(--glass-border);
-            border-radius: 5px;
+            border-radius: var(--radius-sm);
             color: var(--text-primary);
             font-size: 0.8rem;
             outline: none;
-            width: 220px;
+            width: 200px;
+            transition: border var(--duration-fast) ease;
         }
         #filter-input:focus {
-            border-color: var(--text-secondary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
         #filter-col-select {
-            padding: 4px 8px;
-            background: var(--toolbar-bg);
+            padding: 5px 10px;
+            background: var(--bg-surface);
             border: 1px solid var(--glass-border);
-            border-radius: 5px;
+            border-radius: var(--radius-sm);
             color: var(--text-primary);
             font-size: 0.8rem;
             outline: none;
-        }
-        #filter-clear-btn {
-            padding: 3px 8px;
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            border-radius: 4px;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
             cursor: pointer;
         }
+        #filter-col-select:focus {
+            border-color: var(--accent);
+        }
+        #filter-clear-btn {
+            padding: 4px 12px;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+        }
         #filter-clear-btn:hover {
-            background: var(--hover-overlay);
+            background: rgba(255, 107, 107, 0.08);
+            border-color: var(--error);
+            color: var(--error);
         }
 
+        /* ----- TABLE WRAPPER (glass) ----- */
         .table-wrapper {
             background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             overflow-x: auto;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: var(--glass-shadow);
             position: relative;
             z-index: 1;
             width: 100%;
-            /* wider */
+            transition: all var(--duration-med) ease;
         }
 
+        /* ----- TABLE ----- */
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
             min-width: 100%;
-            /* wider */
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            transition: all var(--duration-med) ease;
         }
 
-        /* Vertical + horizontal grid lines = Excel-like */
-        table.excel-mode td,
-        table.excel-mode th {
+        /* Grid lines – always present */
+        table td,
+        table th {
             border: 1px solid var(--glass-border);
-            /* vertical + horizontal */
+            padding: 0.6rem 1rem;
+            transition: background var(--duration-fast) ease;
         }
+        table th {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.25);
+            white-space: nowrap;
+            position: relative;
+            border-bottom: 2px solid var(--glass-border);
+        }
+        [data-theme="light"] table th {
+            background: rgba(0, 0, 0, 0.04);
+        }
+        table td {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+        tr:last-child td {
+            border-bottom: 1px solid var(--glass-border);
+        }
+        tr:hover td {
+            background: var(--bg-surface);
+        }
+
+        /* S/N column */
+        th.sn-col,
+        td.sn-col {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            text-align: center;
+            min-width: 38px;
+            max-width: 48px;
+            padding: 0.4rem 0.3rem;
+            user-select: none;
+            cursor: pointer;
+            border-right: 1px solid var(--glass-border);
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.10);
+        }
+        [data-theme="light"] th.sn-col,
+        [data-theme="light"] td.sn-col {
+            background: rgba(0, 0, 0, 0.03);
+        }
+        td.sn-col:hover {
+            background: var(--bg-surface) !important;
+        }
+
+        /* Edit mode overlay */
         table.excel-mode td {
-            background: rgba(255, 255, 255, 0.02);
             cursor: text;
-            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
         }
         table.excel-mode td:focus {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
             outline: 2px solid var(--accent);
             outline-offset: -2px;
+            box-shadow: inset 0 0 0 1px var(--accent-glow);
         }
         table.excel-mode th.editable-header {
             cursor: text;
@@ -421,69 +679,22 @@
         table.excel-mode th.editable-header:focus {
             outline: 2px solid var(--accent);
             outline-offset: -2px;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
         }
 
-        /* Non-edit mode also gets vertical borders for Excel look */
-        table:not(.excel-mode) td,
-        table:not(.excel-mode) th {
-            border: 1px solid var(--glass-border);
-        }
-        table:not(.excel-mode) td {
-            padding: 0.5rem 1rem;
-        }
-
-        th,
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        th {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
-            font-weight: 500;
-            background: rgba(0, 0, 0, 0.2);
-            white-space: nowrap;
-            position: relative;
-        }
-        td {
-            font-size: 0.9rem;
-        }
-        tr:last-child td {
-            border-bottom: none;
-        }
-        tr:hover td {
-            background-color: var(--table-hover);
-        }
-
-        th.sn-col,
-        td.sn-col {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            text-align: center;
-            min-width: 40px;
-            max-width: 50px;
-            padding: 0.6rem 0.5rem;
-            user-select: none;
-            cursor: pointer;
-            border-right: 1px solid var(--glass-border);
-        }
-        td.sn-col:hover {
-            background: var(--hover-overlay) !important;
-        }
-
+        /* Freeze header */
         table.frozen-header thead th {
             position: sticky;
             top: 0;
             z-index: 5;
-            background: #111 !important;
+            background: var(--bg-secondary) !important;
+            border-bottom: 2px solid var(--accent);
         }
         [data-theme="light"] table.frozen-header thead th {
-            background: #e4e4e7 !important;
+            background: var(--bg-secondary) !important;
         }
 
+        /* Wrap / auto */
         table.wrap-text td,
         table.wrap-text th {
             white-space: normal !important;
@@ -499,16 +710,19 @@
             white-space: nowrap;
         }
 
+        /* Selection */
         td.cell-selected {
-            background: var(--select-color) !important;
-            outline: 1px solid var(--select-border);
+            background: var(--accent-glow) !important;
+            outline: 1px solid var(--accent);
             outline-offset: -1px;
         }
         td.cell-selected-anchor {
-            outline: 2px solid var(--select-border) !important;
+            outline: 2px solid var(--accent) !important;
+            outline-offset: -2px;
+            box-shadow: 0 0 0 2px var(--accent-glow);
         }
 
-        /* Day-based color coding for first row of each day */
+        /* Day marker */
         tr.day-marker td:not(.sn-col) {
             border-top: 3px solid var(--day-color, var(--accent));
         }
@@ -516,287 +730,322 @@
             border-top: 3px solid var(--day-color, var(--accent));
         }
 
+        /* ----- CONTEXT MENU (glass) ----- */
         #ctx-menu {
             position: fixed;
             display: none;
-            background: #1a1a1a;
+            background: var(--bg-secondary);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
-            border-radius: 6px;
+            border-radius: var(--radius-md);
             padding: 4px 0;
             z-index: 9000;
-            min-width: 160px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            min-width: 180px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.50);
             font-size: 0.82rem;
-        }
-        [data-theme="light"] #ctx-menu {
-            background: #ffffff;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
         }
         .ctx-item {
-            padding: 7px 14px;
+            padding: 8px 16px;
             cursor: pointer;
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            transition: background var(--duration-fast) ease;
+            border-left: 2px solid transparent;
         }
         .ctx-item:hover {
-            background: var(--hover-overlay);
+            background: var(--bg-surface);
+            border-left-color: var(--accent);
         }
         .ctx-item.ctx-danger {
-            color: var(--error-color);
+            color: var(--error);
+        }
+        .ctx-item.ctx-danger:hover {
+            background: rgba(255, 107, 107, 0.06);
+            border-left-color: var(--error);
         }
         .ctx-item svg {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
         }
         .ctx-sep {
             height: 1px;
             background: var(--glass-border);
-            margin: 3px 0;
+            margin: 3px 12px;
         }
 
+        /* ----- MODALS (glass) ----- */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 10, 0.82);
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            animation: fadeIn var(--duration-med) ease;
         }
         .modal-overlay.open {
             display: flex;
         }
-        .modal-box {
-            background: #111;
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 2rem 1.75rem;
-            max-width: 440px;
-            width: 100%;
-            animation: slideUp 0.28s ease;
-        }
-        [data-theme="light"] .modal-box {
-            background: #f9f9f9;
-        }
-        @keyframes slideUp {
+        @keyframes fadeIn {
             from {
-                transform: translateY(28px);
                 opacity: 0;
             }
             to {
-                transform: translateY(0);
                 opacity: 1;
             }
         }
+
+        .modal-box {
+            background: var(--bg-secondary);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.75rem;
+            max-width: 460px;
+            width: 100%;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.50);
+            animation: modalSlide var(--duration-med) var(--ease-spring);
+        }
+        @keyframes modalSlide {
+            from {
+                transform: translateY(30px) scale(0.96);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
         .modal-box h2 {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.01em;
         }
         .modal-box p {
             color: var(--text-secondary);
             font-size: 0.88rem;
-            margin-bottom: 1.1rem;
-            line-height: 1.5;
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
         }
 
         .modal-input {
             width: 100%;
-            padding: 0.65rem 0.85rem;
-            background: var(--hover-overlay);
+            padding: 0.6rem 0.85rem;
+            background: var(--bg-surface);
             border: 1px solid var(--glass-border);
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             color: var(--text-primary);
             font-size: 0.9rem;
             outline: none;
             margin-bottom: 0.9rem;
+            transition: border var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+            font-family: var(--font);
         }
         .modal-input:focus {
-            border-color: var(--text-secondary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
         .modal-input.centered {
             text-align: center;
             letter-spacing: 0.12em;
+            font-family: var(--font-mono);
         }
 
         .modal-btn-row {
             display: flex;
             gap: 8px;
             justify-content: flex-end;
+            margin-top: 4px;
         }
-        button.modal-btn {
-            padding: 0.55rem 1.1rem;
-            border-radius: 5px;
-            font-size: 0.85rem;
+
+        .modal-btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
             font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: all var(--duration-fast) ease;
             border: 1px solid var(--glass-border);
             background: transparent;
             color: var(--text-primary);
         }
-        button.modal-btn:hover {
-            background: var(--hover-overlay);
+        .modal-btn:hover {
+            background: var(--bg-surface);
+            border-color: var(--text-secondary);
         }
-        button.modal-btn.primary {
+        .modal-btn.primary {
             background: var(--accent);
-            color: var(--accent-inverse);
-            border-color: var(--accent);
-        }
-        button.modal-btn.primary:hover {
-            opacity: 0.88;
-        }
-        button.modal-btn.danger {
-            background: var(--error-color);
             color: #fff;
-            border-color: var(--error-color);
+            border-color: var(--accent);
+            box-shadow: 0 4px 16px var(--accent-glow);
         }
-        button.modal-btn.danger:hover {
+        .modal-btn.primary:hover {
             opacity: 0.88;
+            transform: translateY(-1px);
         }
-        button.modal-btn:disabled {
-            opacity: 0.4;
+        .modal-btn.danger {
+            background: var(--error);
+            color: #fff;
+            border-color: var(--error);
+            box-shadow: 0 4px 16px rgba(255, 107, 107, 0.25);
+        }
+        .modal-btn.danger:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+        .modal-btn:disabled {
+            opacity: 0.40;
             cursor: not-allowed;
+            pointer-events: none;
         }
 
         .modal-error {
-            color: var(--error-color);
+            color: var(--error);
             font-size: 0.8rem;
-            min-height: 18px;
-            margin-bottom: 0.6rem;
+            min-height: 20px;
+            margin-bottom: 0.4rem;
         }
+
         .modal-step {
             display: none;
         }
         .modal-step.active {
             display: block;
+            animation: fadeIn var(--duration-fast) ease;
         }
 
         .step-indicator {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             justify-content: center;
             margin-bottom: 1.2rem;
         }
         .step-dot {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: var(--glass-border);
+            transition: all var(--duration-fast) ease;
         }
         .step-dot.done {
-            background: var(--error-color);
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
         }
 
+        /* ----- PASSCODE MODAL (glass) ----- */
         #passcode-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 10, 0.85);
-            display: flex;
+            background: rgba(0, 0, 0, 0.70);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            display: none;
         }
         #passcode-modal {
-            background: var(--glass-bg);
+            background: var(--bg-secondary);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             padding: 2.5rem 2rem;
             max-width: 400px;
             width: 100%;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.3s ease;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.50);
+            animation: modalSlide var(--duration-med) var(--ease-spring);
             position: relative;
             z-index: 10001;
         }
         #passcode-modal h2 {
             font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             text-align: center;
-            color: var(--text-primary);
+            letter-spacing: -0.02em;
         }
         #passcode-modal p {
             color: var(--text-secondary);
             text-align: center;
             margin-bottom: 1.5rem;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
         }
         .passcode-input-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
         #passcode-input {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.7rem 0.9rem;
             border: 1px solid var(--glass-border);
-            background: var(--hover-overlay);
+            background: var(--bg-surface);
             color: var(--text-primary);
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             font-size: 1rem;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.12em;
             text-align: center;
+            outline: none;
+            transition: border var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+            font-family: var(--font);
         }
         #passcode-input:focus {
-            outline: none;
             border-color: var(--accent);
-            background: var(--hover-overlay);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
         #passcode-input::placeholder {
-            color: var(--text-secondary);
+            color: var(--text-muted);
             letter-spacing: normal;
+            font-weight: 300;
         }
         .passcode-error {
-            color: var(--error-color);
-            font-size: 0.85rem;
+            color: var(--error);
+            font-size: 0.82rem;
             text-align: center;
             min-height: 1.5rem;
             margin-bottom: 1rem;
         }
         #passcode-btn {
             width: 100%;
-            padding: 0.75rem;
-            background-color: var(--accent);
-            color: var(--accent-inverse);
+            padding: 0.7rem;
+            background: var(--accent);
+            color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
+            transition: all var(--duration-fast) ease;
+            box-shadow: 0 4px 16px var(--accent-glow);
         }
         #passcode-btn:hover:not(:disabled) {
-            opacity: 0.9;
+            opacity: 0.88;
+            transform: translateY(-1px);
         }
         #passcode-btn:disabled {
-            background-color: var(--glass-border);
-            color: var(--text-secondary);
+            background: var(--text-muted);
+            color: var(--bg-primary);
             cursor: not-allowed;
+            box-shadow: none;
         }
 
-        .spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 0.5rem;
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
+        /* ----- ACCESS GATE (glass door animation) ----- */
         #access-gate {
             position: fixed;
             top: 0;
@@ -811,22 +1060,40 @@
             position: absolute;
             width: 50%;
             height: 100%;
-            background: var(--bg-color);
+            background: var(--bg-primary);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             z-index: 10000;
+            box-shadow: inset 0 0 60px rgba(255, 255, 255, 0.02);
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .gate-door::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 50%, rgba(255, 255, 255, 0.02) 100%);
+            pointer-events: none;
         }
         .door-left {
             left: 0;
             border-right: 1px solid var(--glass-border);
             transform: translateX(0);
-            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 0 4px 4px 0;
         }
         .door-right {
             right: 0;
             border-left: 1px solid var(--glass-border);
             transform: translateX(0);
-            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 4px 0 0 4px;
         }
+        #access-gate.open .door-left {
+            transform: translateX(-100%);
+        }
+        #access-gate.open .door-right {
+            transform: translateX(100%);
+        }
+
         .gate-content {
             position: absolute;
             top: 50%;
@@ -836,163 +1103,100 @@
             color: var(--text-primary);
             text-align: center;
             opacity: 1;
-            transition: opacity 0.3s;
+            transition: opacity 0.4s ease;
         }
         #access-gate.open .gate-content {
             opacity: 0;
             pointer-events: none;
         }
+
         .gate-spinner {
-            width: 50px;
-            height: 50px;
+            width: 52px;
+            height: 52px;
             border: 2px solid var(--glass-border);
             border-top-color: var(--accent);
             border-radius: 50%;
-            animation: gateSpin 0.8s linear infinite;
+            animation: gateSpin 0.9s linear infinite;
             margin: 0 auto 20px;
+            box-shadow: 0 0 30px var(--accent-glow);
         }
         @keyframes gateSpin {
             to {
                 transform: rotate(360deg);
             }
         }
+
         #gate-text {
             font-size: 0.85rem;
             font-weight: 500;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
         }
 
+        /* ----- TOAST (glass) ----- */
         .toast {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--glass-bg);
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-secondary);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
             color: var(--text-primary);
-            padding: 0.75rem 1.25rem;
-            border-radius: 6px;
+            padding: 0.7rem 1.3rem;
+            border-radius: var(--radius-md);
             font-size: 0.85rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.40);
             z-index: 10002;
             display: flex;
             align-items: center;
-            gap: 8px;
-            transform: translateY(100px);
+            gap: 10px;
+            transform: translateY(80px) scale(0.95);
             opacity: 0;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
             pointer-events: none;
+            max-width: 420px;
         }
         .toast.show {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
             opacity: 1;
             pointer-events: auto;
         }
         .toast-success {
-            border-color: var(--success-color);
-            background: rgba(74, 222, 128, 0.05);
+            border-color: var(--success);
+            box-shadow: 0 8px 32px rgba(74, 222, 128, 0.15);
         }
         .toast-error {
-            border-color: var(--error-color);
-            background: rgba(255, 85, 85, 0.05);
+            border-color: var(--error);
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.15);
         }
         .toast-info {
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--glass-border);
         }
 
-        #fnr-modal {
-            max-width: 380px;
-        }
-        #fnr-modal .fnr-row {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        #fnr-modal label {
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-            min-width: 58px;
-        }
-        #fnr-modal input {
-            flex: 1;
-            padding: 5px 8px;
-            background: var(--hover-overlay);
-            border: 1px solid var(--glass-border);
-            border-radius: 4px;
-            color: var(--text-primary);
-        }
-
-        #macro-modal {
-            max-width: 600px;
-        }
-        #macro-code {
-            width: 100%;
-            height: 260px;
-            background: var(--hover-overlay);
-            border: 1px solid var(--glass-border);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-            font-size: 0.85rem;
-            padding: 0.8rem;
-            resize: vertical;
-            outline: none;
-            margin-bottom: 0.75rem;
-        }
-        #macro-code::placeholder {
-            color: var(--text-secondary);
-            opacity: 0.7;
-            font-style: italic;
-        }
-        #macro-status {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            min-height: 16px;
-            margin-bottom: 0.6rem;
-        }
-
-        #sync-ts {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-left: 4px;
-            white-space: nowrap;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-secondary);
-        }
-        .empty-state a {
-            color: var(--accent);
-            text-decoration: none;
-            margin-top: 1rem;
-            display: inline-block;
-        }
-
-        /* SIDEBAR – now on the LEFT */
+        /* ----- SIDEBAR (glass, left) ----- */
         .sidebar {
             position: fixed;
-            left: -320px;
-            /* was right: -320px */
+            left: -340px;
             top: 0;
-            width: 300px;
+            width: 320px;
             height: 100%;
-            background: var(--sidebar-bg);
+            background: var(--bg-secondary);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border-right: 1px solid var(--glass-border);
-            /* was border-left */
             z-index: 1100;
-            transition: left 0.3s ease;
-            /* was right */
-            padding: 1.5rem 1rem;
+            transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            padding: 1.5rem 1.2rem;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            box-shadow: 8px 0 40px rgba(0, 0, 0, 0.30);
         }
         .sidebar.open {
             left: 0;
-            /* was right: 0 */
         }
         .sidebar-backdrop {
             position: fixed;
@@ -1000,53 +1204,77 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.40);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             z-index: 1099;
             display: none;
         }
         .sidebar-backdrop.visible {
             display: block;
+            animation: fadeIn var(--duration-med) ease;
         }
+
         .sidebar h3 {
             font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.2rem;
+            letter-spacing: -0.01em;
         }
         .sidebar input {
             width: 100%;
-            padding: 0.4rem 0.6rem;
-            background: var(--glass-bg);
+            padding: 0.4rem 0.7rem;
+            background: var(--bg-surface);
             border: 1px solid var(--glass-border);
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             color: var(--text-primary);
+            outline: none;
+            transition: border var(--duration-fast) ease;
+        }
+        .sidebar input:focus {
+            border-color: var(--accent);
         }
         .sheet-list {
             list-style: none;
-            max-height: 250px;
+            max-height: 220px;
             overflow-y: auto;
             border: 1px solid var(--glass-border);
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-surface);
         }
         .sheet-list li {
-            padding: 0.4rem 0.6rem;
+            padding: 0.45rem 0.7rem;
             cursor: pointer;
             border-bottom: 1px solid var(--glass-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 0.85rem;
+            transition: background var(--duration-fast) ease;
+        }
+        .sheet-list li:last-child {
+            border-bottom: none;
         }
         .sheet-list li.active {
-            background: var(--hover-overlay);
+            background: var(--accent-glow);
             font-weight: 600;
+            border-left: 3px solid var(--accent);
         }
         .sheet-list li:hover {
-            background: var(--hover-overlay);
+            background: var(--bg-surface);
         }
         .sheet-list li button {
             background: none;
             border: none;
-            color: var(--error-color);
+            color: var(--error);
             cursor: pointer;
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            transition: background var(--duration-fast) ease;
+        }
+        .sheet-list li button:hover {
+            background: rgba(255, 107, 107, 0.10);
         }
         .sidebar-actions {
             display: flex;
@@ -1057,15 +1285,16 @@
             flex: 1;
             min-width: 70px;
             padding: 0.4rem 0.5rem;
-            background: transparent;
+            background: var(--bg-surface);
             color: var(--text-primary);
             border: 1px solid var(--glass-border);
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             font-size: 0.75rem;
             cursor: pointer;
+            transition: all var(--duration-fast) ease;
         }
         .sidebar-actions button:hover {
-            background: var(--hover-overlay);
+            background: var(--glass-border);
         }
         .sidebar-close-btn {
             position: absolute;
@@ -1073,59 +1302,68 @@
             right: 1rem;
             background: none;
             border: none;
-            color: var(--text-primary);
+            color: var(--text-secondary);
             font-size: 1.2rem;
             cursor: pointer;
+            transition: color var(--duration-fast) ease;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+        }
+        .sidebar-close-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-surface);
         }
 
-        /* ===== Error toast / notification ===== */
+        /* ----- GLOBAL ERROR (glass) ----- */
         #global-error-container {
             position: fixed;
-            top: 10px;
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 99999;
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-width: 90%;
-            width: 500px;
+            max-width: 92%;
+            width: 520px;
             pointer-events: none;
         }
         .global-error {
-            padding: 10px 16px;
-            border-radius: 6px;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
             font-size: 0.85rem;
             font-weight: 500;
             border: 1px solid var(--glass-border);
-            background: var(--bg-color);
+            background: var(--bg-secondary);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             color: var(--text-primary);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.30);
             pointer-events: auto;
-            animation: slideDown 0.3s ease;
+            animation: slideDown var(--duration-med) var(--ease-spring);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .global-error.sev-error {
-            border-color: var(--error-color);
-            background: rgba(255, 85, 85, 0.12);
-            color: var(--error-color);
+            border-color: var(--error);
+            background: rgba(255, 107, 107, 0.10);
+            color: var(--error);
         }
         .global-error.sev-warning {
-            border-color: var(--warning-color);
-            background: rgba(250, 204, 21, 0.10);
-            color: var(--warning-color);
+            border-color: var(--warning);
+            background: rgba(250, 204, 21, 0.08);
+            color: var(--warning);
         }
         .global-error.sev-info {
-            border-color: var(--info-color);
-            background: rgba(96, 165, 250, 0.08);
-            color: var(--info-color);
+            border-color: var(--info);
+            background: rgba(96, 165, 250, 0.06);
+            color: var(--info);
         }
         .global-error.sev-success {
-            border-color: var(--success-color);
-            background: rgba(74, 222, 128, 0.08);
-            color: var(--success-color);
+            border-color: var(--success);
+            background: rgba(74, 222, 128, 0.06);
+            color: var(--success);
         }
         .global-error .err-close {
             background: none;
@@ -1133,42 +1371,35 @@
             color: inherit;
             font-size: 1rem;
             cursor: pointer;
-            opacity: 0.6;
-            padding: 0 4px;
+            opacity: 0.5;
+            padding: 0 6px;
+            transition: opacity var(--duration-fast) ease;
         }
         .global-error .err-close:hover {
             opacity: 1;
         }
-        @keyframes slideDown {
-            from {
-                transform: translateY(-30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
 
-        /* ===== Install notification ===== */
+        /* ----- INSTALL BANNER (glass) ----- */
         #install-banner {
             position: fixed;
             bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--glass-bg);
+            background: var(--bg-secondary);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             padding: 14px 22px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.40);
             z-index: 9998;
             display: none;
             align-items: center;
             gap: 16px;
-            max-width: 90%;
-            width: 480px;
-            backdrop-filter: blur(8px);
+            max-width: 92%;
+            width: 500px;
             color: var(--text-primary);
+            animation: slideDown var(--duration-med) var(--ease-spring);
         }
         #install-banner.visible {
             display: flex;
@@ -1183,33 +1414,248 @@
             gap: 6px;
         }
         #install-banner button {
-            padding: 5px 14px;
-            border-radius: 4px;
+            padding: 5px 16px;
+            border-radius: var(--radius-sm);
             border: 1px solid var(--glass-border);
             background: transparent;
             color: var(--text-primary);
             cursor: pointer;
             font-size: 0.78rem;
+            transition: all var(--duration-fast) ease;
         }
         #install-banner button.ib-primary {
             background: var(--accent);
-            color: var(--accent-inverse);
+            color: #fff;
             border-color: var(--accent);
+            box-shadow: 0 4px 12px var(--accent-glow);
         }
         #install-banner button:hover {
-            background: var(--hover-overlay);
+            background: var(--bg-surface);
         }
         #install-banner button.ib-primary:hover {
             opacity: 0.88;
+        }
+
+        /* ----- EMPTY STATE ----- */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+        .empty-state a {
+            color: var(--accent);
+            text-decoration: none;
+            margin-top: 1rem;
+            display: inline-block;
+            font-weight: 500;
+            transition: opacity var(--duration-fast) ease;
+        }
+        .empty-state a:hover {
+            opacity: 0.8;
+        }
+
+        /* ----- RESPONSIVE ----- */
+        @media (max-width: 640px) {
+            body {
+                padding: 0.75rem 0.5rem;
+            }
+            .dashboard-header {
+                padding: 1rem;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+            .header-left h1 {
+                font-size: 1.2rem;
+            }
+            .header-left .brand-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 1rem;
+            }
+            .header-actions {
+                justify-content: flex-start;
+            }
+            .action-btn {
+                padding: 0.35rem 0.7rem;
+                font-size: 0.7rem;
+            }
+            .modal-box {
+                padding: 1.5rem 1.2rem;
+                max-width: 94%;
+            }
+            #passcode-modal {
+                padding: 1.8rem 1.2rem;
+                max-width: 94%;
+            }
+            .sidebar {
+                width: 280px;
+                left: -300px;
+                padding: 1.2rem 1rem;
+            }
+            .toast {
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+                max-width: none;
+                padding: 0.6rem 1rem;
+            }
+            table td,
+            table th {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.78rem;
+            }
+            #edit-toolbar {
+                padding: 4px 8px;
+                gap: 2px;
+            }
+            .tb-btn {
+                padding: 3px 5px;
+            }
+            .tb-btn svg {
+                width: 13px;
+                height: 13px;
+            }
+            #install-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 14px 16px;
+                bottom: 70px;
+                gap: 10px;
+            }
+            #install-banner .ib-actions {
+                justify-content: center;
+            }
+            #filter-input {
+                width: 140px;
+            }
+        }
+
+        /* ===== SPINNER ===== */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.20);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 0.4rem;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== FNR MODAL overrides ===== */
+        #fnr-modal {
+            max-width: 400px;
+        }
+        #fnr-modal .fnr-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        #fnr-modal label {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            min-width: 58px;
+        }
+        #fnr-modal input {
+            flex: 1;
+            padding: 5px 10px;
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            outline: none;
+            transition: border var(--duration-fast) ease;
+        }
+        #fnr-modal input:focus {
+            border-color: var(--accent);
+        }
+        #fnr-status {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            min-height: 20px;
+            margin-bottom: 6px;
+        }
+
+        /* ===== MACRO MODAL ===== */
+        #macro-modal {
+            max-width: 620px;
+        }
+        #macro-code {
+            width: 100%;
+            height: 260px;
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            padding: 0.8rem;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 0.6rem;
+            transition: border var(--duration-fast) ease;
+            line-height: 1.6;
+        }
+        #macro-code:focus {
+            border-color: var(--accent);
+        }
+        #macro-code::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+            font-style: italic;
+        }
+        #macro-status {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            min-height: 18px;
+            margin-bottom: 0.4rem;
+        }
+
+        /* ===== SYNC TIMESTAMP ===== */
+        #sync-ts {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+            white-space: nowrap;
+            font-weight: 400;
+        }
+
+        /* ===== BUTTON: new sheet ===== */
+        #new-sheet-btn {
+            width: 100%;
+            padding: 0.45rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all var(--duration-fast) ease;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        #new-sheet-btn:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+        #new-sheet-btn:active {
+            transform: scale(0.97);
         }
     </style>
 </head>
 <body>
 
-    <!-- GLOBAL ERROR CONTAINER -->
+    <!-- ===== GLOBAL ERROR ===== -->
     <div id="global-error-container"></div>
 
-    <!-- INSTALL BANNER -->
+    <!-- ===== INSTALL BANNER ===== -->
     <div id="install-banner">
         <p>📲 <strong>Install BarchScan</strong> — Save this app to your home screen for quick access.</p>
         <div class="ib-actions">
@@ -1218,20 +1664,21 @@
         </div>
     </div>
 
-    <!-- PASSCODE MODAL -->
+    <!-- ===== PASSCODE MODAL (text input, no password save) ===== -->
     <div id="passcode-overlay">
         <div id="passcode-modal">
             <h2>🔐 Access Required</h2>
             <p>Enter the passcode to continue</p>
             <div class="passcode-input-group">
-                <input type="password" id="passcode-input" placeholder="Enter passcode" autocomplete="off">
+                <!-- type="text" so browser never offers to save password -->
+                <input type="text" id="passcode-input" placeholder="Enter passcode" autocomplete="off" spellcheck="false">
             </div>
             <div class="passcode-error" id="passcode-error"></div>
-            <button id="passcode-btn" class="primary-btn">Verify</button>
+            <button id="passcode-btn">Verify</button>
         </div>
     </div>
 
-    <!-- ACCESS GATE -->
+    <!-- ===== ACCESS GATE (glass doors) ===== -->
     <div id="access-gate">
         <div class="gate-door door-left"></div>
         <div class="gate-door door-right"></div>
@@ -1241,10 +1688,10 @@
         </div>
     </div>
 
-    <!-- CLEAR DATABASE MODAL -->
+    <!-- ===== CLEAR DATABASE MODAL ===== -->
     <div class="modal-overlay" id="clear-db-overlay">
         <div class="modal-box" id="clear-db-modal">
-            <h2 style="color:var(--error-color)">⚠ Clear Database</h2>
+            <h2 style="color:var(--error)">⚠ Clear Database</h2>
             <div class="step-indicator">
                 <div class="step-dot" id="sd1"></div>
                 <div class="step-dot" id="sd2"></div>
@@ -1261,7 +1708,7 @@
             </div>
             <div class="modal-step" id="cdb-step2">
                 <p>Enter your access passcode to authorise.</p>
-                <input type="password" class="modal-input centered" id="cdb-pass" placeholder="Passcode" autocomplete="off">
+                <input type="text" class="modal-input centered" id="cdb-pass" placeholder="Passcode" autocomplete="off" spellcheck="false">
                 <div class="modal-error" id="cdb-err2"></div>
                 <div class="modal-btn-row">
                     <button class="modal-btn" id="cdb-back2">Back</button>
@@ -1279,7 +1726,7 @@
         </div>
     </div>
 
-    <!-- FIND & REPLACE MODAL -->
+    <!-- ===== FIND & REPLACE MODAL ===== -->
     <div class="modal-overlay" id="fnr-overlay">
         <div class="modal-box" id="fnr-modal">
             <h2>Find &amp; Replace</h2>
@@ -1297,7 +1744,7 @@
         </div>
     </div>
 
-    <!-- MACROS MODAL -->
+    <!-- ===== MACROS MODAL ===== -->
     <div class="modal-overlay" id="macro-overlay">
         <div class="modal-box" id="macro-modal">
             <h2>⚡ Macros</h2>
@@ -1314,7 +1761,7 @@ Available variables:
 You can modify data, manipulate the table, fetch APIs, etc.
 Click 'Run' to execute."></textarea>
             <div id="macro-status"></div>
-            <div class="modal-btn-row" style="justify-content: space-between;">
+            <div class="modal-btn-row" style="justify-content:space-between;">
                 <button class="modal-btn danger" id="macro-clear" title="Clear the editor">Clear</button>
                 <div style="display:flex;gap:6px">
                     <button class="modal-btn primary" id="macro-run">▶ Run</button>
@@ -1324,7 +1771,7 @@ Click 'Run' to execute."></textarea>
         </div>
     </div>
 
-    <!-- EXPORT MODAL -->
+    <!-- ===== EXPORT MODAL ===== -->
     <div class="modal-overlay" id="export-overlay">
         <div class="modal-box" style="max-width:300px">
             <h2>📤 Export Data</h2>
@@ -1340,13 +1787,13 @@ Click 'Run' to execute."></textarea>
         </div>
     </div>
 
-    <!-- IMPORT MODAL -->
+    <!-- ===== IMPORT MODAL ===== -->
     <div class="modal-overlay" id="import-overlay">
         <div class="modal-box" style="max-width:350px">
             <h2>📥 Import Data</h2>
             <p>Select a CSV or JSON file. New rows will be appended.</p>
             <input type="file" id="import-file" accept=".csv,.json" class="modal-input">
-            <div id="import-status" style="color:var(--error-color);font-size:0.8rem;margin-bottom:0.6rem"></div>
+            <div id="import-status" style="color:var(--error);font-size:0.8rem;margin-bottom:0.6rem"></div>
             <div class="modal-btn-row">
                 <button class="modal-btn" id="import-cancel">Cancel</button>
                 <button class="modal-btn primary" id="import-process">Import</button>
@@ -1354,7 +1801,7 @@ Click 'Run' to execute."></textarea>
         </div>
     </div>
 
-    <!-- THEME MODAL -->
+    <!-- ===== THEME MODAL ===== -->
     <div class="modal-overlay" id="theme-overlay">
         <div class="modal-box" style="max-width:280px">
             <h2>🎨 Choose Theme</h2>
@@ -1368,7 +1815,7 @@ Click 'Run' to execute."></textarea>
         </div>
     </div>
 
-    <!-- CONTEXT MENU -->
+    <!-- ===== CONTEXT MENU ===== -->
     <div id="ctx-menu">
         <div class="ctx-item" id="ctx-copy">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -1389,88 +1836,88 @@ Click 'Run' to execute."></textarea>
         </div>
     </div>
 
-    <!-- SIDEBAR BACKDROP -->
+    <!-- ===== SIDEBAR BACKDROP ===== -->
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
-    <!-- SIDEBAR (left) -->
+    <!-- ===== SIDEBAR (left) ===== -->
     <div class="sidebar" id="sidebar">
         <button class="sidebar-close-btn" id="sidebar-close-btn">✕</button>
         <h3>📋 Sheets</h3>
-        <button id="new-sheet-btn" style="width:100%;margin-bottom:0.5rem">+ New Sheet</button>
+        <button id="new-sheet-btn">+ New Sheet</button>
         <ul id="sheet-list" class="sheet-list"></ul>
         <div class="sidebar-actions">
             <button id="sidebar-macro-btn">⚡ Macros</button>
-            <button id="sidebar-clear-db-btn" style="color:var(--error-color)">🗑️ Clear DB</button>
+            <button id="sidebar-clear-db-btn" style="color:var(--error)">🗑️ Clear DB</button>
         </div>
-        <small style="color:var(--text-secondary);margin-top:auto;font-size:0.7rem">Sheets saved on device only</small>
+        <small style="color:var(--text-muted);margin-top:auto;font-size:0.7rem">Sheets saved on device only</small>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- ===== MAIN DASHBOARD ===== -->
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%">
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <!-- Sidebar toggle moved to LEFT side -->
-                    <button class="action-btn" id="sidebar-toggle" title="Sheets">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                    </button>
-                    <div>
-                        <h1>Processed Records</h1>
-                        <p class="subtitle">Structured output from the scanner.</p>
-                    </div>
-                </div>
-                <div style="display:flex;gap:6px;">
-                    <button class="action-btn" id="reload-btn" title="Reload page" onclick="location.reload()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="23 4 23 10 17 10"></polyline>
-                            <polyline points="1 20 1 14 7 14"></polyline>
-                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
-                            <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
-                        </svg>
-                    </button>
+            <div class="header-left">
+                <button class="action-btn" id="sidebar-toggle" title="Sheets">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                </button>
+                <div class="brand-icon">📊</div>
+                <div>
+                    <h1>BarchScan</h1>
+                    <div class="subtitle">Data Ledger · Structured scanner output</div>
                 </div>
             </div>
-
-            <div class="action-group" id="action-buttons" style="display:none">
-                <!-- Edit mode toggle -->
-                <button class="action-btn" id="toggle-edit" title="Edit Mode">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <div class="header-actions">
+                <button class="action-btn" id="reload-btn" title="Reload page" onclick="location.reload()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
+                        <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
+                    </svg>
                 </button>
-
-                <div class="btn-sep"></div>
-
-                <!-- Dropdown -->
-                <div class="dropdown">
-                    <button class="action-btn" id="more-actions-btn" title="More actions">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px">
-                            <line x1="4" y1="6" x2="20" y2="6"></line>
-                            <line x1="4" y1="12" x2="20" y2="12"></line>
-                            <line x1="4" y1="18" x2="20" y2="18"></line>
-                        </svg>
-                    </button>
-                    <div class="dropdown-menu" id="more-actions-dropdown">
-                        <div class="dropdown-item" id="dropdown-export-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
-                            Export
-                        </div>
-                        <div class="dropdown-item" id="dropdown-import-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                            Import
-                        </div>
-                        <div class="dropdown-item" id="dropdown-theme-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                            Theme
-                        </div>
-                        <div class="dropdown-item" id="dropdown-clear-db-btn" style="color:var(--error-color)">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                            Clear DB
-                        </div>
-                    </div>
-                </div>
             </div>
         </header>
 
-        <!-- EDIT TOOLBAR (sticky) -->
+        <!-- ===== ACTION BUTTONS ===== -->
+        <div class="action-group" id="action-buttons" style="display:none; margin-bottom:0.75rem; flex-wrap:wrap; gap:6px;">
+            <!-- Edit toggle -->
+            <button class="action-btn" id="toggle-edit" title="Edit Mode">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit
+            </button>
+
+            <div class="btn-sep"></div>
+
+            <!-- More Actions dropdown -->
+            <div class="dropdown">
+                <button class="action-btn" id="more-actions-btn" title="More actions">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px">
+                        <line x1="4" y1="6" x2="20" y2="6"></line>
+                        <line x1="4" y1="12" x2="20" y2="12"></line>
+                        <line x1="4" y1="18" x2="20" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="dropdown-menu" id="more-actions-dropdown">
+                    <div class="dropdown-item" id="dropdown-export-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+                        Export
+                    </div>
+                    <div class="dropdown-item" id="dropdown-import-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Import
+                    </div>
+                    <div class="dropdown-item" id="dropdown-theme-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        Theme
+                    </div>
+                    <div class="dropdown-item danger" id="dropdown-clear-db-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                        Clear DB
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== EDIT TOOLBAR ===== -->
         <div id="edit-toolbar">
             <div class="toolbar-group">
                 <button class="tb-btn" id="tb-undo" title="Undo (Ctrl+Z)" disabled>
@@ -1530,14 +1977,16 @@ Click 'Run' to execute."></textarea>
                 </button>
             </div>
             <div class="toolbar-sep"></div>
-            <!-- SAVE CHANGES button – icon only -->
+            <!-- SAVE + CANCEL (Save morphs from Edit) -->
             <div class="toolbar-group">
                 <button class="tb-btn tb-save" id="tb-save" title="Save Changes">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save
                 </button>
+                <button class="tb-btn tb-cancel" id="tb-cancel" title="Cancel Edit">✕ Cancel</button>
             </div>
             <div class="toolbar-sep"></div>
-            <!-- ZOOM controls -->
+            <!-- ZOOM -->
             <div class="toolbar-group zoom-group">
                 <button id="zoom-out" title="Zoom Out">−</button>
                 <span class="zoom-level" id="zoom-level">100%</span>
@@ -1545,20 +1994,20 @@ Click 'Run' to execute."></textarea>
             </div>
         </div>
 
-        <!-- FORMULA BAR -->
+        <!-- ===== FORMULA BAR ===== -->
         <div id="formula-bar">
             <span id="formula-cell-ref">—</span>
             <input type="text" id="formula-input" placeholder="Cell value…" spellcheck="false">
         </div>
 
-        <!-- FILTER BAR -->
+        <!-- ===== FILTER BAR ===== -->
         <div id="filter-bar">
             <select id="filter-col-select"></select>
             <input type="text" id="filter-input" placeholder="Filter value…">
             <button id="filter-clear-btn">✕ Clear</button>
         </div>
 
-        <!-- TABLE -->
+        <!-- ===== TABLE ===== -->
         <div class="table-wrapper" id="table-container" style="display:none">
             <table id="data-table">
                 <thead id="table-head"></thead>
@@ -1572,9 +2021,12 @@ Click 'Run' to execute."></textarea>
         </div>
     </div>
 
+    <!-- ============================================================ -->
+    <!-- ===== JAVASCRIPT (functionality unchanged) ===== -->
+    <!-- ============================================================ -->
     <script>
         // ============================================================
-        // GLOBAL ERROR HANDLER – catches all browser errors
+        // GLOBAL ERROR HANDLER
         // ============================================================
         (function() {
             const container = document.getElementById('global-error-container');
@@ -1585,11 +2037,9 @@ Click 'Run' to execute."></textarea>
                 el.innerHTML = `<span>${message}</span><button class="err-close" title="Dismiss">✕</button>`;
                 el.querySelector('.err-close').addEventListener('click', () => el.remove());
                 container.appendChild(el);
-                // auto-dismiss after 8s
                 setTimeout(() => { if (el.parentNode) el.remove(); }, 8000);
             }
 
-            // Override console.error to also show in UI
             const origConsoleError = console.error;
             console.error = function(...args) {
                 origConsoleError.apply(console, args);
@@ -1597,24 +2047,21 @@ Click 'Run' to execute."></textarea>
                 showGlobalError('⚠ ' + msg.substring(0, 200), 'error');
             };
 
-            // Catch unhandled promise rejections
             window.addEventListener('unhandledrejection', (e) => {
                 const msg = e.reason?.message || e.reason || 'Unhandled Promise rejection';
                 showGlobalError('⚠ ' + msg.substring(0, 200), 'error');
             });
 
-            // Catch global errors
             window.addEventListener('error', (e) => {
                 const msg = e.message || e.error?.message || 'Script error';
                 showGlobalError('⚠ ' + msg.substring(0, 200), 'error');
             });
 
-            // Expose for manual use
             window.showGlobalError = showGlobalError;
         })();
 
         // ============================================================
-        // INSTALL BANNER – first time
+        // INSTALL BANNER
         // ============================================================
         (function() {
             const banner = document.getElementById('install-banner');
@@ -1629,14 +2076,12 @@ Click 'Run' to execute."></textarea>
             document.getElementById('ib-install').addEventListener('click', () => {
                 banner.classList.remove('visible');
                 localStorage.setItem(key, 'true');
-                // Prompt install if available
                 if (window.deferredPrompt) {
                     window.deferredPrompt.prompt();
                 } else {
                     showGlobalError('Install your browser\'s "Add to Home Screen" feature.', 'info');
                 }
             });
-            // PWA install prompt capture
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 window.deferredPrompt = e;
@@ -1665,21 +2110,18 @@ Click 'Run' to execute."></textarea>
                 if (zoomLevel > 50) { zoomLevel -= 10;
                     applyZoom(); }
             });
-            // reset zoom with double-click on level
             zoomDisplay.addEventListener('dblclick', () => { zoomLevel = 100;
                 applyZoom(); });
         })();
 
         // ============================================================
-        // KEYBOARD SHORTCUTS – 10 actions mapped to 1-9,0
+        // KEYBOARD SHORTCUTS
         // ============================================================
         document.addEventListener('keydown', (e) => {
-            // Only if not in input/textarea
             const tag = e.target.tagName;
             if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 
             const key = e.key;
-            // Map 1-9,0 to actions
             const map = {
                 '1': 'save',
                 '2': 'edit',
@@ -1694,7 +2136,6 @@ Click 'Run' to execute."></textarea>
             };
             const action = map[key];
             if (!action) return;
-
             e.preventDefault();
 
             switch (action) {
@@ -1735,12 +2176,12 @@ Click 'Run' to execute."></textarea>
         });
 
         // ============================================================
-        // SAVE CHANGES – icon only
+        // SAVE CHANGES
         // ============================================================
         document.getElementById('tb-save').addEventListener('click', async function() {
             const btn = this;
             btn.disabled = true;
-            btn.innerHTML = `<span class="spinner" style="border-top-color:#000;width:12px;height:12px;"></span>`;
+            btn.innerHTML = `<span class="spinner" style="border-top-color:#000;width:12px;height:12px;"></span> Saving...`;
             try {
                 await saveTableToMemory();
                 showToast('Changes saved successfully!', 'success');
@@ -1749,13 +2190,44 @@ Click 'Run' to execute."></textarea>
             } finally {
                 btn.disabled = false;
                 btn.innerHTML =
-                    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`;
+                    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save`;
             }
         });
 
         // ============================================================
-        // HEADER MERGE + DUPLICATE PREVENTION
-        // Override onHeaderEdit with merge logic
+        // CANCEL EDIT – exits edit mode without saving
+        // ============================================================
+        document.getElementById('tb-cancel').addEventListener('click', function() {
+            if (isEditMode) {
+                // Exit edit mode without saving
+                isEditMode = false;
+                dataTable.classList.remove('excel-mode');
+                toggleEditBtn.classList.remove('active');
+                toggleEditBtn.innerHTML =
+                    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit`;
+                tableBody.querySelectorAll('td:not(.sn-col)').forEach(td => { td.contentEditable = 'false'; });
+                tableHead.querySelectorAll('th:not(.sn-col)').forEach(th => {
+                    th.contentEditable = 'false';
+                    th.classList.remove('editable-header');
+                });
+                document.getElementById('edit-toolbar').classList.remove('visible');
+                document.getElementById('formula-bar').classList.remove('visible');
+                document.getElementById('filter-bar').classList.remove('visible');
+                clearSelection();
+                // Reload data from memory to discard changes
+                if (activeSheetName !== 'Server Data') {
+                    logbookData = getSheetData(activeSheetName);
+                } else {
+                    // Re-fetch from server
+                    loadLogbookData();
+                }
+                buildDynamicTable(logbookData);
+                showToast('Edit cancelled. Changes discarded.', 'info');
+            }
+        });
+
+        // ============================================================
+        // HEADER MERGE
         // ============================================================
         const originalOnHeaderEdit = window.onHeaderEdit;
 
@@ -1768,11 +2240,10 @@ Click 'Run' to execute."></textarea>
 
             const thEls = Array.from(tableHead.querySelectorAll('th:not(.sn-col)'));
             const colIdx = thEls.indexOf(th);
-            // Check for duplicate header (case-insensitive)
-            const dupIdx = thEls.findIndex((t, i) => i !== colIdx && t.textContent.trim().toLowerCase() === newName.toLowerCase());
+            const dupIdx = thEls.findIndex((t, i) => i !== colIdx && t.textContent.trim().toLowerCase() === newName
+            .toLowerCase());
 
             if (dupIdx !== -1) {
-                // MERGE: move data from this column into the duplicate column, then remove this column
                 if (!confirm(`Merge column "${oldName}" into "${newName}"? All data will be appended.`)) {
                     th.textContent = oldName;
                     return;
@@ -1787,54 +2258,42 @@ Click 'Run' to execute."></textarea>
                     if (!srcTd || !destTd) return;
                     const srcVal = srcTd.textContent.trim();
                     const destVal = destTd.textContent.trim();
-                    // Append src value to dest (with separator if both exist)
                     destTd.textContent = destVal && srcVal ? `${destVal} ${srcVal}` : destVal || srcVal;
-                    // Remove src cell
                     srcTd.remove();
                 });
 
-                // Remove the header
                 th.remove();
-
-                // Update currentHeaders
                 const newThEls = Array.from(tableHead.querySelectorAll('th:not(.sn-col)'));
                 currentHeaders = newThEls.map(t => t.textContent.trim());
-
-                // Renumber cells
                 renumberSN();
                 showToast(`Column merged into "${newName}".`, 'success');
                 return;
             }
 
-            // No duplicate – just update the header
             th.setAttribute('data-original-name', newName);
-            // Update currentHeaders
             const newThEls = Array.from(tableHead.querySelectorAll('th:not(.sn-col)'));
             currentHeaders = newThEls.map(t => t.textContent.trim());
         };
 
         // ============================================================
-        // DAY-BASED COLOR CODING – first row of each day
+        // DAY COLOR CODING
         // ============================================================
         function applyDayColorCoding() {
             const rows = tableBody.querySelectorAll('tr');
             if (rows.length === 0) return;
 
-            const dayColors = [
-                '#ff6b6b', '#ffa94d', '#ffd93d', '#6bcb77',
-                '#4d96ff', '#9b59b6', '#ff6b9d', '#00d2d3', '#f368e0'
+            const dayColors = ['#ff6b6b', '#ffa94d', '#ffd93d', '#6bcb77', '#4d96ff', '#9b59b6', '#ff6b9d', '#00d2d3',
+                '#f368e0'
             ];
             let colorIndex = 0;
             let lastDate = null;
 
-            // Find which column might contain dates – look for "date", "day", "created", etc.
             const headers = currentHeaders.map(h => h.toLowerCase());
             let dateColIdx = headers.findIndex(h =>
                 h.includes('date') || h.includes('day') || h.includes('created') || h.includes('timestamp') || h.includes(
-                'time')
+                    'time')
             );
             if (dateColIdx === -1) {
-                // Try to find by content: check first few rows for date-like strings
                 for (let i = 0; i < Math.min(rows.length, 10); i++) {
                     const tds = rows[i].querySelectorAll('td:not(.sn-col)');
                     for (let j = 0; j < tds.length; j++) {
@@ -1847,21 +2306,18 @@ Click 'Run' to execute."></textarea>
                     if (dateColIdx !== -1) break;
                 }
             }
-            if (dateColIdx === -1) return; // no date column found
+            if (dateColIdx === -1) return;
 
             rows.forEach((tr, idx) => {
                 const tds = tr.querySelectorAll('td:not(.sn-col)');
                 const dateCell = tds[dateColIdx];
                 if (!dateCell) return;
                 const val = dateCell.textContent.trim();
-                // Try to parse date
                 let dateObj = null;
                 try {
-                    // Try various formats
                     let d = val.replace(/\//g, '-');
                     dateObj = new Date(d);
                     if (isNaN(dateObj.getTime())) {
-                        // try MM/DD/YYYY
                         const parts = val.split(/[-/]/);
                         if (parts.length === 3) {
                             let y = parseInt(parts[2]);
@@ -1878,7 +2334,6 @@ Click 'Run' to execute."></textarea>
                 if (lastDate !== dateKey) {
                     lastDate = dateKey;
                     colorIndex = (colorIndex + 1) % dayColors.length;
-                    // Apply color to this row's top border
                     tr.style.setProperty('--day-color', dayColors[colorIndex]);
                     tr.classList.add('day-marker');
                 } else {
@@ -1887,15 +2342,12 @@ Click 'Run' to execute."></textarea>
             });
         }
 
-        // Patch buildDynamicTable to apply day coloring
         const origBuildDynamicTable = window.buildDynamicTable || function() {};
         window.buildDynamicTable = function(data) {
             origBuildDynamicTable(data);
-            // After rendering, apply day coloring
             setTimeout(applyDayColorCoding, 50);
         };
 
-        // Also re-apply after any data change
         const origRenumberSN = window.renumberSN || function() {};
         window.renumberSN = function() {
             origRenumberSN();
@@ -1903,23 +2355,18 @@ Click 'Run' to execute."></textarea>
         };
 
         // ============================================================
-        // HEADER ASSIGNMENT AUTOMATION – prefilled function
+        // AUTO ASSIGN COLUMNS (macro helper)
         // ============================================================
-        // This function is available in the macro environment as "autoAssignColumns"
-        // It automatically assigns columns to headers based on position or name patterns.
-        // Extra unassigned columns become independent columns.
         window.autoAssignColumns = function(data, headers, tableBodyEl, tableHeadEl, showToastFn, tableEl) {
             if (!data || data.length === 0) {
                 showToastFn('No data to assign.', 'error');
                 return;
             }
 
-            // Build a map of all unique keys from all rows
             const allKeys = new Set();
             data.forEach(row => { Object.keys(row).forEach(k => allKeys.add(k)); });
             const keys = Array.from(allKeys);
 
-            // Try to match keys to headers by common patterns
             const headerPatterns = headers.map(h => h.toLowerCase().replace(/[^a-z0-9]/g, ''));
             const assigned = new Set();
             const matched = [];
@@ -1942,12 +2389,10 @@ Click 'Run' to execute."></textarea>
                     assigned.add(bestMatch);
                     matched.push({ key, headerIdx: bestMatch, score: bestScore });
                 } else {
-                    // unassigned – becomes independent column
                     matched.push({ key, headerIdx: -1, score: 0 });
                 }
             });
 
-            // Build new headers: assigned ones keep their names, unassigned become new columns
             const newHeaders = [];
             const headerMap = {};
             headers.forEach((h, idx) => {
@@ -1956,7 +2401,6 @@ Click 'Run' to execute."></textarea>
                     newHeaders.push(h);
                 }
             });
-            // Add unassigned keys as new headers
             matched.forEach(m => {
                 if (m.headerIdx === -1) {
                     newHeaders.push(m.key);
@@ -1964,14 +2408,12 @@ Click 'Run' to execute."></textarea>
                 }
             });
 
-            // Rebuild data with new header order
             const newData = data.map(row => {
                 const newRow = {};
                 newHeaders.forEach(h => {
                     if (headerMap[h] !== undefined && row[h] !== undefined) {
                         newRow[h] = row[h];
                     } else {
-                        // Try to find value from matched keys
                         const match = matched.find(m => m.key === h);
                         if (match && match.headerIdx === -1) {
                             newRow[h] = row[match.key] || '';
@@ -1986,7 +2428,6 @@ Click 'Run' to execute."></textarea>
                 return newRow;
             });
 
-            // Update the table
             window.logbookData = newData;
             window.currentHeaders = newHeaders;
             window.buildDynamicTable(newData);
@@ -1996,22 +2437,17 @@ Click 'Run' to execute."></textarea>
             showToastFn(`Re-assigned ${matched.length} columns. ${newHeaders.length} columns total.`, 'success');
         };
 
-        // Pre-populate macro editor with this function as a reference
         document.getElementById('macro-code').value =
             `// ============================================================\n` +
             `// HEADER ASSIGNMENT AUTOMATION – pre-filled example\n` +
-            `// This function automatically assigns columns to headers.\n` +
-            `// Extra unassigned columns become independent columns.\n` +
             `// Usage: autoAssignColumns(data, headers, tableBody, tableHead, showToast, table)\n` +
             `// ============================================================\n\n` +
-            `// Example: run auto-assignment\n` +
             `autoAssignColumns(data, headers, tableBody, tableHead, showToast, table);\n\n` +
             `// Or write your own custom logic below:\n` +
             `// data.forEach(row => { ... });\n`;
 
         // ============================================================
-        // DELETE DATABASE – sends DELETE request to backend
-        // Override the clear DB confirmation to use DELETE
+        // DELETE DATABASE
         // ============================================================
         const originalCdbConfirm = document.getElementById('cdb-confirm')?.click;
         document.getElementById('cdb-confirm').addEventListener('click', async function() {
@@ -2022,7 +2458,6 @@ Click 'Run' to execute."></textarea>
                 if (!response.ok) throw new Error('Server error: ' + response.status);
                 showToast('All records have been deleted.', 'success');
                 document.getElementById('clear-db-overlay').classList.remove('open');
-                // Clear table
                 tableHead.innerHTML = '';
                 tableBody.innerHTML = '';
                 logbookData = [];
@@ -2034,7 +2469,7 @@ Click 'Run' to execute."></textarea>
                 dataTable.classList.remove('excel-mode');
                 toggleEditBtn.classList.remove('active');
                 toggleEditBtn.innerHTML =
-                    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+                    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit`;
                 document.getElementById('edit-toolbar').classList.remove('visible');
                 document.getElementById('formula-bar').classList.remove('visible');
                 document.getElementById('filter-bar').classList.remove('visible');
@@ -2051,13 +2486,7 @@ Click 'Run' to execute."></textarea>
         }, true);
 
         // ============================================================
-        // PATCH: ensure vertical grid lines are always present
-        // ============================================================
-        // Already done via CSS: table.excel-mode td, th have border: 1px solid
-        // Also non-edit mode gets borders via table:not(.excel-mode) td, th
-
-        // ============================================================
-        // INIT – load data
+        // INIT
         // ============================================================
         const SESSION_KEY = 'barchscan_authenticated';
         const rootElement = document.documentElement;
@@ -2561,7 +2990,6 @@ Click 'Run' to execute."></textarea>
                 tableBody.appendChild(tr);
             });
             updateFilterSelect();
-            // Apply day coloring after render
             setTimeout(applyDayColorCoding, 50);
         }
 
@@ -2571,6 +2999,8 @@ Click 'Run' to execute."></textarea>
             if (isEditMode) {
                 dataTable.classList.add('excel-mode');
                 toggleEditBtn.classList.add('active');
+                toggleEditBtn.innerHTML =
+                    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit`;
                 tableBody.querySelectorAll('td:not(.sn-col)').forEach(td => {
                     td.contentEditable = 'true';
                     td.addEventListener('focus', onCellFocus);
@@ -2588,7 +3018,8 @@ Click 'Run' to execute."></textarea>
             } else {
                 dataTable.classList.remove('excel-mode');
                 toggleEditBtn.classList.remove('active');
-
+                toggleEditBtn.innerHTML =
+                    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit`;
                 tableBody.querySelectorAll('td:not(.sn-col)').forEach(td => { td.contentEditable = 'false'; });
                 tableHead.querySelectorAll('th:not(.sn-col)').forEach(th => {
                     th.contentEditable = 'false';
@@ -2877,7 +3308,6 @@ Click 'Run' to execute."></textarea>
             .toLowerCase());
 
             if (dupIdx !== -1) {
-                // MERGE
                 if (!confirm(`Merge column "${oldName}" into "${newName}"? All data will be appended.`)) {
                     th.textContent = oldName;
                     return;
@@ -3055,7 +3485,7 @@ Click 'Run' to execute."></textarea>
             dataTable.classList.toggle('auto-cols');
             btn.classList.toggle('tb-active', dataTable.classList.contains('auto-cols'));
             showToast(dataTable.classList.contains('auto-cols') ? 'Auto-resize columns on' : 'Auto-resize columns off',
-            'info');
+                'info');
         });
 
         document.getElementById('tb-duprow').addEventListener('click', () => {
@@ -3298,8 +3728,6 @@ Click 'Run' to execute."></textarea>
 
         document.getElementById('cdb-back3').addEventListener('click', () => goToStep(2));
 
-        // DELETE handler – already overridden above
-
         const macroOverlay = document.getElementById('macro-overlay');
         const macroCode = document.getElementById('macro-code');
         const macroStatus = document.getElementById('macro-status');
@@ -3385,25 +3813,13 @@ Click 'Run' to execute."></textarea>
             }
         });
 
-        // ============================================================
-        // PWA: register service worker (if available)
-        // ============================================================
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js').catch(() => {});
         }
 
-        // ============================================================
-        // Ensure vertical grid lines are always present
-        // ============================================================
-        // Already done via CSS – both edit and non-edit modes have borders
-
-        console.log('✅ BarchScan loaded with all features.');
+        console.log('✅ BarchScan loaded with glass design.');
         console.log('📌 Keyboard shortcuts: 1=Save, 2=Edit, 3=Undo, 4=Redo, 5=Find, 6=Filter, 7=Sort↑, 8=Sort↓, 9=Freeze, 0=Wrap');
-        console.log('📌 Zoom: + / - buttons');
-        console.log('📌 Header merge: rename a header to match an existing one to merge columns.');
-        console.log('📌 Day coloring: first row of each day gets a unique color.');
-        console.log('📌 Auto-assign columns: use the "autoAssignColumns" function in Macros.');
-        console.log('📌 Global error catcher active.');
+        console.log('📌 Edit → Save morphs; Cancel discards changes.');
     </script>
 </body>
 </html>
