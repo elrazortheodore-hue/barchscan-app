@@ -1,9 +1,12 @@
 {
+  "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
     "api/analyze.py": {
-      "runtime": "python3.9"
+      "runtime": "python3.10",
+      "maxDuration": 30,
+      "memory": 1024
     }
   },
   "redirects": [
@@ -21,6 +24,10 @@
     {
       "source": "/data",
       "destination": "/data/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/404.html"
     }
   ],
   "headers": [
