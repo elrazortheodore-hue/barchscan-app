@@ -15,3 +15,4 @@ node_modules/
 # React product page local artifacts
 product-page/node_modules/
 product-page/dist/
+.vercel

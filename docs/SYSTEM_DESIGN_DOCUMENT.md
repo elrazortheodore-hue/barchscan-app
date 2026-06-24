@@ -157,20 +157,20 @@ BarchScan operates on a two-tier subscription model. Both tiers share the same c
 |---------------------------------|---------------------------------------|--------------------------------------------------|
 | **Core Value**                  | Digitize, encrypt, store, retrieve    | Records Vault + AI analytics + external data        |
 | **Target User**                 | Officers, clerks, operations managers | Analysts, compliance officers, decision-makers   |
-| AI Extraction + Suggestion Step | ✅                                    | ✅                                               |
-| Encrypted Storage               | ✅                                    | ✅                                               |
-| Records Retrieval & Search      | ✅                                    | ✅                                               |
-| Export (CSV, JSON)              | ✅                                    | ✅                                               |
-| User Accounts                   | ✅                                    | ✅                                               |
-| Session Management              | ✅                                    | ✅                                               |
-| Image Archive                   | ✅                                    | ✅                                               |
-| Manual Analytics                | ❌                                    | ✅                                               |
-| AI Analytics Assistant (Chat)   | ❌                                    | ✅                                               |
-| Tag & Reference System          | ❌                                    | ✅                                               |
-| External Data Upload            | ❌                                    | ✅                                               |
-| Automated Charts & Graphs       | ❌                                    | ✅                                               |
-| MCP-Embedded Tool Calls         | ❌                                    | ✅                                               |
-| Trend & Anomaly Detection       | ❌                                    | ✅                                               |
+| AI Extraction + Suggestion Step | Yes                                    | Yes                                               |
+| Encrypted Storage               | Yes                                    | Yes                                               |
+| Records Retrieval & Search      | Yes                                    | Yes                                               |
+| Export (CSV, JSON)              | Yes                                    | Yes                                               |
+| User Accounts                   | Yes                                    | Yes                                               |
+| Session Management              | Yes                                    | Yes                                               |
+| Image Archive                   | Yes                                    | Yes                                               |
+| Manual Analytics                | No                                    | Yes                                               |
+| AI Analytics Assistant (Chat)   | No                                    | Yes                                               |
+| Tag & Reference System          | No                                    | Yes                                               |
+| External Data Upload            | No                                    | Yes                                               |
+| Automated Charts & Graphs       | No                                    | Yes                                               |
+| MCP-Embedded Tool Calls         | No                                    | Yes                                               |
+| Trend & Anomaly Detection       | No                                    | Yes                                               |
 ### 3.2 Tier 1 — Records Vault
 
 The Records Vault tier is the foundational digitization and storage product. The core workflow is:
@@ -896,10 +896,10 @@ API routes additionally:
 
 | Item                            | Status in v2.0                                                       | Severity |
 |---------------------------------|----------------------------------------------------------------------|----------|
-| Passcode auth replaced          | Replaced by Supabase Auth (JWT). Fully resolved.                     | ✅ Fixed |
-| JSONBin master key in repo      | JSONBin replaced by Supabase. `create_bin.js` to be deleted.         | ✅ Fixed |
-| Open CORS (`*`)                 | CORS restricted to known origins in production.                       | ✅ Fixed |
-| No API auth middleware          | All API handlers now validate Supabase JWT.                           | ✅ Fixed |
+| Passcode auth replaced          | Replaced by Supabase Auth (JWT). Fully resolved.                     | Yes Fixed |
+| JSONBin master key in repo      | JSONBin replaced by Supabase. `create_bin.js` to be deleted.         | Yes Fixed |
+| Open CORS (`*`)                 | CORS restricted to known origins in production.                       | Yes Fixed |
+| No API auth middleware          | All API handlers now validate Supabase JWT.                           | Yes Fixed |
 
 ---
 

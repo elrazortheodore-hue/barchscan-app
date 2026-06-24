@@ -13,16 +13,16 @@ async function main() {
 
   console.log('Sanitizing markdown (removing emojis, cleaning tables)...');
   
-  // Replace checkmarks and crosses
-  markdown = markdown.replace(/✅/g, 'Yes');
-  markdown = markdown.replace(/❌/g, 'No');
+  // Replace checkmarks and crosses (using unicode escapes to keep codebase emoji-free)
+  markdown = markdown.replace(/\u2705/g, 'Yes');
+  markdown = markdown.replace(/\u274c/g, 'No');
 
   // Clean up specific icon labels in the ASCII flow diagram
-  markdown = markdown.replace(/📸 SCAN/g, 'SCAN');
-  markdown = markdown.replace(/🤖 SUGGEST/g, 'SUGGEST');
-  markdown = markdown.replace(/✏️ EDIT/g, 'EDIT');
-  markdown = markdown.replace(/✅ CREATE/g, 'CREATE');
-  markdown = markdown.replace(/📊 ANALYSE/g, 'ANALYSE');
+  markdown = markdown.replace(/\ud83d\udcf8 SCAN/g, 'SCAN');
+  markdown = markdown.replace(/\ud83e\udd16 SUGGEST/g, 'SUGGEST');
+  markdown = markdown.replace(/\u270f\ufe0f EDIT/g, 'EDIT');
+  markdown = markdown.replace(/\u2705 CREATE/g, 'CREATE');
+  markdown = markdown.replace(/\ud83d\udcca ANALYSE/g, 'ANALYSE');
 
   // Strip any other remaining emojis/icons
   // Match standard emoji ranges and miscellaneous symbols

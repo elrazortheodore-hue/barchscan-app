@@ -81,7 +81,7 @@ BarchScan delivers a seamless pipeline from physical record to digital intellige
 
 ```
 ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-│  📸 SCAN     │   │  🤖 SUGGEST  │   │  ✏️ EDIT     │   │  ✅ CREATE   │   │  📊 ANALYSE  │
+│  SCAN     │   │  SUGGEST  │   │  EDIT     │   │  CREATE   │   │  ANALYSE  │
 │              │   │              │   │              │   │              │   │              │
 │ Photograph   │──▶│ AI extracts  │──▶│ User reviews │──▶│ Data saved   │──▶│ AI assistant │
 │ any paper    │   │ structured   │   │ & edits:     │   │ encrypted in │   │ + manual     │
@@ -181,7 +181,7 @@ Everything in Tier 1, plus a world-class analytics and AI layer. Designed to gro
 | Scans per month | 10 |
 | Records stored | Up to 100 rows |
 | Analytics | None |
-| Encryption | ✅ Same as paid |
+| Encryption | Yes Same as paid |
 | Purpose | Trial → conversion to Tier 1 or Tier 2 |
 
 ### 5.3 Revenue Formula
@@ -243,13 +243,13 @@ ARR = MRR × 12
 
 | Competitor | Price | AI Extraction | Human Review Step | Encrypted Storage | Analytics | External Data Upload | Mobile-First |
 |---|---|---|---|---|---|---|---|
-| **BarchScan** | $8–$23/mo | ✅ AI Vision | ✅ Full editor | ✅ AES-256 | ✅ AI + Manual | ✅ CSV/Excel/JSON | ✅ |
-| Google Lens | Free | Partial OCR | ❌ | ❌ | ❌ | ❌ | ✅ |
-| Adobe Scan | $10–$25/mo | OCR only | ❌ | ❌ | ❌ | ❌ | ✅ |
-| Microsoft Lens | Free | Basic table | Limited | ❌ | ❌ | ❌ | ✅ |
-| Tabula | Free | Rule-based | ❌ | ❌ | ❌ | ❌ | ❌ |
-| ABBYY FineReader | $200+/mo | ✅ | Limited | ✅ | ❌ | ❌ | ❌ |
-| Kofax | $500+/mo | ✅ | ✅ | ✅ | Limited | ❌ | ❌ |
+| **BarchScan** | $8–$23/mo | Yes AI Vision | Yes Full editor | Yes AES-256 | Yes AI + Manual | Yes CSV/Excel/JSON | Yes |
+| Google Lens | Free | Partial OCR | No | No | No | No | Yes |
+| Adobe Scan | $10–$25/mo | OCR only | No | No | No | No | Yes |
+| Microsoft Lens | Free | Basic table | Limited | No | No | No | Yes |
+| Tabula | Free | Rule-based | No | No | No | No | No |
+| ABBYY FineReader | $200+/mo | Yes | Limited | Yes | No | No | No |
+| Kofax | $500+/mo | Yes | Yes | Yes | Limited | No | No |
 
 ### 7.2 BarchScan's Moat
 

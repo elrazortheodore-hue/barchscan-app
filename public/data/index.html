@@ -1682,7 +1682,7 @@
 
     <!-- ===== INSTALL BANNER ===== -->
     <div id="install-banner">
-        <p>📲 <strong>Install BarchScan</strong> — Save this app to your home screen for quick access.</p>
+        <p><strong>Install BarchScan</strong> — Save this app to your home screen for quick access.</p>
         <div class="ib-actions">
             <button class="ib-primary" id="ib-install">Install</button>
             <button id="ib-close">✕</button>
@@ -3886,9 +3886,9 @@ Click 'Run' to execute."></textarea>
             navigator.serviceWorker.register('/sw.js').catch(() => {});
         }
 
-        console.log('✅ BarchScan loaded with glass design.');
-        console.log('📌 Keyboard shortcuts: 1=Save, 2=Edit, 3=Undo, 4=Redo, 5=Find, 6=Filter, 7=Sort↑, 8=Sort↓, 9=Freeze, 0=Wrap');
-        console.log('📌 Edit → Save morphs; Cancel discards changes.');
+        console.log('BarchScan loaded with glass design.');
+        console.log('Keyboard shortcuts: 1=Save, 2=Edit, 3=Undo, 4=Redo, 5=Find, 6=Filter, 7=Sort↑, 8=Sort↓, 9=Freeze, 0=Wrap');
+        console.log('Edit → Save morphs; Cancel discards changes.');
 
         // ============================================================
         //   CLOUDINARY IMAGES – Moved to a toggleable panel
@@ -4014,7 +4014,7 @@ Click 'Run' to execute."></textarea>
 
             } catch (err) {
                 console.error('Cloudinary load error:', err);
-                container.innerHTML = '<div style="color: var(--error-color); font-size: 0.75rem; text-align: center; padding: 0.5rem;">⚠️ Failed to load images.</div>';
+                container.innerHTML = '<div style="color: var(--error-color); font-size: 0.75rem; text-align: center; padding: 0.5rem;">Failed to load images.</div>';
                 showToast('Could not load uploaded images.', 'error');
             }
         }
@@ -4270,7 +4270,7 @@ function displayAnalysisResults(results) {
     // ---- Anomalies ----
     const anomalyCount = results.anomaly_count || 0;
     if (anomalyCount > 0) {
-        html += `<h3 style="color:var(--error); margin-top:0.5rem;">⚠️ Anomalies Found (${anomalyCount})</h3>`;
+        html += `<h3 style="color:var(--error); margin-top:0.5rem;">Anomalies Found (${anomalyCount})</h3>`;
         html += `<div style="max-height:200px; overflow-y:auto; margin-bottom:1rem; font-size:0.75rem;">`;
         results.anomalies.forEach((row, idx) => {
             html += `<div style="padding:4px 6px; border-bottom:1px solid var(--glass-border);">`;
@@ -4281,13 +4281,13 @@ function displayAnalysisResults(results) {
         });
         html += `</div>`;
     } else {
-        html += `<p style="color:var(--success);">✅ No anomalies detected in numeric columns.</p>`;
+        html += `<p style="color:var(--success);">No anomalies detected in numeric columns.</p>`;
     }
     
     // ---- Duplicates ----
     const dupCount = results.duplicate_count || 0;
     if (dupCount > 0) {
-        html += `<h3 style="color:var(--warning); margin-top:0.5rem;">🔄 Near-Duplicates Found (${dupCount})</h3>`;
+        html += `<h3 style="color:var(--warning); margin-top:0.5rem;">Near-Duplicates Found (${dupCount})</h3>`;
         html += `<div style="max-height:200px; overflow-y:auto; margin-bottom:1rem; font-size:0.7rem;">`;
         results.duplicates.forEach((dup, idx) => {
             html += `<div style="padding:4px 6px; border-bottom:1px solid var(--glass-border);">`;
@@ -4298,12 +4298,12 @@ function displayAnalysisResults(results) {
         });
         html += `</div>`;
     } else {
-        html += `<p style="color:var(--success);">✅ No near-duplicates found in text columns.</p>`;
+        html += `<p style="color:var(--success);">No near-duplicates found in text columns.</p>`;
     }
     
     // ---- Summary Stats ----
     if (results.summary && Object.keys(results.summary).length > 0) {
-        html += `<h3 style="margin-top:0.5rem;">📊 Numeric Summary</h3>`;
+        html += `<h3 style="margin-top:0.5rem;">Numeric Summary</h3>`;
         html += `<div style="font-size:0.7rem; background:var(--bg-surface); padding:0.5rem; border-radius:4px; overflow-x:auto;">`;
         html += `<table style="width:100%; border-collapse:collapse; font-size:0.7rem;">`;
         html += `<tr><th style="text-align:left;padding:2px 6px;">Column</th><th style="text-align:right;padding:2px 6px;">Mean</th><th style="text-align:right;padding:2px 6px;">Std</th><th style="text-align:right;padding:2px 6px;">Min</th><th style="text-align:right;padding:2px 6px;">Max</th></tr>`;
