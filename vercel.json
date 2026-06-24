@@ -2,13 +2,6 @@
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/upload",
-      "permanent": false
-    }
-  ],
   "rewrites": [
     {
       "source": "/upload",
@@ -17,10 +10,6 @@
     {
       "source": "/data",
       "destination": "/data/index.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/404.html"
     }
   ],
   "headers": [

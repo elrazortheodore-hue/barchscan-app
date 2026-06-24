@@ -11,3 +11,7 @@ node_modules/
 
 # Vercel
 .vercel/
+
+# React product page local artifacts
+product-page/node_modules/
+product-page/dist/
